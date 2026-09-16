@@ -22,6 +22,7 @@
 :root{
     --bg:#EEF1EF; --panel:#FFFFFF; --panel2:#F6F8F7; --panel3:#EAEFEC;
     --ink:#0D1412; --ink2:#3B4945; --muted:#505F59; --faint:#5E6C66; --onbrand:#FFFFFF; --dtMark:#1F4622; --dtInk:#1C1913;
+    --g1:#0072B2; --g2:#D55E00; --g3:#009E73; --gMP:#9A6212; --gNom:#6B4396; --gExt:#5F6D68; --gRes:#0F6B50; --gband:rgba(15,90,71,.08);
     --line:#DFE6E2; --line2:#CBD5D0;
     --brand:#0F5A47; --brand2:#137A5F; --bsoft:#E3F0EB; --bink:#0B4A3A;
     --alert:#A3352A; --asoft:#FBE7E3; --aline:#E7B3A9;
@@ -36,6 +37,7 @@
   @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
     --bg:#0B100F; --panel:#141B19; --panel2:#1A2321; --panel3:#232E2B;
     --ink:#E9EFEC; --ink2:#BAC7C2; --muted:#9AAAA4; --faint:#8FA09A; --onbrand:#062018; --dtMark:#A6BC9F; --dtInk:#E9EFEC;
+    --g1:#56B4E9; --g2:#F28C4B; --g3:#3CCB9E; --gMP:#E8B04E; --gNom:#B794E0; --gExt:#9AAAA4; --gRes:#63CFAC; --gband:rgba(99,207,172,.10);
     --line:#232E2B; --line2:#2F3C38;
     --brand:#4FBF9B; --brand2:#63CFAC; --bsoft:#123028; --bink:#8FE0C6;
     --alert:#E88B78; --asoft:#2E1A16; --aline:#5F3128;
@@ -49,6 +51,7 @@
   :root[data-theme="dark"]{
     --bg:#0B100F; --panel:#141B19; --panel2:#1A2321; --panel3:#232E2B;
     --ink:#E9EFEC; --ink2:#BAC7C2; --muted:#9AAAA4; --faint:#8FA09A; --onbrand:#062018; --dtMark:#A6BC9F; --dtInk:#E9EFEC;
+    --g1:#56B4E9; --g2:#F28C4B; --g3:#3CCB9E; --gMP:#E8B04E; --gNom:#B794E0; --gExt:#9AAAA4; --gRes:#63CFAC; --gband:rgba(99,207,172,.10);
     --line:#232E2B; --line2:#2F3C38;
     --brand:#4FBF9B; --brand2:#63CFAC; --bsoft:#123028; --bink:#8FE0C6;
     --alert:#E88B78; --asoft:#2E1A16; --aline:#5F3128;
@@ -350,6 +353,21 @@
   .ctaYo b{display:block;font-size:1rem}.ctaYo div>span{display:block;font-size:.84rem;color:var(--muted)}
   .ctaAcc{display:flex;gap:10px;margin:12px 0 26px}
   .ctaPow{margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+  /* ---------- gráficas de dirección ---------- */
+  .graficas{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:18px;margin-bottom:18px}
+  .graficas .card{margin-bottom:0}
+  .graf{display:block;max-width:100%;height:auto;overflow:visible}
+  .graf text{font-family:"Public Sans",system-ui,sans-serif}
+  .graf .gt{font-size:11px;fill:var(--muted)}.graf .gv{fill:var(--ink2);font-weight:600}
+  .graf .gin{font-size:11px;font-weight:600;fill:var(--onbrand)}
+  .leyenda{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.8rem;color:var(--ink2);margin:-4px 0 10px}
+  .leyenda i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+  .leyenda i.ln{width:18px;height:0;border-radius:0;border-top:3px solid;vertical-align:3px}.leyenda i.gu{border-top-style:dashed}
+  .datos{margin-top:8px}.datos summary{cursor:pointer;font-size:.82rem;color:var(--bink);font-weight:600;padding:4px 0}
+  .datos summary:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:4px}
+  .datos table{margin-top:6px}
+  .kpis .dl{font-size:.74rem;color:var(--muted);margin-top:7px;line-height:1.35}
+  .kpis .chispa{display:block;width:100%;height:30px;margin-top:8px}
   /* ---------- Powered by Dantia.ca: marca y palabra del folleto de Dantia (ai-automation-agency/marca-dantia.md) ---------- */
   .dantia{display:inline-flex;flex-direction:column;gap:6px}
   .dantia .dtL{font-size:.66rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);line-height:1}
@@ -765,6 +783,238 @@ function cargaRows(lista){
    "8,5% + 2% + 3% para "+noExo+(noExo===1?" empleado":" empleados")+" con 10 SMMLV o más; el resto, exonerado"]];
  return f.map(function(r){return '<tr><td class="ing">'+r[0]+'</td><td class="n r">'+r[1]+'</td>'+
   '<td class="n r">'+money(r[2])+'</td><td class="sub">'+r[3]+'</td></tr>';}).join("");
+}
+
+/* ============ GRAFICAS PARA DIRECCION (SVG a mano, sin librerias: funcionan offline) ============ */
+var MESES_C=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+var MESES_L=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+function dm(d){return d.getDate()+" "+MESES_C[d.getMonth()];}
+function lunes(d){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-(x.getDay()+6)%7);return x;}
+function r1(n){return Math.round(n*10)/10;}
+function compacto(n){var a=Math.abs(n),s=n<0?"-$":"$";
+ if(a>=1e6)return s+fmt(a/1e6,a>=1e8?0:1)+" M";
+ if(a>=1e3)return s+fmt(Math.round(a/1e3))+" mil";
+ return s+fmt(a);}
+function escala(min,max,n){
+ if(max===min)max=min+1;
+ var b=(max-min)/(n||4), e=Math.pow(10,Math.floor(Math.log(b)/Math.LN10)), f=b/e;
+ var p=(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*e, lo=Math.floor(min/p)*p, hi=Math.ceil(max/p)*p, t=[];
+ for(var v=lo;v<=hi+p/2;v+=p)t.push(Math.round(v*1e6)/1e6);
+ return {lo:lo,hi:hi,t:t};
+}
+function colorSede(k){return "var(--g"+((Object.keys(SEDES).indexOf(k)%3)+1)+")";}
+/* ancho disponible para cada gráfica: dos columnas desde 858 px */
+function anchoGraf(){var w=($("vista")&&$("vista").clientWidth)||900, dos=w>=858;
+ return Math.max(250,Math.floor((dos?(w-18)/2:w)-36));}
+
+/* ---------- datos ---------- */
+function sumaSalida(x,e){var serv=(e.meta&&e.meta.serv)||0;
+ x.serv+=serv; x.val+=e.v; x.presu+=(e.meta&&e.meta.desv!==undefined)?e.v/(1+e.meta.desv):serv*EST.desayuno; x.dias[iso(e.f)]=1;}
+function nuevaSuma(){return {serv:0,val:0,presu:0,dias:{}};}
+function desvDe(x){return x.presu?(x.val/x.presu-1)*100:null;}
+function diasDe(x){return Object.keys(x.dias).length;}
+/* salidas agrupadas por semana (lunes a domingo), por sede y total, desde el 1 de julio hasta hoy */
+function semanasSalidas(){
+ var fin=dISO(HOY), sem=[], idx={};
+ for(var d=lunes(new Date(2026,6,1));d<=fin;d.setDate(d.getDate()+7)){idx[iso(d)]=sem.length;sem.push({ini:new Date(d),tot:nuevaSuma(),sede:{}});}
+ EVENTOS.forEach(function(e){
+  if(e.t!=="salida"||(e.meta&&e.meta.revertida))return;
+  var w=idx[iso(lunes(e.f))]; if(w===undefined)return;
+  var s=sem[w]; sumaSalida(s.tot,e); sumaSalida(s.sede[e.sede]||(s.sede[e.sede]=nuevaSuma()),e);});
+ return sem;
+}
+function mesSalidas(m,k){var x=nuevaSuma();
+ EVENTOS.forEach(function(e){if(e.t==="salida"&&!(e.meta&&e.meta.revertida)&&e.f.getFullYear()===2026&&e.f.getMonth()===m&&(!k||e.sede===k))sumaSalida(x,e);});
+ return x;}
+function comprasMes(m,k){var v=0;
+ EVENTOS.forEach(function(e){if(e.t==="oc"&&e.f.getFullYear()===2026&&e.f.getMonth()===m&&(!k||e.sede===k))v+=e.v;});
+ return v;}
+/* facturas por pagar: vencido primero y después por mes de vencimiento */
+function pagosPorVencer(){
+ var b=[{n:"Vencido",sede:{}}], mapa={};
+ FACTURAS.forEach(function(f){var e=estadoFac(f)[0], i;
+  if(e==="Pagada"||e==="Sin factura")return;
+  if(e==="Vencida")i=0;
+  else{var key=f.venc.getFullYear()*12+f.venc.getMonth();
+   if(mapa[key]===undefined){mapa[key]=b.length;b.push({n:MESES_C[f.venc.getMonth()],key:key,sede:{}});}
+   i=mapa[key];}
+  b[i].sede[f.sede]=(b[i].sede[f.sede]||0)+f.v;});
+ return [b[0]].concat(b.slice(1).sort(function(x,y){return x.key-y.key;}));
+}
+
+/* ---------- piezas ---------- */
+function leyenda(items){return '<div class="leyenda">'+items.map(function(it){
+ return '<span><i class="'+(it.linea?'ln':'')+(it.guion?' gu':'')+'" style="'+(it.linea?'border-color:':'background:')+it.color+'"></i>'+esc(it.n)+'</span>';}).join("")+'</div>';}
+function datosHTML(cab,filas){return '<details class="datos"><summary>Ver los datos</summary><div class="scroll"><table><thead><tr>'+
+ cab.map(function(c,i){return '<th'+(i?' class="r"':'')+'>'+esc(c)+'</th>';}).join("")+'</tr></thead><tbody>'+
+ filas.map(function(f){return '<tr>'+f.map(function(c,i){return '<td'+(i?' class="n r"':'')+'>'+c+'</td>';}).join("")+'</tr>';}).join("")+
+ '</tbody></table></div></details>';}
+function tarjetaGraf(titulo,sub,cuerpo){return '<div class="card"><header><div><h2>'+titulo+'</h2><p>'+sub+'</p></div></header><div class="body">'+cuerpo+'</div></div>';}
+/* línea pequeña para las tarjetas de indicadores */
+function chispa(datos,color){
+ var v=datos.filter(function(x){return x!=null;}); if(v.length<2)return "";
+ var w=120,h=30,mn=Math.min.apply(null,v),mx=Math.max.apply(null,v); if(mx===mn){mx+=1;mn-=1;}
+ var pts=[],ult=null;
+ datos.forEach(function(x,i){if(x==null)return; var px=r1(2+i*(w-4)/(datos.length-1)), py=r1(h-3-(x-mn)/(mx-mn)*(h-6));
+  pts.push((pts.length?"L":"M")+px+" "+py); ult=[px,py];});
+ return '<svg class="chispa" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" aria-hidden="true" focusable="false">'+
+  '<path d="'+pts.join("")+'" fill="none" style="stroke:'+color+'" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>'+
+  '<circle cx="'+ult[0]+'" cy="'+ult[1]+'" r="2.6" style="fill:'+color+'"/></svg>';
+}
+
+/* ---------- gráficas ---------- */
+function grafLineas(o){
+ var w=o.w, h=o.h||230, ml=o.ml||48, mr=14, mt=12, mb=30, iw=w-ml-mr, ih=h-mt-mb, n=o.cats.length, vals=[];
+ o.series.forEach(function(s){s.datos.forEach(function(v){if(v!=null)vals.push(v);});});
+ if(o.banda)vals.push(o.banda[0],o.banda[1]); if(o.ref!=null)vals.push(o.ref);
+ var sc=escala(Math.min.apply(null,vals),Math.max.apply(null,vals),4);
+ var X=function(i){return r1(ml+(n<2?iw/2:i*iw/(n-1)));}, Y=function(v){return r1(mt+ih-(v-sc.lo)/(sc.hi-sc.lo)*ih);};
+ var g='<svg class="graf" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+esc(o.titulo)+'">';
+ if(o.banda)g+='<rect x="'+ml+'" y="'+Y(o.banda[1])+'" width="'+iw+'" height="'+r1(Y(o.banda[0])-Y(o.banda[1]))+'" style="fill:var(--gband)"/>';
+ sc.t.forEach(function(t){g+='<line x1="'+ml+'" x2="'+(w-mr)+'" y1="'+Y(t)+'" y2="'+Y(t)+'" style="stroke:var(--line)"/>'+
+  '<text x="'+(ml-7)+'" y="'+r1(Y(t)+4)+'" text-anchor="end" class="gt">'+esc(o.fmtY(t))+'</text>';});
+ if(o.ref!=null)g+='<line x1="'+ml+'" x2="'+(w-mr)+'" y1="'+Y(o.ref)+'" y2="'+Y(o.ref)+'" style="stroke:var(--ink2)" stroke-dasharray="4 4"/>';
+ var paso=Math.max(1,Math.ceil(n/Math.max(2,Math.floor(iw/58))));
+ o.cats.forEach(function(c,i){if(i%paso===0)g+='<text x="'+X(i)+'" y="'+(h-9)+'" text-anchor="middle" class="gt">'+esc(c)+'</text>';});
+ o.series.forEach(function(s){
+  var d="",pen=false;
+  s.datos.forEach(function(v,i){if(v==null){pen=false;return;} d+=(pen?"L":"M")+X(i)+" "+Y(v); pen=true;});
+  g+='<path d="'+d+'" fill="none" style="stroke:'+s.color+'" stroke-width="'+(s.ancho||2.2)+'"'+(s.guion?' stroke-dasharray="6 4"':'')+' stroke-linejoin="round" stroke-linecap="round"/>';
+  s.datos.forEach(function(v,i){if(v==null)return;
+   g+='<circle cx="'+X(i)+'" cy="'+Y(v)+'" r="'+(s.guion?2.4:3)+'" style="fill:'+s.color+'"><title>'+esc(s.n+" · "+o.cats[i]+": "+o.fmtTip(v))+'</title></circle>';});
+ });
+ return g+'</svg>';
+}
+function grafBarras(o){
+ var w=o.w, h=o.h||230, ml=o.ml||58, mr=10, mt=18, mb=30, iw=w-ml-mr, ih=h-mt-mb, n=o.cats.length;
+ var tot=o.cats.map(function(c,i){return o.series.reduce(function(a,s){return a+(s.datos[i]||0);},0);});
+ var sc=escala(0,Math.max.apply(null,tot.concat([1])),4), paso=iw/n, bw=Math.min(52,paso*0.62);
+ var Y=function(v){return r1(mt+ih-(v-sc.lo)/(sc.hi-sc.lo)*ih);};
+ var g='<svg class="graf" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+esc(o.titulo)+'">';
+ sc.t.forEach(function(t){g+='<line x1="'+ml+'" x2="'+(w-mr)+'" y1="'+Y(t)+'" y2="'+Y(t)+'" style="stroke:var(--line)"/>'+
+  '<text x="'+(ml-7)+'" y="'+r1(Y(t)+4)+'" text-anchor="end" class="gt">'+esc(o.fmtY(t))+'</text>';});
+ var cada=Math.max(1,Math.ceil(n/Math.max(2,Math.floor(iw/52))));
+ o.cats.forEach(function(c,i){
+  var x=r1(ml+paso*i+(paso-bw)/2), base=0;
+  o.series.forEach(function(s){var v=s.datos[i]||0; if(v<=0)return;
+   var y1=Y(base+v), y0=Y(base);
+   g+='<rect x="'+x+'" y="'+y1+'" width="'+r1(bw)+'" height="'+r1(Math.max(0,y0-y1))+'" style="fill:'+s.color+';stroke:var(--panel)" stroke-width="1"><title>'+
+    esc(c+" · "+s.n+": "+o.fmtTip(v))+'</title></rect>';
+   base+=v;});
+  if(o.totales&&tot[i]>0&&bw>=26)g+='<text x="'+r1(x+bw/2)+'" y="'+r1(Y(tot[i])-5)+'" text-anchor="middle" class="gt gv">'+esc(o.fmtY(tot[i]))+'</text>';
+  if(i%cada===0)g+='<text x="'+r1(x+bw/2)+'" y="'+(h-9)+'" text-anchor="middle" class="gt">'+esc(c)+'</text>';
+ });
+ return g+'</svg>';
+}
+/* barras horizontales al 100%: en qué se va cada peso */
+function grafProporcion(o){
+ var w=o.w, fila=34, gap=10, lw=Math.min(118,Math.round(w*0.3)), bx=lw+8, bwid=w-bx-4, h=o.filas.length*(fila+gap)-gap+4;
+ var g='<svg class="graf" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+esc(o.titulo)+'">';
+ o.filas.forEach(function(f,i){
+  var y=i*(fila+gap), total=f.partes.reduce(function(a,p){return a+Math.max(0,p.v);},0), x=bx;
+  g+='<text x="'+(lw)+'" y="'+(y+fila/2+4)+'" text-anchor="end" class="gt'+(f.total?' gv':'')+'">'+esc(f.n)+'</text>';
+  f.partes.forEach(function(p){if(p.v<=0||!total)return;
+   var ww=p.v/total*bwid, pct=p.v/total*100;
+   g+='<rect x="'+r1(x)+'" y="'+y+'" width="'+r1(ww)+'" height="'+fila+'" style="fill:'+p.color+';stroke:var(--panel)" stroke-width="1.5"><title>'+
+    esc(f.n+" · "+p.n+": "+money(p.v)+" ("+fmt(pct,1)+"%)")+'</title></rect>';
+   if(ww>=30)g+='<text x="'+r1(x+ww/2)+'" y="'+(y+fila/2+4)+'" text-anchor="middle" class="gin">'+fmt(pct,0)+'%</text>';
+   x+=ww;});
+ });
+ return g+'</svg>';
+}
+
+/* ---------- lo que ve dirección ---------- */
+function indicadoresEmpresa(T){
+ var sem=semanasSalidas(), ago=mesSalidas(7), sep=mesSalidas(8);
+ var desvSem=sem.map(function(s){return desvDe(s.tot);}), platosSem=sem.map(function(s){var d=diasDe(s.tot);return d?s.tot.serv/d:null;});
+ var cppAgo=ago.serv?ago.val/ago.serv:0, cppSep=sep.serv?sep.val/sep.serv:0, desvAgo=desvDe(ago), desvSep=desvDe(sep);
+ var pdAgo=diasDe(ago)?ago.serv/diasDe(ago):0, pdSep=diasDe(sep)?sep.serv/diasDe(sep):0;
+ var cAgo=comprasMes(7), cSep=comprasMes(8);
+ var cambio=function(a,b){return b?(a/b-1)*100:0;};
+ var kpi=function(v,k,clase,det,graf){return '<div class="stat '+(clase||"")+'"><div class="v">'+v+'</div><div class="k">'+k+'</div>'+
+  (det?'<div class="dl">'+det+'</div>':'')+(graf||'')+'</div>';};
+ return '<div class="stats kpis">'+
+  kpi(money(T.res),"Resultado estimado de septiembre · margen "+fmt(T.ingreso?T.res/T.ingreso*100:0,1)+"%",T.res>0?"good":"bad",
+   "Ingresos "+compacto(T.ingreso)+" · costos "+compacto(T.ingreso-T.res))+
+  kpi(money(cppSep),"Costo por plato · "+signo(desvSep||0)+" frente al estándar",Math.abs(desvSep||0)<=8?"good":"warn",
+   "Agosto: "+money(cppAgo)+" · "+signo(desvAgo||0),chispa(desvSem,"var(--g1)"))+
+  kpi(fmt(Math.round(pdSep)),"Platos por día en septiembre","",
+   "Agosto: "+fmt(Math.round(pdAgo))+" por día · "+signo(cambio(pdSep,pdAgo)),chispa(platosSem,"var(--g3)"))+
+  kpi(money(cSep),"Compras de septiembre, al "+dISO(HOY).getDate(),"",
+   "Agosto: "+compacto(cAgo)+" · julio: "+compacto(comprasMes(6)))+
+  kpi(money(T.nom),"Nómina de septiembre · "+pl(T.emps,"empleado","empleados"),"",
+   "Por servicio: "+money(T.platos?T.nom/T.platos:0)+" · extras "+compacto(T.extras))+
+  kpi(money(T.porPagar),"Por pagar a proveedores, sin vencer",T.vencido?"bad":"",
+   "Vencido: "+money(T.vencido)+" · sin factura: "+compacto(T.sinFac))+
+  kpi(fmt(T.rq),"Requerimientos por aprobar",T.rq?"warn":"good",pl(T.ent,"entrega por recibir","entregas por recibir"))+
+  kpi(money(T.riesgo),"Inventario que vence en 7 días",T.riesgo?"warn":"good",
+   "De "+compacto(T.inv)+" en inventario · "+fmt(T.inv?T.riesgo/T.inv*100:0,1)+"%")+
+  '</div>';
+}
+function graficasEmpresa(K){
+ var ks=Object.keys(SEDES), w=anchoGraf(), sem=semanasSalidas(), cats=sem.map(function(s){return dm(s.ini);});
+ var nombres={}; ks.forEach(function(k){nombres[k]=SEDES[k].n;});
+ /* 1. costo frente al estándar por semana */
+ var serieDesv=ks.map(function(k){return {n:nombres[k],color:colorSede(k),datos:sem.map(function(s){return s.sede[k]?desvDe(s.sede[k]):null;})};});
+ serieDesv.push({n:"Empresa",color:"var(--ink)",guion:true,ancho:2,datos:sem.map(function(s){return desvDe(s.tot);})});
+ var pctY=function(v){return (v>0?"+":"")+fmt(v,0)+"%";}, pctT=function(v){return signo(v);};
+ var g1=tarjetaGraf("Costo frente al estándar, por semana","Diferencia entre lo que salió de bodega y el estándar de cada servicio. La franja es la tolerancia de ±8%.",
+  leyenda(serieDesv.map(function(s){return {n:s.n,color:s.color,linea:true,guion:s.guion};}))+
+  grafLineas({w:w,cats:cats,series:serieDesv,fmtY:pctY,fmtTip:pctT,banda:[-8,8],ref:0,titulo:"Costo frente al estándar por semana y por sede"})+
+  datosHTML(["Semana del"].concat(serieDesv.map(function(s){return s.n;})),
+   sem.map(function(s,i){return [esc(cats[i])].concat(serieDesv.map(function(se){return se.datos[i]==null?"·":signo(se.datos[i]);}));})));
+ /* 2. platos por día, por semana */
+ var seriePlatos=ks.map(function(k){return {n:nombres[k],color:colorSede(k),datos:sem.map(function(s){var d=diasDe(s.tot);
+  return s.sede[k]&&d?s.sede[k].serv/d:0;})};});
+ var g2=tarjetaGraf("Platos por día, por semana","Promedio diario de platos servidos en cada semana, sumando las sedes.",
+  leyenda(seriePlatos.map(function(s){return {n:s.n,color:s.color};}))+
+  grafBarras({w:w,cats:cats,series:seriePlatos,fmtY:function(v){return fmt(Math.round(v));},fmtTip:function(v){return fmt(Math.round(v))+" platos por día";},
+   titulo:"Platos servidos por día en cada semana, por sede",ml:44})+
+  datosHTML(["Semana del"].concat(seriePlatos.map(function(s){return s.n;})).concat(["Total"]),
+   sem.map(function(s,i){var t=0;return [esc(cats[i])].concat(seriePlatos.map(function(se){t+=se.datos[i];return fmt(Math.round(se.datos[i]));})).concat([fmt(Math.round(t))]);})));
+ /* 3. en qué se va cada peso de ingreso */
+ var partes=function(x,nom){return [{n:"Materia prima",v:x.mp,color:"var(--gMP)"},{n:"Nómina",v:nom,color:"var(--gNom)"},
+  {n:"Servicios externos",v:x.ext,color:"var(--gExt)"},{n:"Resultado",v:x.res,color:"var(--gRes)"}];};
+ var T={mp:0,nom:0,ext:0,res:0,ingreso:0}; ks.forEach(function(k){var x=K[k];T.mp+=x.mp;T.nom+=x.t.costo;T.ext+=x.ext;T.res+=x.res;T.ingreso+=x.ingreso;});
+ var filas=ks.map(function(k){return {n:nombres[k],partes:partes(K[k],K[k].t.costo),x:K[k]};});
+ filas.push({n:"Empresa",total:true,partes:partes(T,T.nom),x:T});
+ var perdidas=filas.filter(function(f){return f.x.res<0;}).map(function(f){return f.n;});
+ var g3=tarjetaGraf("En qué se va cada peso de ingreso","Septiembre, resultado estimado con la base de contabilidad."+(perdidas.length?" Con pérdida: "+esc(perdidas.join(", "))+".":""),
+  leyenda(partes(T,0).map(function(p){return {n:p.n,color:p.color};}))+
+  grafProporcion({w:w,filas:filas,titulo:"Composición del ingreso de septiembre por sede"})+
+  datosHTML(["Sede","Ingresos","Materia prima","Nómina","Servicios externos","Resultado"],
+   filas.map(function(f){var x=f.x, nom=f.total?T.nom:x.t.costo;return [esc(f.n),money(x.ingreso),money(x.mp),money(nom),money(x.ext),money(x.res)];})));
+ /* 4. compras por mes */
+ var meses=[6,7,8], catsM=meses.map(function(m){return m===dISO(HOY).getMonth()?MESES_C[m]+" (al "+dISO(HOY).getDate()+")":MESES_C[m];});
+ var serieCompras=ks.map(function(k){return {n:nombres[k],color:colorSede(k),datos:meses.map(function(m){return comprasMes(m,k);})};});
+ var g4=tarjetaGraf("Compras por mes","Valor de las órdenes de compra enviadas a proveedores.",
+  leyenda(serieCompras.map(function(s){return {n:s.n,color:s.color};}))+
+  grafBarras({w:w,cats:catsM,series:serieCompras,fmtY:compacto,fmtTip:money,totales:true,titulo:"Valor de las órdenes de compra por mes y por sede"})+
+  datosHTML(["Mes"].concat(serieCompras.map(function(s){return s.n;})).concat(["Total"]),
+   catsM.map(function(c,i){var t=0;return [esc(c)].concat(serieCompras.map(function(s){t+=s.datos[i];return money(s.datos[i]);})).concat([money(t)]);})));
+ /* 5. pagos a proveedores por vencer */
+ var pv=pagosPorVencer(), catsP=pv.map(function(b){return b.n;});
+ var seriePagos=ks.map(function(k){return {n:nombres[k],color:colorSede(k),datos:pv.map(function(b){return b.sede[k]||0;})};});
+ var g5=tarjetaGraf("Pagos a proveedores por vencer","Facturas registradas y sin pagar, por mes de vencimiento. Lo recibido sin factura no está incluido.",
+  leyenda(seriePagos.map(function(s){return {n:s.n,color:s.color};}))+
+  grafBarras({w:w,cats:catsP,series:seriePagos,fmtY:compacto,fmtTip:money,totales:true,titulo:"Pagos a proveedores por mes de vencimiento y por sede"})+
+  datosHTML(["Vence"].concat(seriePagos.map(function(s){return s.n;})).concat(["Total"]),
+   catsP.map(function(c,i){var t=0;return [esc(c)].concat(seriePagos.map(function(s){t+=s.datos[i];return money(s.datos[i]);})).concat([money(t)]);})));
+ return '<h3 class="sec" style="margin:6px 0 12px">Cómo va la empresa</h3><div class="graficas">'+g1+g2+g3+g4+g5+'</div>';
+}
+/* tendencia de una sede para su ficha */
+function graficaSede(k){
+ var w=anchoGraf(), sem=semanasSalidas(), cats=sem.map(function(s){return dm(s.ini);});
+ var desv=[{n:SEDES[k].n,color:colorSede(k),datos:sem.map(function(s){return s.sede[k]?desvDe(s.sede[k]):null;})}];
+ var platos=[{n:SEDES[k].n,color:colorSede(k),datos:sem.map(function(s){var x=s.sede[k];return x&&diasDe(x)?x.serv/diasDe(x):0;})}];
+ return '<div class="graficas">'+
+  tarjetaGraf("Costo frente al estándar, por semana","La franja es la tolerancia de ±8%.",
+   grafLineas({w:w,cats:cats,series:desv,fmtY:function(v){return (v>0?"+":"")+fmt(v,0)+"%";},fmtTip:signo,banda:[-8,8],ref:0,
+    titulo:"Costo frente al estándar por semana en "+SEDES[k].n}))+
+  tarjetaGraf("Platos por día, por semana","Promedio diario de platos servidos.",
+   grafBarras({w:w,cats:cats,series:platos,fmtY:function(v){return fmt(Math.round(v));},fmtTip:function(v){return fmt(Math.round(v))+" platos por día";},
+    titulo:"Platos servidos por día en cada semana en "+SEDES[k].n,ml:44}))+
+  '</div>';
 }
 
 /* ============ NUCLEO: DATOS Y UTILIDADES ============ */
@@ -2474,7 +2724,7 @@ function fichaSede(k){
   st(money(x.res),"Resultado estimado del mes · "+fmt(x.mg,1)+"%",x.res>0?"good":"bad")+
   st(money(t.costo),"Nómina del mes · "+pl(x.emps,"empleado","empleados"),"")+
   st(money(x.vencido),"Vencido con proveedores",x.vencido?"bad":"good")+
-  st(money(m.riesgo),"Inventario que vence en 7 días",m.riesgo?"warn":"good")+'</div>'+
+  st(money(m.riesgo),"Inventario que vence en 7 días",m.riesgo?"warn":"good")+'</div>'+graficaSede(k)+
   '<div class="card"><header><div><h2>Resultado estimado del mes</h2><p>Con la misma base que contabilidad: servicios del mes completo al precio '+
   'por plato y materia prima al costo estándar.</p></div></header>'+
   tablaHTML(["Concepto","#Valor"],[["Facturación de servicios ("+fmt(x.platos)+" platos)",x.ingreso],["Materia prima al costo estándar",-x.mp],
@@ -2522,15 +2772,9 @@ function vistaTablero(){
    'Conviene revisar gramajes y sobreporción.</div>';}).join("");
  var nombre=function(k){return '<td class="ing">'+esc(nombreSede(k))+'</td>';};
  var total='<td class="ing">Total '+pl(ks.length,"sede","sedes")+'</td>';
- return '<div class="stats">'+
-  st(money(T.res),"Resultado estimado del mes · margen "+fmt(mgT,1)+"%",T.res>0?"good":"bad")+
-  st(money(cpp),"Costo por plato · "+signo(dG)+" frente al estándar",Math.abs(dG)<=8?"good":"warn")+
-  st(money(T.nom),"Nómina del mes · "+pl(T.emps,"empleado","empleados"),"")+
-  st(money(T.vencido),"Vencido con proveedores",T.vencido?"bad":"good")+
-  st(T.rq,"Requerimientos por aprobar",T.rq?"warn":"good")+st(T.ent,"Entregas por recibir","")+
-  st(money(T.riesgo),"Inventario que vence en 7 días",T.riesgo?"warn":"good")+
-  st(fmt(T.personas),"Personas por día en "+pl(ks.length,"sede","sedes"),"")+'</div>'+
+ return indicadoresEmpresa(T)+
   (alertas?'<div class="card"><div class="body" style="padding-top:4px">'+alertas+'</div></div>':'')+
+  graficasEmpresa(K)+'<h3 class="sec" style="margin:6px 0 12px">Detalle por sede</h3>'+
   '<div class="card"><header><div><h2>Resultado estimado por sede</h2><p>Septiembre 2026, con la misma base que contabilidad. '+
   'Abra una sede para ver su ficha completa.</p></div></header>'+
   tablaHTML(["Sede","#Ingresos","#Materia prima","#Nómina","#Servicios externos","#Resultado","#Margen"],
@@ -3041,6 +3285,9 @@ document.addEventListener("keydown",function(ev){
 document.addEventListener("submit",function(ev){
  if(ev.target&&ev.target.id==="lgForm"){ev.preventDefault();iniciarSesion();}
 });
+var tAncho=null;
+window.addEventListener("resize",function(){clearTimeout(tAncho);
+ tAncho=setTimeout(function(){if(S.cuenta&&S.vista==="tab"&&$("ovl").hidden)render();},200);});
 document.addEventListener("input",onCampo);
 document.addEventListener("change",onCampo);
 $("vx").addEventListener("click",cerrarDoc);
