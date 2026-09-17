@@ -325,6 +325,18 @@
     text-transform:uppercase;color:var(--muted);padding:7px 14px}
   .empty{padding:26px 18px;color:var(--muted);font-size:.9rem}
   .lot b.warn{color:var(--alert)}
+  .lots{display:grid;grid-template-columns:auto auto 1fr;gap:3px 12px;align-items:baseline;
+    font-family:"Public Sans",system-ui,sans-serif;font-variant-numeric:tabular-nums;font-size:.79rem}
+  .lots .q{font-weight:600;color:var(--brand);text-align:right;white-space:nowrap;min-width:4.6em}
+  .lots .q.pr{color:var(--alert)}
+  .lots .lt{color:var(--ink2);white-space:nowrap;min-width:4.4em}
+  .lots .vn{color:var(--muted);font-size:.74rem;white-space:nowrap}
+  .lots .vn.pr{color:var(--alert)}
+  .lotsMas{margin-top:5px}
+  .lotsMas summary{cursor:pointer;font-size:.74rem;color:var(--bink);font-weight:600}
+  .lotsMas summary:focus-visible{outline:2px solid var(--brand);outline-offset:2px;border-radius:4px}
+  .lotsMas .lots{margin-top:5px}
+  .lotsFalta{display:block;margin-top:5px;font-size:.78rem;color:var(--alert);font-weight:600}
   .req{color:var(--alert)}
 
   /* ---------- cuentas ---------- */
@@ -1954,6 +1966,20 @@ function procesarRecep(o){
  render(); arriba();
 }
 
+/* lotes en columnas: cantidad, lote y vencimiento alineados, y los demás en un desplegable */
+function fCorta(s){var d=dISO(s), a=d.getFullYear();
+ return pad(d.getDate())+"/"+pad(d.getMonth()+1)+(a!==dISO(HOY).getFullYear()?"/"+String(a).slice(2):"");}
+function lotesHTML(items,max){
+ var vis=max?items.slice(0,max):items, resto=max?items.slice(max):[];
+ var fila=function(x){
+  var d=x.ven?diasHasta(x.ven):null, urg=d!==null&&d<=7;
+  return '<span class="q'+(urg?" pr":"")+'">'+cant(x.c,x.q)+'</span><span class="lt">'+esc(x.lote)+'</span>'+
+   '<span class="vn'+(urg?" pr":"")+'">'+(x.ven?fCorta(x.ven)+(d!==null&&d<=14?" · "+diasTxt(x.ven):""):"sin vencimiento")+
+   (x.hoy?" · entró hoy":"")+'</span>';};
+ return '<div class="lots">'+vis.map(fila).join("")+'</div>'+
+  (resto.length?'<details class="lotsMas"><summary>'+pl(resto.length,"lote más","lotes más")+'</summary>'+
+   '<div class="lots">'+resto.map(fila).join("")+'</div></details>':'');
+}
 /* ============ SEDE · INVENTARIO ============ */
 function vistaInv(){
  if(S.aj)return formAjuste();
@@ -1964,12 +1990,10 @@ function vistaInv(){
   tot+=q*p.cost; lotes+=ls.length;
   if(c.charAt(0)!==grupo){grupo=c.charAt(0);g='<tr class="grp"><td colspan="4">'+CATEG[grupo]+'</td></tr>';}
   return g+'<tr><td><span class="ing">'+esc(p.n)+'</span><div class="cod">'+c+'</div></td>'+
-   '<td class="lot">'+ls.map(function(l,i){
-    var d=l.ven?diasHasta(l.ven):null, pr=d!==null&&d<=7;
-    if(pr)riesgo+=l.q*p.cost; if(l.hoy)hoyN++;
-    return '<b'+(pr?' class="warn"':'')+'>'+cant(c,l.q)+'</b> lote '+esc(l.lote)+
-     ' <em>'+(l.ven?'vence '+fISO(l.ven)+' · '+diasTxt(l.ven):'sin vencimiento')+
-     (i===0&&ls.length>1?' · sale primero':'')+(l.hoy?' · entró hoy':'')+'</em>';}).join("")+'</td>'+
+   '<td>'+lotesHTML(ls.map(function(l){
+    var d=l.ven?diasHasta(l.ven):null;
+    if(d!==null&&d<=7)riesgo+=l.q*p.cost; if(l.hoy)hoyN++;
+    return {c:c,q:l.q,lote:l.lote,ven:l.ven,hoy:l.hoy};}),4)+'</td>'+
    '<td class="n r">'+cant(c,q)+'</td><td class="n r">'+money(q*p.cost)+'</td></tr>';
  }).join("");
  return '<div class="stats">'+st(cods.length,"Productos con saldo","")+st(lotes,"Lotes en bodega","")+
@@ -2005,16 +2029,15 @@ function explotar(menu,n,real){
 function difTxt(c,q,teo){var d=r3(q-teo);return (d>0?"+":"-")+cant(c,Math.abs(d));}
 function ajHTML(f){return f.aj?'<span style="color:var(--warn)">'+difTxt(f.c,f.q,f.teo)+' frente a la receta</span>':'';}
 function lotHTML(f){
- return f.alloc.map(function(a){
-  return '<b>'+cant(f.c,a.t)+'</b> del lote '+esc(a.lote)+' <em>'+(a.ven?'vence '+fISO(a.ven):'sin vencimiento')+'</em>';}).join("")+
-  (f.falta?'<b class="warn">saldo insuficiente</b>':'');
+ return lotesHTML(f.alloc.map(function(a){return {c:f.c,q:a.t,lote:a.lote,ven:a.ven};}),3)+
+  (f.falta?'<b class="lotsFalta">saldo insuficiente</b>':'');
 }
 function subTot(ex){return ex.n?money(ex.total/ex.n)+' por plato · estándar '+money(ex.est)+' · presupuesto '+money(ex.n*ex.est):'';}
 function faltaHTML(ex){return ex.falta.length?'<div class="cal a"><b>Saldo insuficiente.</b> '+esc(ex.falta.join(" · "))+'. '+
  'Hay que pedirlo en un requerimiento o bajar la cantidad.</div>':'';}
 function tablaExpl(ex){
  return '<div class="scroll" style="margin-top:16px"><table style="min-width:820px"><thead><tr><th>Insumo</th><th class="r">Por porción</th>'+
-  '<th class="r">Receta</th><th class="r">Sale</th><th>Lote asignado · PEPS</th><th class="r">Costo</th></tr></thead><tbody>'+
+  '<th class="r">Receta</th><th class="r">Sale</th><th>Lotes asignados</th><th class="r">Costo</th></tr></thead><tbody>'+
   ex.filas.map(function(f){var p=PROD[f.c], typed=S.serv.real[f.c];
    return '<tr><td><span class="ing">'+esc(p.n)+'</span><div class="cod">'+f.c+'</div></td>'+
     '<td class="n r">'+porcion(f.c,f.per)+'</td><td class="n r">'+cant(f.c,f.teo)+'</td>'+
@@ -2152,9 +2175,8 @@ function controlSalida(s){
   s.lineas.map(function(l){var aj=Math.abs(l.q-l.teo)>1e-9;
    return '<tr><td class="ing">'+esc(PROD[l.c].n)+'</td><td class="n r">'+cant(l.c,l.teo)+'</td>'+
     '<td class="n r">'+(aj?'<b style="color:var(--warn)">'+cant(l.c,l.q)+'</b><div class="sub">'+difTxt(l.c,l.q,l.teo)+'</div>':cant(l.c,l.q))+'</td>'+
-    '<td class="lot">'+s.alloc.filter(function(a){return a.c===l.c;}).map(function(a){
-     return '<b>'+cant(a.c,a.t)+'</b> lote '+esc(a.lote)+' <em>'+(a.ven?'vence '+fISO(a.ven):'sin vencimiento')+'</em>';}).join("")+
-    '</td></tr>';}).join("")+
+    '<td>'+lotesHTML(s.alloc.filter(function(a){return a.c===l.c;}).map(function(a){
+     return {c:a.c,q:a.t,lote:a.lote,ven:a.ven};}),3)+'</td></tr>';}).join("")+
   '</tbody></table></div>'+rev+'</div>';
 }
 function reversar(){
