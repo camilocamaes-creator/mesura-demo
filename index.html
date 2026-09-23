@@ -465,6 +465,45 @@
     .side .pow{margin-top:0}
   }
 
+/* ============ MOVIMIENTO ============
+   El sistema no tenía ninguna transición: 17 estados :hover y 9 de foco
+   cambiaban de golpe. Esto les pone la curva y añade la entrada de la vista,
+   del visor y del aviso. Solo opacidad y transform, que no obligan a
+   recalcular el diseño. Duraciones cortas a propósito: esto es una
+   herramienta de uso diario, no una página de venta. Todo queda anulado al
+   final para quien pide menos movimiento. */
+.side nav button,.cuenta,.btn,.back,.xbtn,.close,.lgLink,.thumb,.step,
+.quick button,.day>button,.roles button,.chips button,.ctaOpt,summary{
+  transition:background-color .16s ease,color .16s ease,border-color .16s ease,
+    box-shadow .16s ease,transform .16s ease}
+tbody tr{transition:background-color .12s ease}
+.btn:not(:disabled):active,.back:active,.xbtn:active,.ctaOpt:active{transform:translateY(1px)}
+
+/* Entrada de vista. render() corre en cada cambio de estado, así que la clase
+   la pone app.js solo cuando S.vista cambia de verdad; si no, la pantalla
+   parpadearía en cada filtro. */
+#vista.entra{animation:vistaEntra .22s cubic-bezier(.22,.61,.36,1) both}
+@keyframes vistaEntra{from{opacity:0;transform:translate3d(0,6px,0)}to{opacity:1;transform:none}}
+
+/* Visor y aviso. [hidden] es display:none, así que al quitarlo la animación
+   vuelve a correr sola y no hace falta tocar el script. */
+.ovl:not([hidden]){animation:ovlEntra .18s ease both}
+.ovl:not([hidden]) .viewer{animation:visorEntra .24s cubic-bezier(.22,.61,.36,1) both}
+@keyframes ovlEntra{from{opacity:0}to{opacity:1}}
+@keyframes visorEntra{from{opacity:0;transform:translate3d(0,10px,0)}to{opacity:1;transform:none}}
+.toast:not([hidden]){animation:avisoEntra .22s cubic-bezier(.22,.61,.36,1) both}
+@keyframes avisoEntra{from{opacity:0;transform:translate3d(0,10px,0)}to{opacity:1;transform:none}}
+
+/* Pantalla de acceso: es lo primero que ve quien llega a mesura.dantia.ca. */
+.lgIntro,.lgPanel{animation:lgEntra .38s cubic-bezier(.22,.61,.36,1) both}
+.lgPanel{animation-delay:.07s}
+@keyframes lgEntra{from{opacity:0;transform:translate3d(0,10px,0)}to{opacity:1;transform:none}}
+
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-delay:0ms !important;
+    transition-duration:.01ms !important;scroll-behavior:auto !important}
+}
+
 </style>
 </head>
 <body>
@@ -1391,7 +1430,11 @@ function render(){
    '</select></label>':'OFICINA BOGOTÁ'))+'<br>'+hoyTxt;
  var V={rq:vistaRQ,recep:vistaRecep,inv:vistaInv,serv:vistaServ,hist:vistaHistorial,aprob:vistaAprob,oc:vistaOC,
   fac:vistaFacturas,con:vistaContabilidad,nom:vistaNomina,tab:vistaTablero,cuentas:vistaCuentas};
- $("vista").innerHTML=V[S.vista]();
+ var elVista=$("vista"), cambioVista=elVista.getAttribute("data-v")!==S.vista;
+ elVista.setAttribute("data-v",S.vista);
+ elVista.innerHTML=V[S.vista]();
+ // la entrada solo en un cambio real de vista, no en cada render
+ if(cambioVista){elVista.classList.remove("entra");void elVista.offsetWidth;elVista.classList.add("entra");}
  if(S.vista==="hist")bindHistorial();
  if(S.vista==="inv"&&S.aj&&S.aj.filtro)filtrarAj();
  if(S.foco){var el=$(S.foco);S.foco=null;if(el)el.focus();}
@@ -1399,7 +1442,8 @@ function render(){
 function arriba(){try{window.scrollTo(0,0);}catch(e){}}
 
 var tToast=null;
-function toast(msg){var t=$("toast");t.textContent=msg;t.hidden=false;
+function toast(msg){var t=$("toast");t.hidden=true;void t.offsetWidth;
+ t.textContent=msg;t.hidden=false;
  clearTimeout(tToast);tToast=setTimeout(function(){t.hidden=true;},5200);}
 
 function info(pares){return '<div class="info">'+pares.map(function(x){
