@@ -551,7 +551,7 @@ tbody tr{transition:background-color .12s ease}
 <div class="shell" id="app" hidden>
   <aside class="side">
     <div class="brand"><div class="gl" id="glMarca" aria-hidden="true"></div>
-      <div><b>Mesura</b><span>Operación de alimentación</span></div></div>
+      <div><b>Mesura</b><span id="marcaSub"></span></div></div>
     <button class="cuenta" id="cuentaBtn" data-act="cuenta-abrir" aria-haspopup="dialog" aria-label="Su cuenta y cerrar sesión">
       <span class="av" id="cuentaAv"></span>
       <span class="cn"><b id="cuentaN"></b><span id="cuentaC"></span></span>
@@ -559,8 +559,8 @@ tbody tr{transition:background-color .12s ease}
         stroke-linejoin="round" aria-hidden="true"><path d="M5 6.5l3 3 3-3"/></svg>
     </button>
     <nav id="nav" aria-label="Secciones"></nav>
-    <div class="sedeb"><div class="l" id="sedeL">Sede</div><div class="v" id="sedeV">Altamira</div>
-      <div class="s" id="sedeS">Ubicación 3102 · ciclo 20 días</div></div>
+    <div class="sedeb"><div class="l" id="sedeL"></div><div class="v" id="sedeV"></div>
+      <div class="s" id="sedeS"></div></div>
     <div class="pow" id="pow"></div>
   </aside>
   <div class="main">
@@ -581,8 +581,9 @@ tbody tr{transition:background-color .12s ease}
 <script>
 (function(){
 "use strict";
-var D={"hoy":"2026-09-06","prov":{"CARNES":{"n":"Cárnicos Demo","merma":0.4},"AVICOLA":{"n":"Avícola Demo","merma":null},"ABARROTES":{"n":"Abarrotes Demo","merma":null},"FRUVER":{"n":"Fruver Demo","merma":null},"LACTEOS":{"n":"Lácteos Demo","merma":null},"DOTACION":{"n":"Dotaciones Demo","merma":null}},"prod":{"1001":{"n":"Costilla de res","u":"kg","cost":18000,"prov":"CARNES","vida":6,"prot":true,"iva":0},"1002":{"n":"Carne de res molida","u":"kg","cost":22000,"prov":"CARNES","vida":5,"prot":true,"iva":0},"1003":{"n":"Chicharrón","u":"kg","cost":28000,"prov":"CARNES","vida":6,"prot":false,"iva":0},"1101":{"n":"Pechuga de pollo","u":"kg","cost":14500,"prov":"AVICOLA","vida":5,"prot":true,"iva":0},"1102":{"n":"Gallina","u":"kg","cost":16000,"prov":"AVICOLA","vida":5,"prot":true,"iva":0},"1103":{"n":"Huevo AA","u":"u","cost":750,"prov":"AVICOLA","vida":20,"prot":false,"iva":0},"2001":{"n":"Arroz blanco","u":"kg","cost":4200,"prov":"ABARROTES","vida":180,"prot":false,"iva":0},"2002":{"n":"Fríjol cargamanto","u":"kg","cost":9800,"prov":"ABARROTES","vida":120,"prot":false,"iva":0},"2003":{"n":"Arepa de maíz","u":"u","cost":600,"prov":"ABARROTES","vida":8,"prot":false,"iva":0.05},"2004":{"n":"Pan tajado","u":"u","cost":400,"prov":"ABARROTES","vida":6,"prot":false,"iva":0.05},"2005":{"n":"Pasta","u":"kg","cost":5200,"prov":"ABARROTES","vida":240,"prot":false,"iva":0.05},"2006":{"n":"Aceite vegetal","u":"L","cost":8600,"prov":"ABARROTES","vida":300,"prot":false,"iva":0.05},"2007":{"n":"Chocolate en polvo","u":"kg","cost":14000,"prov":"ABARROTES","vida":150,"prot":false,"iva":0.05},"2008":{"n":"Panela","u":"kg","cost":4500,"prov":"ABARROTES","vida":150,"prot":false,"iva":0},"2009":{"n":"Sal refinada","u":"kg","cost":1800,"prov":"ABARROTES","vida":700,"prot":false,"iva":0},"3001":{"n":"Papa pastusa","u":"kg","cost":2400,"prov":"FRUVER","vida":12,"prot":false,"iva":0},"3002":{"n":"Papa criolla","u":"kg","cost":3800,"prov":"FRUVER","vida":8,"prot":false,"iva":0},"3003":{"n":"Plátano maduro","u":"kg","cost":3200,"prov":"FRUVER","vida":5,"prot":false,"iva":0},"3004":{"n":"Plátano verde","u":"kg","cost":2900,"prov":"FRUVER","vida":9,"prot":false,"iva":0},"3005":{"n":"Yuca","u":"kg","cost":3400,"prov":"FRUVER","vida":7,"prot":false,"iva":0},"3006":{"n":"Mazorca","u":"kg","cost":4500,"prov":"FRUVER","vida":6,"prot":false,"iva":0},"3007":{"n":"Verdura mixta","u":"kg","cost":3400,"prov":"FRUVER","vida":6,"prot":false,"iva":0},"3008":{"n":"Lechuga y tomate","u":"kg","cost":4100,"prov":"FRUVER","vida":4,"prot":false,"iva":0},"3009":{"n":"Aguacate","u":"kg","cost":7800,"prov":"FRUVER","vida":5,"prot":false,"iva":0},"3010":{"n":"Naranja","u":"kg","cost":3600,"prov":"FRUVER","vida":12,"prot":false,"iva":0},"3011":{"n":"Guascas","u":"kg","cost":38000,"prov":"FRUVER","vida":6,"prot":false,"iva":0},"3012":{"n":"Pulpa de mora","u":"kg","cost":19585,"prov":"FRUVER","vida":20,"prot":false,"iva":0.05},"3013":{"n":"Pulpa de lulo","u":"kg","cost":19585,"prov":"FRUVER","vida":20,"prot":false,"iva":0.05},"4001":{"n":"Leche entera","u":"L","cost":3800,"prov":"LACTEOS","vida":8,"prot":false,"iva":0},"4002":{"n":"Queso campesino","u":"kg","cost":16000,"prov":"LACTEOS","vida":14,"prot":false,"iva":0},"4003":{"n":"Crema de leche","u":"L","cost":9200,"prov":"LACTEOS","vida":10,"prot":false,"iva":0.05},"5001":{"n":"Guantes de nitrilo, caja x100","u":"u","cost":32000,"prov":"DOTACION","vida":null,"prot":false,"iva":0.19},"5002":{"n":"Cofias desechables, paquete x100","u":"u","cost":18000,"prov":"DOTACION","vida":null,"prot":false,"iva":0.19},"5003":{"n":"Detergente industrial, galón","u":"u","cost":27000,"prov":"DOTACION","vida":null,"prot":false,"iva":0.19}},"est":{"desayuno":8140,"almuerzo":8140,"comida":8140,"lunch frío":5000},"menus":{"d1":{"c":"desayuno","n":"Caldo de costilla, huevo, arepa y chocolate","r":{"1001":185,"1103":2,"2003":1,"3001":110,"4001":200,"2007":16,"2008":20,"3012":70,"2009":4}},"d2":{"c":"desayuno","n":"Huevos pericos, arepa con queso, fruta y chocolate","r":{"1103":3,"2003":1,"4002":80,"3010":250,"4001":220,"2007":16,"2008":20,"3008":30,"2006":8,"3013":90}},"a1":{"c":"almuerzo","n":"Bandeja: carne molida, fríjol, arroz, plátano y aguacate","r":{"1002":120,"2002":120,"2001":110,"3003":90,"1103":1,"2003":1,"3009":40,"1003":25,"2006":12,"2009":6,"3012":60}},"a2":{"c":"almuerzo","n":"Ajiaco santafereño con pollo, arroz y aguacate","r":{"1101":220,"3002":130,"3001":120,"3006":90,"3011":3,"4003":45,"2001":90,"3009":70,"2003":1,"4002":20,"3013":70}},"c1":{"c":"comida","n":"Sopa de pasta, pollo, arroz y verdura","r":{"1101":230,"2005":30,"2001":100,"3001":90,"3007":120,"3003":90,"2003":1,"1103":1,"4002":30,"3012":70,"2006":10,"2009":5}},"c2":{"c":"comida","n":"Sancocho de gallina con arroz y aguacate","r":{"1102":260,"3005":120,"3001":100,"3006":80,"3004":100,"2001":100,"3009":60,"2003":1,"3013":70,"2009":5}},"l1":{"c":"lunch frío","n":"Sándwich de pollo, fruta y jugo","r":{"2004":2,"1101":90,"4002":30,"3008":50,"3010":200,"3012":70,"2008":15}},"l2":{"c":"lunch frío","n":"Sándwich de huevo y queso, fruta y jugo","r":{"2004":2,"1103":2,"4002":35,"3008":40,"3010":180,"3013":65,"2008":15}}},"inv":[{"c":1001,"q":10.0,"lote":"L-3301","ven":"2026-09-09"},{"c":1001,"q":17.5,"lote":"L-3302","ven":"2026-09-15"},{"c":1002,"q":6.5,"lote":"L-3303","ven":"2026-09-08"},{"c":1002,"q":11.5,"lote":"L-3304","ven":"2026-09-14"},{"c":1003,"q":1.5,"lote":"L-3305","ven":"2026-09-09"},{"c":1003,"q":2.5,"lote":"L-3306","ven":"2026-09-15"},{"c":1101,"q":12.0,"lote":"L-3307","ven":"2026-09-08"},{"c":1101,"q":22.0,"lote":"L-3308","ven":"2026-09-14"},{"c":1102,"q":13.5,"lote":"L-3309","ven":"2026-09-08"},{"c":1102,"q":25.0,"lote":"L-3310","ven":"2026-09-14"},{"c":1103,"q":155,"lote":"L-3311","ven":"2026-09-10"},{"c":1103,"q":288,"lote":"L-3312","ven":"2026-09-29"},{"c":2001,"q":16.5,"lote":"L-3313","ven":"2027-03-05"},{"c":2002,"q":18.0,"lote":"L-3314","ven":"2027-01-04"},{"c":2003,"q":52,"lote":"L-3315","ven":"2026-09-10"},{"c":2003,"q":96,"lote":"L-3316","ven":"2026-09-17"},{"c":2004,"q":104,"lote":"L-3317","ven":"2026-09-09"},{"c":2004,"q":192,"lote":"L-3318","ven":"2026-09-15"},{"c":2005,"q":4.5,"lote":"L-3319","ven":"2027-05-04"},{"c":2006,"q":2.0,"lote":"L-3320","ven":"2027-07-03"},{"c":2007,"q":2.5,"lote":"L-3321","ven":"2027-02-03"},{"c":2008,"q":3.0,"lote":"L-3322","ven":"2027-02-03"},{"c":2009,"q":1.0,"lote":"L-3323","ven":"2028-08-06"},{"c":3001,"q":6.5,"lote":"L-3324","ven":"2026-09-10"},{"c":3001,"q":11.5,"lote":"L-3325","ven":"2026-09-21"},{"c":3002,"q":7.0,"lote":"L-3326","ven":"2026-09-10"},{"c":3002,"q":12.5,"lote":"L-3327","ven":"2026-09-17"},{"c":3003,"q":5.0,"lote":"L-3328","ven":"2026-09-08"},{"c":3003,"q":8.5,"lote":"L-3329","ven":"2026-09-14"},{"c":3004,"q":5.5,"lote":"L-3330","ven":"2026-09-10"},{"c":3004,"q":9.5,"lote":"L-3331","ven":"2026-09-18"},{"c":3005,"q":6.5,"lote":"L-3332","ven":"2026-09-09"},{"c":3005,"q":11.5,"lote":"L-3333","ven":"2026-09-16"},{"c":3006,"q":5.0,"lote":"L-3334","ven":"2026-09-09"},{"c":3006,"q":8.5,"lote":"L-3335","ven":"2026-09-15"},{"c":3007,"q":6.5,"lote":"L-3336","ven":"2026-09-09"},{"c":3007,"q":11.5,"lote":"L-3337","ven":"2026-09-15"},{"c":3008,"q":3.0,"lote":"L-3338","ven":"2026-09-08"},{"c":3008,"q":4.5,"lote":"L-3339","ven":"2026-09-13"},{"c":3009,"q":4.0,"lote":"L-3340","ven":"2026-09-08"},{"c":3009,"q":6.5,"lote":"L-3341","ven":"2026-09-14"},{"c":3010,"q":13.0,"lote":"L-3342","ven":"2026-09-10"},{"c":3010,"q":24.0,"lote":"L-3343","ven":"2026-09-21"},{"c":3011,"q":0.5,"lote":"L-3344","ven":"2026-09-09"},{"c":3011,"q":0.0,"lote":"L-3345","ven":"2026-09-15"},{"c":3012,"q":4.0,"lote":"L-3346","ven":"2026-09-10"},{"c":3012,"q":6.5,"lote":"L-3347","ven":"2026-09-29"},{"c":3013,"q":5.0,"lote":"L-3348","ven":"2026-09-10"},{"c":3013,"q":8.5,"lote":"L-3349","ven":"2026-09-29"},{"c":4001,"q":11.5,"lote":"L-3350","ven":"2026-09-10"},{"c":4001,"q":21.0,"lote":"L-3351","ven":"2026-09-17"},{"c":4002,"q":4.5,"lote":"L-3352","ven":"2026-09-10"},{"c":4002,"q":7.5,"lote":"L-3353","ven":"2026-09-23"},{"c":4003,"q":2.5,"lote":"L-3354","ven":"2026-09-10"},{"c":4003,"q":4.5,"lote":"L-3355","ven":"2026-09-19"}],"tienda":{"prov":{"DIST":"Distribuidora Andina","LACT":"Lácteos La Pradera","FRUV":"Frutas del Campo SAS","CARN":"Carnes y Fríos Bolívar","PAN":"Panadería La Espiga"},"cat":["Abarrotes","Lácteos y huevos","Carnes y fríos","Frutas y verduras","Bebidas","Aseo y hogar","Panadería"],"prod":{"7001":{"n":"Arroz blanco 1 kg","u":"u","cat":"Abarrotes","cost":4200,"precio":4800,"iva":0.0,"vida":null,"vd":26,"prov":"DIST"},"7002":{"n":"Aceite de girasol 1 L","u":"u","cat":"Abarrotes","cost":8600,"precio":10500,"iva":0.0,"vida":null,"vd":9,"prov":"DIST"},"7003":{"n":"Pasta 500 g","u":"u","cat":"Abarrotes","cost":2600,"precio":3300,"iva":0.0,"vida":null,"vd":14,"prov":"DIST"},"7004":{"n":"Fríjol cargamanto 500 g","u":"u","cat":"Abarrotes","cost":4900,"precio":6200,"iva":0.0,"vida":null,"vd":7,"prov":"DIST"},"7005":{"n":"Panela 500 g","u":"u","cat":"Abarrotes","cost":2300,"precio":3000,"iva":0.0,"vida":null,"vd":11,"prov":"DIST"},"7006":{"n":"Chocolate en polvo 250 g","u":"u","cat":"Abarrotes","cost":3500,"precio":4600,"iva":0.0,"vida":null,"vd":6,"prov":"DIST"},"7007":{"n":"Sal refinada 1 kg","u":"u","cat":"Abarrotes","cost":1800,"precio":2400,"iva":0.0,"vida":null,"vd":5,"prov":"DIST"},"7008":{"n":"Atún en lata 160 g","u":"u","cat":"Abarrotes","cost":5200,"precio":6800,"iva":0.0,"vida":null,"vd":10,"prov":"DIST"},"7009":{"n":"Café molido 250 g","u":"u","cat":"Abarrotes","cost":7800,"precio":10400,"iva":0.05,"vida":null,"vd":8,"prov":"DIST"},"7010":{"n":"Azúcar 1 kg","u":"u","cat":"Abarrotes","cost":4100,"precio":4900,"iva":0.0,"vida":null,"vd":15,"prov":"DIST"},"7011":{"n":"Lentejas 500 g","u":"u","cat":"Abarrotes","cost":3600,"precio":4600,"iva":0.0,"vida":null,"vd":6,"prov":"DIST"},"7012":{"n":"Galletas surtidas 300 g","u":"u","cat":"Abarrotes","cost":2900,"precio":4500,"iva":0.19,"vida":240,"vd":12,"prov":"DIST"},"7013":{"n":"Harina de maíz 1 kg","u":"u","cat":"Abarrotes","cost":4300,"precio":5400,"iva":0.0,"vida":300,"vd":9,"prov":"DIST"},"7101":{"n":"Leche entera 1 L","u":"u","cat":"Lácteos y huevos","cost":3600,"precio":4300,"iva":0.0,"vida":12,"vd":42,"prov":"LACT"},"7102":{"n":"Huevo AA, bandeja de 30","u":"u","cat":"Lácteos y huevos","cost":22500,"precio":26500,"iva":0.0,"vida":20,"vd":11,"prov":"LACT"},"7103":{"n":"Queso campesino 500 g","u":"u","cat":"Lácteos y huevos","cost":11000,"precio":14000,"iva":0.0,"vida":10,"vd":7,"prov":"LACT"},"7104":{"n":"Yogur 1 L","u":"u","cat":"Lácteos y huevos","cost":6200,"precio":7800,"iva":0.0,"vida":18,"vd":9,"prov":"LACT"},"7105":{"n":"Mantequilla 250 g","u":"u","cat":"Lácteos y huevos","cost":7400,"precio":9300,"iva":0.0,"vida":60,"vd":4,"prov":"LACT"},"7201":{"n":"Pechuga de pollo","u":"kg","cat":"Carnes y fríos","cost":14500,"precio":17500,"iva":0.0,"vida":5,"vd":22,"prov":"CARN"},"7202":{"n":"Carne de res molida","u":"kg","cat":"Carnes y fríos","cost":22000,"precio":26500,"iva":0.0,"vida":5,"vd":12,"prov":"CARN"},"7203":{"n":"Costilla de cerdo","u":"kg","cat":"Carnes y fríos","cost":16500,"precio":20000,"iva":0.0,"vida":5,"vd":8,"prov":"CARN"},"7204":{"n":"Jamón 250 g","u":"u","cat":"Carnes y fríos","cost":7200,"precio":11200,"iva":0.19,"vida":15,"vd":6,"prov":"CARN"},"7205":{"n":"Salchichón 500 g","u":"u","cat":"Carnes y fríos","cost":9800,"precio":15000,"iva":0.19,"vida":20,"vd":5,"prov":"CARN"},"7301":{"n":"Papa pastusa","u":"kg","cat":"Frutas y verduras","cost":2400,"precio":3400,"iva":0.0,"vida":12,"vd":34,"prov":"FRUV"},"7302":{"n":"Tomate chonto","u":"kg","cat":"Frutas y verduras","cost":3800,"precio":5400,"iva":0.0,"vida":6,"vd":18,"prov":"FRUV"},"7303":{"n":"Cebolla cabezona","u":"kg","cat":"Frutas y verduras","cost":3200,"precio":4600,"iva":0.0,"vida":14,"vd":15,"prov":"FRUV"},"7304":{"n":"Banano","u":"kg","cat":"Frutas y verduras","cost":2600,"precio":3800,"iva":0.0,"vida":6,"vd":20,"prov":"FRUV"},"7305":{"n":"Naranja","u":"kg","cat":"Frutas y verduras","cost":3600,"precio":5000,"iva":0.0,"vida":12,"vd":13,"prov":"FRUV"},"7306":{"n":"Zanahoria","u":"kg","cat":"Frutas y verduras","cost":2200,"precio":3300,"iva":0.0,"vida":14,"vd":11,"prov":"FRUV"},"7307":{"n":"Aguacate","u":"kg","cat":"Frutas y verduras","cost":7800,"precio":10500,"iva":0.0,"vida":5,"vd":7,"prov":"FRUV"},"7401":{"n":"Gaseosa 1,5 L","u":"u","cat":"Bebidas","cost":4200,"precio":6400,"iva":0.19,"vida":240,"vd":24,"prov":"DIST"},"7402":{"n":"Agua 600 ml","u":"u","cat":"Bebidas","cost":1300,"precio":2200,"iva":0.19,"vida":300,"vd":19,"prov":"DIST"},"7403":{"n":"Jugo en caja 1 L","u":"u","cat":"Bebidas","cost":3900,"precio":6000,"iva":0.19,"vida":180,"vd":10,"prov":"DIST"},"7404":{"n":"Cerveza lata 330 ml","u":"u","cat":"Bebidas","cost":2800,"precio":4400,"iva":0.19,"vida":270,"vd":16,"prov":"DIST"},"7501":{"n":"Jabón en polvo 1 kg","u":"u","cat":"Aseo y hogar","cost":9500,"precio":14600,"iva":0.19,"vida":null,"vd":7,"prov":"DIST"},"7502":{"n":"Papel higiénico x4","u":"u","cat":"Aseo y hogar","cost":6800,"precio":10600,"iva":0.19,"vida":null,"vd":9,"prov":"DIST"},"7503":{"n":"Jabón de baño","u":"u","cat":"Aseo y hogar","cost":2400,"precio":3800,"iva":0.19,"vida":null,"vd":8,"prov":"DIST"},"7504":{"n":"Blanqueador 1 L","u":"u","cat":"Aseo y hogar","cost":3200,"precio":5100,"iva":0.19,"vida":null,"vd":5,"prov":"DIST"},"7505":{"n":"Crema dental 100 ml","u":"u","cat":"Aseo y hogar","cost":6400,"precio":10000,"iva":0.19,"vida":null,"vd":4,"prov":"DIST"},"7601":{"n":"Pan tajado 500 g","u":"u","cat":"Panadería","cost":4200,"precio":5500,"iva":0.0,"vida":6,"vd":16,"prov":"PAN"},"7602":{"n":"Pan francés","u":"u","cat":"Panadería","cost":400,"precio":600,"iva":0.0,"vida":2,"vd":95,"prov":"PAN"},"7603":{"n":"Arepa de maíz x5","u":"u","cat":"Panadería","cost":2800,"precio":3900,"iva":0.0,"vida":8,"vd":13,"prov":"PAN"}}}};
+var D={"hoy":"2026-09-06","prov":{"CARNES":{"n":"Cárnicos Demo","merma":0.4},"AVICOLA":{"n":"Avícola Demo","merma":null},"ABARROTES":{"n":"Abarrotes Demo","merma":null},"FRUVER":{"n":"Fruver Demo","merma":null},"LACTEOS":{"n":"Lácteos Demo","merma":null},"DOTACION":{"n":"Dotaciones Demo","merma":null}},"prod":{"1001":{"n":"Costilla de res","u":"kg","cost":18000,"prov":"CARNES","vida":6,"prot":true,"iva":0},"1002":{"n":"Carne de res molida","u":"kg","cost":22000,"prov":"CARNES","vida":5,"prot":true,"iva":0},"1003":{"n":"Chicharrón","u":"kg","cost":28000,"prov":"CARNES","vida":6,"prot":false,"iva":0},"1101":{"n":"Pechuga de pollo","u":"kg","cost":14500,"prov":"AVICOLA","vida":5,"prot":true,"iva":0},"1102":{"n":"Gallina","u":"kg","cost":16000,"prov":"AVICOLA","vida":5,"prot":true,"iva":0},"1103":{"n":"Huevo AA","u":"u","cost":750,"prov":"AVICOLA","vida":20,"prot":false,"iva":0},"2001":{"n":"Arroz blanco","u":"kg","cost":4200,"prov":"ABARROTES","vida":180,"prot":false,"iva":0},"2002":{"n":"Fríjol cargamanto","u":"kg","cost":9800,"prov":"ABARROTES","vida":120,"prot":false,"iva":0},"2003":{"n":"Arepa de maíz","u":"u","cost":600,"prov":"ABARROTES","vida":8,"prot":false,"iva":0.05},"2004":{"n":"Pan tajado","u":"u","cost":400,"prov":"ABARROTES","vida":6,"prot":false,"iva":0.05},"2005":{"n":"Pasta","u":"kg","cost":5200,"prov":"ABARROTES","vida":240,"prot":false,"iva":0.05},"2006":{"n":"Aceite vegetal","u":"L","cost":8600,"prov":"ABARROTES","vida":300,"prot":false,"iva":0.05},"2007":{"n":"Chocolate en polvo","u":"kg","cost":14000,"prov":"ABARROTES","vida":150,"prot":false,"iva":0.05},"2008":{"n":"Panela","u":"kg","cost":4500,"prov":"ABARROTES","vida":150,"prot":false,"iva":0},"2009":{"n":"Sal refinada","u":"kg","cost":1800,"prov":"ABARROTES","vida":700,"prot":false,"iva":0},"3001":{"n":"Papa pastusa","u":"kg","cost":2400,"prov":"FRUVER","vida":12,"prot":false,"iva":0},"3002":{"n":"Papa criolla","u":"kg","cost":3800,"prov":"FRUVER","vida":8,"prot":false,"iva":0},"3003":{"n":"Plátano maduro","u":"kg","cost":3200,"prov":"FRUVER","vida":5,"prot":false,"iva":0},"3004":{"n":"Plátano verde","u":"kg","cost":2900,"prov":"FRUVER","vida":9,"prot":false,"iva":0},"3005":{"n":"Yuca","u":"kg","cost":3400,"prov":"FRUVER","vida":7,"prot":false,"iva":0},"3006":{"n":"Mazorca","u":"kg","cost":4500,"prov":"FRUVER","vida":6,"prot":false,"iva":0},"3007":{"n":"Verdura mixta","u":"kg","cost":3400,"prov":"FRUVER","vida":6,"prot":false,"iva":0},"3008":{"n":"Lechuga y tomate","u":"kg","cost":4100,"prov":"FRUVER","vida":4,"prot":false,"iva":0},"3009":{"n":"Aguacate","u":"kg","cost":7800,"prov":"FRUVER","vida":5,"prot":false,"iva":0},"3010":{"n":"Naranja","u":"kg","cost":3600,"prov":"FRUVER","vida":12,"prot":false,"iva":0},"3011":{"n":"Guascas","u":"kg","cost":38000,"prov":"FRUVER","vida":6,"prot":false,"iva":0},"3012":{"n":"Pulpa de mora","u":"kg","cost":19585,"prov":"FRUVER","vida":20,"prot":false,"iva":0.05},"3013":{"n":"Pulpa de lulo","u":"kg","cost":19585,"prov":"FRUVER","vida":20,"prot":false,"iva":0.05},"4001":{"n":"Leche entera","u":"L","cost":3800,"prov":"LACTEOS","vida":8,"prot":false,"iva":0},"4002":{"n":"Queso campesino","u":"kg","cost":16000,"prov":"LACTEOS","vida":14,"prot":false,"iva":0},"4003":{"n":"Crema de leche","u":"L","cost":9200,"prov":"LACTEOS","vida":10,"prot":false,"iva":0.05},"5001":{"n":"Guantes de nitrilo, caja x100","u":"u","cost":32000,"prov":"DOTACION","vida":null,"prot":false,"iva":0.19},"5002":{"n":"Cofias desechables, paquete x100","u":"u","cost":18000,"prov":"DOTACION","vida":null,"prot":false,"iva":0.19},"5003":{"n":"Detergente industrial, galón","u":"u","cost":27000,"prov":"DOTACION","vida":null,"prot":false,"iva":0.19}},"est":{"desayuno":8140,"almuerzo":8140,"comida":8140,"lunch frío":5000},"menus":{"d1":{"c":"desayuno","n":"Caldo de costilla, huevo, arepa y chocolate","r":{"1001":185,"1103":2,"2003":1,"3001":110,"4001":200,"2007":16,"2008":20,"3012":70,"2009":4}},"d2":{"c":"desayuno","n":"Huevos pericos, arepa con queso, fruta y chocolate","r":{"1103":3,"2003":1,"4002":80,"3010":250,"4001":220,"2007":16,"2008":20,"3008":30,"2006":8,"3013":90}},"a1":{"c":"almuerzo","n":"Bandeja: carne molida, fríjol, arroz, plátano y aguacate","r":{"1002":120,"2002":120,"2001":110,"3003":90,"1103":1,"2003":1,"3009":40,"1003":25,"2006":12,"2009":6,"3012":60}},"a2":{"c":"almuerzo","n":"Ajiaco santafereño con pollo, arroz y aguacate","r":{"1101":220,"3002":130,"3001":120,"3006":90,"3011":3,"4003":45,"2001":90,"3009":70,"2003":1,"4002":20,"3013":70}},"c1":{"c":"comida","n":"Sopa de pasta, pollo, arroz y verdura","r":{"1101":230,"2005":30,"2001":100,"3001":90,"3007":120,"3003":90,"2003":1,"1103":1,"4002":30,"3012":70,"2006":10,"2009":5}},"c2":{"c":"comida","n":"Sancocho de gallina con arroz y aguacate","r":{"1102":260,"3005":120,"3001":100,"3006":80,"3004":100,"2001":100,"3009":60,"2003":1,"3013":70,"2009":5}},"l1":{"c":"lunch frío","n":"Sándwich de pollo, fruta y jugo","r":{"2004":2,"1101":90,"4002":30,"3008":50,"3010":200,"3012":70,"2008":15}},"l2":{"c":"lunch frío","n":"Sándwich de huevo y queso, fruta y jugo","r":{"2004":2,"1103":2,"4002":35,"3008":40,"3010":180,"3013":65,"2008":15}}},"inv":[{"c":1001,"q":10.0,"lote":"L-3301","ven":"2026-09-09"},{"c":1001,"q":17.5,"lote":"L-3302","ven":"2026-09-15"},{"c":1002,"q":6.5,"lote":"L-3303","ven":"2026-09-08"},{"c":1002,"q":11.5,"lote":"L-3304","ven":"2026-09-14"},{"c":1003,"q":1.5,"lote":"L-3305","ven":"2026-09-09"},{"c":1003,"q":2.5,"lote":"L-3306","ven":"2026-09-15"},{"c":1101,"q":12.0,"lote":"L-3307","ven":"2026-09-08"},{"c":1101,"q":22.0,"lote":"L-3308","ven":"2026-09-14"},{"c":1102,"q":13.5,"lote":"L-3309","ven":"2026-09-08"},{"c":1102,"q":25.0,"lote":"L-3310","ven":"2026-09-14"},{"c":1103,"q":155,"lote":"L-3311","ven":"2026-09-10"},{"c":1103,"q":288,"lote":"L-3312","ven":"2026-09-29"},{"c":2001,"q":16.5,"lote":"L-3313","ven":"2027-03-05"},{"c":2002,"q":18.0,"lote":"L-3314","ven":"2027-01-04"},{"c":2003,"q":52,"lote":"L-3315","ven":"2026-09-10"},{"c":2003,"q":96,"lote":"L-3316","ven":"2026-09-17"},{"c":2004,"q":104,"lote":"L-3317","ven":"2026-09-09"},{"c":2004,"q":192,"lote":"L-3318","ven":"2026-09-15"},{"c":2005,"q":4.5,"lote":"L-3319","ven":"2027-05-04"},{"c":2006,"q":2.0,"lote":"L-3320","ven":"2027-07-03"},{"c":2007,"q":2.5,"lote":"L-3321","ven":"2027-02-03"},{"c":2008,"q":3.0,"lote":"L-3322","ven":"2027-02-03"},{"c":2009,"q":1.0,"lote":"L-3323","ven":"2028-08-06"},{"c":3001,"q":6.5,"lote":"L-3324","ven":"2026-09-10"},{"c":3001,"q":11.5,"lote":"L-3325","ven":"2026-09-21"},{"c":3002,"q":7.0,"lote":"L-3326","ven":"2026-09-10"},{"c":3002,"q":12.5,"lote":"L-3327","ven":"2026-09-17"},{"c":3003,"q":5.0,"lote":"L-3328","ven":"2026-09-08"},{"c":3003,"q":8.5,"lote":"L-3329","ven":"2026-09-14"},{"c":3004,"q":5.5,"lote":"L-3330","ven":"2026-09-10"},{"c":3004,"q":9.5,"lote":"L-3331","ven":"2026-09-18"},{"c":3005,"q":6.5,"lote":"L-3332","ven":"2026-09-09"},{"c":3005,"q":11.5,"lote":"L-3333","ven":"2026-09-16"},{"c":3006,"q":5.0,"lote":"L-3334","ven":"2026-09-09"},{"c":3006,"q":8.5,"lote":"L-3335","ven":"2026-09-15"},{"c":3007,"q":6.5,"lote":"L-3336","ven":"2026-09-09"},{"c":3007,"q":11.5,"lote":"L-3337","ven":"2026-09-15"},{"c":3008,"q":3.0,"lote":"L-3338","ven":"2026-09-08"},{"c":3008,"q":4.5,"lote":"L-3339","ven":"2026-09-13"},{"c":3009,"q":4.0,"lote":"L-3340","ven":"2026-09-08"},{"c":3009,"q":6.5,"lote":"L-3341","ven":"2026-09-14"},{"c":3010,"q":13.0,"lote":"L-3342","ven":"2026-09-10"},{"c":3010,"q":24.0,"lote":"L-3343","ven":"2026-09-21"},{"c":3011,"q":0.5,"lote":"L-3344","ven":"2026-09-09"},{"c":3011,"q":0.0,"lote":"L-3345","ven":"2026-09-15"},{"c":3012,"q":4.0,"lote":"L-3346","ven":"2026-09-10"},{"c":3012,"q":6.5,"lote":"L-3347","ven":"2026-09-29"},{"c":3013,"q":5.0,"lote":"L-3348","ven":"2026-09-10"},{"c":3013,"q":8.5,"lote":"L-3349","ven":"2026-09-29"},{"c":4001,"q":11.5,"lote":"L-3350","ven":"2026-09-10"},{"c":4001,"q":21.0,"lote":"L-3351","ven":"2026-09-17"},{"c":4002,"q":4.5,"lote":"L-3352","ven":"2026-09-10"},{"c":4002,"q":7.5,"lote":"L-3353","ven":"2026-09-23"},{"c":4003,"q":2.5,"lote":"L-3354","ven":"2026-09-10"},{"c":4003,"q":4.5,"lote":"L-3355","ven":"2026-09-19"}]};
 var MARCA_SVG="<svg viewBox=\"0 0 64 64\"><path d=\"M7 28H57A25 25 0 0 1 7 28Z\" fill=\"none\" stroke=\"#0F5A47\" stroke-width=\"5\" stroke-linejoin=\"round\"/><path d=\"M16 37H48\" fill=\"none\" stroke=\"#BF7F14\" stroke-width=\"5\" stroke-linecap=\"round\"/><path d=\"M24 19V14M32 19V11M40 19V14\" fill=\"none\" stroke=\"#0F5A47\" stroke-width=\"3.5\" stroke-linecap=\"round\"/><\/svg>";
+/* ============ COMUNES: lo que usan los dos demos ============ */
 /* ============ UTILIDADES COMPARTIDAS ============ */
 var seed=20260906;
 function rnd(){seed=(seed*1103515245+12345)&0x7fffffff;return seed/0x7fffffff;}
@@ -595,6 +596,472 @@ function fLargo(d){
 }
 function iso(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
 function hashN(str){var h=0;str=String(str);for(var i=0;i<str.length;i++)h=(h*31+str.charCodeAt(i))&0x7fffffff;return h;}
+
+/* ============ MOVIMIENTOS ============ */
+var EVENTOS=[];
+function ordenarEventos(){EVENTOS.sort(function(a,b){return b.f-a.f||b.h.localeCompare(a.h);});}
+
+/* ============ HISTORIAL ============ */
+var TIPOS={};
+var H={desde:"2026-09-01",hasta:"2026-09-06",abierto:{"2026-09-06":true},rango:"mes"};
+function enRango(e){var i=iso(e.f);return i>=H.desde&&i<=H.hasta;}
+
+function vistaHistorial(){
+ var evs=EVENTOS.filter(enRango).filter(filtroRol), porDia={};
+ evs.forEach(function(e){var k=iso(e.f);(porDia[k]=porDia[k]||[]).push(e);});
+ var dias=Object.keys(porDia).sort().reverse();
+ var tot=evs.reduce(function(a,e){return a+valorSuma(e);},0);
+ var sal=evs.filter(function(e){return e.t==="salida"&&!(e.meta&&e.meta.revertida);});
+ var servs=sal.reduce(function(a,e){return a+(e.meta&&e.meta.serv||0);},0);
+ var revs=evs.filter(function(e){return e.t==="rev";}).length;
+ var q=[["hoy","Hoy"],["ayer","Ayer"],["7","Últimos 7 días"],["mes","Este mes"],["pasado","Mes pasado"],["todo","Todo"]];
+ return '<div class="card">'+
+  '<div class="filt"><div class="fld"><label for="hd">Desde</label><input type="date" id="hd" value="'+H.desde+'"></div>'+
+  '<div class="fld"><label for="hh">Hasta</label><input type="date" id="hh" value="'+H.hasta+'"></div>'+
+  '<div class="quick">'+q.map(function(x){
+    return '<button data-q="'+x[0]+'" class="'+(H.rango===x[0]?"on":"")+'">'+x[1]+'</button>';}).join("")+
+  '</div></div><div class="stats">'+
+  st(fmt(evs.length),"Movimientos","")+st(fmt(dias.length),"Días con actividad","")+
+  st(fmt(servs),"Servicios producidos","")+st(money(tot),"Valor movido","")+
+  st(fmt(revs),"Reversiones",revs?"warn":"good")+'</div>'+
+  (dias.length?dias.map(function(k){
+    var es=porDia[k], v=es.reduce(function(a,e){return a+valorSuma(e);},0), ab=H.abierto[k];
+    var d=new Date(k+"T12:00:00");
+    return '<div class="day"><button data-d="'+k+'" aria-expanded="'+(ab?"true":"false")+'"><span><span class="dt">'+fLargo(d)+
+     '</span> <span class="dc"> · '+es.length+' movimiento'+(es.length===1?"":"s")+'</span></span>'+
+     '<span class="dc">'+money(v)+' '+(ab?"▾":"▸")+'</span></button>'+
+     (ab?es.map(function(e){var ti=TIPOS[e.t]||[e.t,"p-n"];
+      return '<div class="ev"><span class="h">'+e.h+'</span>'+
+       '<span><span class="pill '+ti[1]+'">'+ti[0]+'</span></span>'+
+       '<span class="d">'+esc(e.des)+'<div class="u">'+esc(e.doc)+' · '+esc(e.u)+esc(sedeEv(e))+'</div></span>'+
+       '<span class="v">'+(valorVisible(e)?money(valorVisible(e)):(e.meta&&e.meta.revertida?"reversada":"·"))+
+       (e.meta&&e.meta.desv!==undefined&&!e.meta.revertida?'<div class="u">'+(e.meta.desv>0?"+":"")+
+        fmt(e.meta.desv*100,1)+'% frente al estándar</div>':"")+'</span></div>';}).join(""):"")+
+     '</div>';}).join("")
+   :'<div class="empty">No hay movimientos en ese rango.</div>')+'</div>';
+}
+
+function bindHistorial(){
+ var hd=$("hd"),hh=$("hh");
+ if(hd)hd.addEventListener("change",function(){H.desde=hd.value;H.rango="";render();});
+ if(hh)hh.addEventListener("change",function(){H.hasta=hh.value;H.rango="";render();});
+ [].forEach.call(document.querySelectorAll("[data-q]"),function(b){
+  b.addEventListener("click",function(){
+   var hoy=new Date(HOY+"T12:00:00"), a=new Date(hoy), z=new Date(hoy), q=b.getAttribute("data-q");
+   if(q==="ayer"){a.setDate(a.getDate()-1);z=new Date(a);}
+   else if(q==="7"){a.setDate(a.getDate()-6);}
+   else if(q==="mes"){a=new Date(hoy.getFullYear(),hoy.getMonth(),1);}
+   else if(q==="pasado"){a=new Date(hoy.getFullYear(),hoy.getMonth()-1,1);z=new Date(hoy.getFullYear(),hoy.getMonth(),0);}
+   else if(q==="todo"){a=new Date(2026,6,1);}
+   H.desde=iso(a);H.hasta=iso(z);H.rango=q;H.abierto={};
+   if(q==="hoy"||q==="ayer")H.abierto[iso(a)]=true;
+   render();});});
+ [].forEach.call(document.querySelectorAll("[data-d]"),function(b){
+  b.addEventListener("click",function(){var k=b.getAttribute("data-d");
+   H.abierto[k]=!H.abierto[k];render();});});
+}
+
+/* ============ VISOR ============ */
+var ultimoFoco=null;
+function cerrarDoc(){ if($("ovl").hidden)return; $("ovl").hidden=true; if(ultimoFoco&&ultimoFoco.focus)ultimoFoco.focus(); }
+
+/* ============ GRAFICOS: SVG a mano, sin librerías, para los dos demos ============ */
+var MESES_C=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+var MESES_L=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+function dm(d){return d.getDate()+" "+MESES_C[d.getMonth()];}
+function lunes(d){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-(x.getDay()+6)%7);return x;}
+function r1(n){return Math.round(n*10)/10;}
+function compacto(n){var a=Math.abs(n),s=n<0?"-$":"$";
+ if(a>=1e6)return s+fmt(a/1e6,a>=1e8?0:1)+" M";
+ if(a>=1e3)return s+fmt(Math.round(a/1e3))+" mil";
+ return s+fmt(a);}
+function escala(min,max,n){
+ if(max===min)max=min+1;
+ var b=(max-min)/(n||4), e=Math.pow(10,Math.floor(Math.log(b)/Math.LN10)), f=b/e;
+ var p=(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*e, lo=Math.floor(min/p)*p, hi=Math.ceil(max/p)*p, t=[];
+ for(var v=lo;v<=hi+p/2;v+=p)t.push(Math.round(v*1e6)/1e6);
+ return {lo:lo,hi:hi,t:t};
+}
+/* ancho disponible para cada gráfica: dos columnas desde 858 px */
+function anchoGraf(){var w=($("vista")&&$("vista").clientWidth)||900, dos=w>=858;
+ return Math.max(250,Math.floor((dos?(w-18)/2:w)-36));}
+/* ---------- piezas ---------- */
+function leyenda(items){return '<div class="leyenda">'+items.map(function(it){
+ return '<span><i class="'+(it.linea?'ln':'')+(it.guion?' gu':'')+'" style="'+(it.linea?'border-color:':'background:')+it.color+'"></i>'+esc(it.n)+'</span>';}).join("")+'</div>';}
+function datosHTML(cab,filas){return '<details class="datos"><summary>Ver los datos</summary><div class="scroll"><table><thead><tr>'+
+ cab.map(function(c,i){return '<th'+(i?' class="r"':'')+'>'+esc(c)+'</th>';}).join("")+'</tr></thead><tbody>'+
+ filas.map(function(f){return '<tr>'+f.map(function(c,i){return '<td'+(i?' class="n r"':'')+'>'+c+'</td>';}).join("")+'</tr>';}).join("")+
+ '</tbody></table></div></details>';}
+function tarjetaGraf(titulo,sub,cuerpo){return '<div class="card"><header><div><h2>'+titulo+'</h2><p>'+sub+'</p></div></header><div class="body">'+cuerpo+'</div></div>';}
+/* línea pequeña para las tarjetas de indicadores */
+function chispa(datos,color){
+ var v=datos.filter(function(x){return x!=null;}); if(v.length<2)return "";
+ var w=120,h=30,mn=Math.min.apply(null,v),mx=Math.max.apply(null,v); if(mx===mn){mx+=1;mn-=1;}
+ var pts=[],ult=null;
+ datos.forEach(function(x,i){if(x==null)return; var px=r1(2+i*(w-4)/(datos.length-1)), py=r1(h-3-(x-mn)/(mx-mn)*(h-6));
+  pts.push((pts.length?"L":"M")+px+" "+py); ult=[px,py];});
+ return '<svg class="chispa" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" aria-hidden="true" focusable="false">'+
+  '<path d="'+pts.join("")+'" fill="none" style="stroke:'+color+'" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>'+
+  '<circle cx="'+ult[0]+'" cy="'+ult[1]+'" r="2.6" style="fill:'+color+'"/></svg>';
+}
+/* ---------- gráficas ---------- */
+function grafLineas(o){
+ var w=o.w, h=o.h||230, ml=o.ml||48, mr=14, mt=12, mb=30, iw=w-ml-mr, ih=h-mt-mb, n=o.cats.length, vals=[];
+ o.series.forEach(function(s){s.datos.forEach(function(v){if(v!=null)vals.push(v);});});
+ if(o.banda)vals.push(o.banda[0],o.banda[1]); if(o.ref!=null)vals.push(o.ref);
+ var sc=escala(Math.min.apply(null,vals),Math.max.apply(null,vals),4);
+ var X=function(i){return r1(ml+(n<2?iw/2:i*iw/(n-1)));}, Y=function(v){return r1(mt+ih-(v-sc.lo)/(sc.hi-sc.lo)*ih);};
+ var g='<svg class="graf" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+esc(o.titulo)+'">';
+ if(o.banda)g+='<rect x="'+ml+'" y="'+Y(o.banda[1])+'" width="'+iw+'" height="'+r1(Y(o.banda[0])-Y(o.banda[1]))+'" style="fill:var(--gband)"/>';
+ sc.t.forEach(function(t){g+='<line x1="'+ml+'" x2="'+(w-mr)+'" y1="'+Y(t)+'" y2="'+Y(t)+'" style="stroke:var(--line)"/>'+
+  '<text x="'+(ml-7)+'" y="'+r1(Y(t)+4)+'" text-anchor="end" class="gt">'+esc(o.fmtY(t))+'</text>';});
+ if(o.ref!=null)g+='<line x1="'+ml+'" x2="'+(w-mr)+'" y1="'+Y(o.ref)+'" y2="'+Y(o.ref)+'" style="stroke:var(--ink2)" stroke-dasharray="4 4"/>';
+ var paso=Math.max(1,Math.ceil(n/Math.max(2,Math.floor(iw/58))));
+ o.cats.forEach(function(c,i){if(i%paso===0)g+='<text x="'+X(i)+'" y="'+(h-9)+'" text-anchor="middle" class="gt">'+esc(c)+'</text>';});
+ o.series.forEach(function(s){
+  var d="",pen=false;
+  s.datos.forEach(function(v,i){if(v==null){pen=false;return;} d+=(pen?"L":"M")+X(i)+" "+Y(v); pen=true;});
+  g+='<path d="'+d+'" fill="none" style="stroke:'+s.color+'" stroke-width="'+(s.ancho||2.2)+'"'+(s.guion?' stroke-dasharray="6 4"':'')+' stroke-linejoin="round" stroke-linecap="round"/>';
+  s.datos.forEach(function(v,i){if(v==null)return;
+   g+='<circle cx="'+X(i)+'" cy="'+Y(v)+'" r="'+(s.guion?2.4:3)+'" style="fill:'+s.color+'"><title>'+esc(s.n+" · "+o.cats[i]+": "+o.fmtTip(v))+'</title></circle>';});
+ });
+ return g+'</svg>';
+}
+function grafBarras(o){
+ var w=o.w, h=o.h||230, ml=o.ml||58, mr=10, mt=18, mb=30, iw=w-ml-mr, ih=h-mt-mb, n=o.cats.length;
+ var tot=o.cats.map(function(c,i){return o.series.reduce(function(a,s){return a+(s.datos[i]||0);},0);});
+ var sc=escala(0,Math.max.apply(null,tot.concat([1])),4), paso=iw/n, bw=Math.min(52,paso*0.62);
+ var Y=function(v){return r1(mt+ih-(v-sc.lo)/(sc.hi-sc.lo)*ih);};
+ var g='<svg class="graf" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+esc(o.titulo)+'">';
+ sc.t.forEach(function(t){g+='<line x1="'+ml+'" x2="'+(w-mr)+'" y1="'+Y(t)+'" y2="'+Y(t)+'" style="stroke:var(--line)"/>'+
+  '<text x="'+(ml-7)+'" y="'+r1(Y(t)+4)+'" text-anchor="end" class="gt">'+esc(o.fmtY(t))+'</text>';});
+ var cada=Math.max(1,Math.ceil(n/Math.max(2,Math.floor(iw/52))));
+ o.cats.forEach(function(c,i){
+  var x=r1(ml+paso*i+(paso-bw)/2), base=0;
+  o.series.forEach(function(s){var v=s.datos[i]||0; if(v<=0)return;
+   var y1=Y(base+v), y0=Y(base);
+   g+='<rect x="'+x+'" y="'+y1+'" width="'+r1(bw)+'" height="'+r1(Math.max(0,y0-y1))+'" style="fill:'+s.color+';stroke:var(--panel)" stroke-width="1"><title>'+
+    esc(c+" · "+s.n+": "+o.fmtTip(v))+'</title></rect>';
+   base+=v;});
+  if(o.totales&&tot[i]>0&&bw>=26)g+='<text x="'+r1(x+bw/2)+'" y="'+r1(Y(tot[i])-5)+'" text-anchor="middle" class="gt gv">'+esc(o.fmtY(tot[i]))+'</text>';
+  if(i%cada===0)g+='<text x="'+r1(x+bw/2)+'" y="'+(h-9)+'" text-anchor="middle" class="gt">'+esc(c)+'</text>';
+ });
+ return g+'</svg>';
+}
+/* barras horizontales al 100%: en qué se va cada peso */
+function grafProporcion(o){
+ var w=o.w, fila=34, gap=10, lw=Math.min(118,Math.round(w*0.3)), bx=lw+8, bwid=w-bx-4, h=o.filas.length*(fila+gap)-gap+4;
+ var g='<svg class="graf" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+esc(o.titulo)+'">';
+ o.filas.forEach(function(f,i){
+  var y=i*(fila+gap), total=f.partes.reduce(function(a,p){return a+Math.max(0,p.v);},0), x=bx;
+  g+='<text x="'+(lw)+'" y="'+(y+fila/2+4)+'" text-anchor="end" class="gt'+(f.total?' gv':'')+'">'+esc(f.n)+'</text>';
+  f.partes.forEach(function(p){if(p.v<=0||!total)return;
+   var ww=p.v/total*bwid, pct=p.v/total*100;
+   g+='<rect x="'+r1(x)+'" y="'+y+'" width="'+r1(ww)+'" height="'+fila+'" style="fill:'+p.color+';stroke:var(--panel)" stroke-width="1.5"><title>'+
+    esc(f.n+" · "+p.n+": "+money(p.v)+" ("+fmt(pct,1)+"%)")+'</title></rect>';
+   if(ww>=30)g+='<text x="'+r1(x+ww/2)+'" y="'+(y+fila/2+4)+'" text-anchor="middle" class="gin">'+fmt(pct,0)+'%</text>';
+   x+=ww;});
+ });
+ return g+'</svg>';
+}
+
+/* ============ NUCLEO: ARMAZON COMPARTIDO ============
+   Lo que usan los dos demos: utilidades, estado, cuentas y sesión, navegación y el
+   despacho de acciones y campos. Cada dominio (alimentación o tienda) llena los
+   contenedores de abajo y registra sus vistas en VISTAS. Sin datos de ningún cliente. */
+var HOY=D.hoy;
+var SEDES={}, TIENDAS={}, CARGOS={}, CUENTAS=[], MENU_N={}, IC={}, TIT={}, FILTRABLES=[];
+var EVENTOS_CARGO={}, VISTAS={}, INTRO={titulo:"",lista:[],sub:""};
+
+function $(i){return document.getElementById(i);}
+function fmt(n,d){d=d==null?0:d;var s=Number(n).toFixed(d),p=s.split(".");
+ p[0]=p[0].replace(/\B(?=(\d{3})+(?!\d))/g,".");return p.join(",");}
+function money(n){var r=Math.round(n);return (r<0?"-$":"$")+fmt(Math.abs(r));}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){
+ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function st(v,k,c){return '<div class="stat '+(c||"")+'"><div class="v">'+v+'</div><div class="k">'+k+'</div></div>';}
+function pad4(n){return ("000"+n).slice(-4);}
+function r3(x){return Math.round(x*1000)/1000;}
+function parseNum(v){v=String(v==null?"":v).trim().replace(",",".");return v===""?0:parseFloat(v);}
+function pl(n,s,p){return fmt(n)+" "+(n===1?s:p);}
+function frase(t){return String(t==null?"":t).trim().replace(/[.\s]+$/,"");}
+function normFac(s){return String(s).toUpperCase().replace(/[^A-Z0-9]/g,"");}
+
+function dISO(s){var p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2]);}
+function fISO(s){return s?fecha(dISO(s)):"·";}
+function diasHasta(s){return Math.round((dISO(s)-dISO(HOY))/864e5);}
+function sumarDias(s,n){var d=dISO(s);d.setDate(d.getDate()+n);return iso(d);}
+function diasTxt(s){var d=diasHasta(s);
+ if(d<0)return "vencido hace "+pl(-d,"día","días");
+ if(d===0)return "vence hoy"; if(d===1)return "vence mañana"; return "en "+d+" días";}
+
+function numTxt(q,u){
+ if(u==="u")return fmt(Math.round(q));
+ var r=Math.round(q*100)/100;
+ return fmt(r, r%1===0?0:(Math.round(r*10)/10===r?1:2));
+}
+
+function pill(e){return '<span class="pill '+e[1]+'">'+e[0]+'</span>';}
+
+function nombreSede(k){return SEDES[k]?k+" "+SEDES[k].n:(TIENDAS[k]?TIENDAS[k].n:"Oficina Bogotá");}
+function ubicCta(c){return c.sede?SEDES[c.sede].n:(c.tienda?TIENDAS[c.tienda].n:"Oficina Bogotá");}
+
+function buscarCta(id){var r=null;CUENTAS.forEach(function(c){if(c.id===id)r=c;});return r;}
+function cta(){return buscarCta(S.cuenta);}
+function cargo(){return CARGOS[cta().cargo];}
+function rol(){return cargo().ambito;}
+function quien(){return cta().n;}
+function puede(v){return cargo().menu.indexOf(v)>=0;}
+function iniciales(n){return String(n).split(/\s+/).filter(Boolean).slice(0,2).map(function(p){return p.charAt(0);}).join("").toUpperCase();}
+
+/* sede en contexto: la de la cuenta de sede, o la del documento que la oficina tiene abierto */
+var CTX="3102";
+function enSede(k,fn){var p=CTX;CTX=k;try{return fn();}finally{CTX=p;}}
+
+var BORR=["nuevo","recep","aj","facForm","emp","serv","nuevaCta","filtroSede"];
+
+/* ============ ESTADO ============ */
+var S={
+ cuenta:"jrojas", vista:"rq", filtroSede:"todas", stash:{}, nuevaCta:null, accesos:[], sel:null, nuevo:null, recep:null, motivo:"",
+ filtroAprob:"pend", filtroOC:"todas", cierre:false, cierreMotivo:"",
+ inv:[], rqs:[], ocs:[], salidas:[],
+ serv:null, verSalida:null, revAbierta:false, revMotivo:"",   /* serv lo arma alimentación al entrar */
+ facForm:null, pago:null, pagoD:null, emp:null, empRetirar:false, aj:null, ajustes:[],
+ reloj:9*60+12, foco:null, fichaSede:null, n:{rq:38,qr:13,oc:1045,sal:0,lote:3420,inv:0,fac:0,aj:1}
+};
+function nuevoLote(c,q,lote,ven,hoy,sede){
+ var l={id:"i"+(S.n.inv++),c:c,q:q,lote:lote,ven:ven,hoy:!!hoy,sede:sede||CTX}; S.inv.push(l); return l;
+}
+
+function hora(){if(S.reloj<23*60+40)S.reloj+=3+(S.reloj%4);return pad(Math.floor(S.reloj/60))+":"+pad(S.reloj%60);}
+function evento(t,doc,des,u,v,meta,fISOx,h,sede){
+ EVENTOS.push({f:dISO(fISOx||HOY),h:h||hora(),t:t,doc:doc,des:des,u:u,v:v||0,meta:meta,
+  sede:sede!==undefined?sede:CTX});
+ ordenarEventos();
+}
+
+function filtroRol(e){
+ var t=EVENTOS_CARGO[cta().cargo];
+ var ok=t==="todo"||(t==="todo menos cuentas"?e.t!=="acc":t.indexOf(e.t)>=0);
+ if(rol()==="tienda")return ok&&e.sede===cta().tienda;
+ if(TIENDAS[e.sede])return false;   /* lo de la tienda no entra en el historial de alimentación */
+ if(rol()==="sede")return ok&&e.sede===cta().sede;
+ return ok&&(S.filtroSede==="todas"||!e.sede||e.sede===S.filtroSede);
+}
+function sedeEv(e){return rol()==="oficina"&&S.filtroSede==="todas"&&SEDES[e.sede]?" · "+SEDES[e.sede].n:"";}
+/* la sede no ve el valor de las facturas; una salida reversada no suma */
+/* al "valor movido" suman salidas y recepciones; ordenes, ajustes, facturas y pagos no, para no contar dos veces */
+function valorSuma(e){return ["oc","aj","fac","pago"].indexOf(e.t)>=0?0:valorVisible(e);}
+function valorVisible(e){
+ if(e.meta&&e.meta.revertida)return 0;
+ if(rol()==="sede"&&e.t==="recep")return 0;
+ return e.v;
+}
+
+function loteId(id){var r=null;S.inv.forEach(function(x){if(x.id===id)r=x;});return r;}
+
+function stock(c){return S.inv.reduce(function(a,l){return a+(l.c===c&&l.sede===CTX?l.q:0);},0);}
+function lotesFEFO(c){
+ return S.inv.filter(function(l){return l.c===c&&l.sede===CTX&&l.q>1e-9;}).sort(function(a,b){
+  return (a.ven||"9999-12-31").localeCompare(b.ven||"9999-12-31");});
+}
+
+/* los formularios a medio llenar se conservan por cuenta, hasta guardar o cancelar */
+function limpiar(todo){
+ S.sel=null;S.motivo="";S.verSalida=null;S.revAbierta=false;S.cierre=false;S.cierreMotivo="";S.pago=null;S.empRetirar=false;S.fichaSede=null;
+ if(todo){S.nuevo=null;S.recep=null;S.facForm=null;S.emp=null;S.aj=null;S.nuevaCta=null;}
+}
+
+function render(){
+ $("login").hidden=!!S.cuenta; $("app").hidden=!S.cuenta;
+ if(!S.cuenta)return;
+ var C=cta(), G=cargo(), esT=G.ambito==="tienda";
+ if(G.ambito==="sede")CTX=C.sede; else if(esT)CTX=C.tienda;
+ if(!puede(S.vista))S.vista=G.menu[0];
+ $("cuentaAv").textContent=iniciales(C.n); $("cuentaN").textContent=C.n;
+ $("cuentaC").textContent=G.n+" · "+ubicCta(C);
+ $("sedeL").textContent=esT?"Tienda":C.sede?"Sede":"Oficina";
+ $("sedeV").textContent=esT?TIENDAS[C.tienda].n.replace("Supermercado ",""):C.sede?SEDES[C.sede].n:"Bogotá";
+ $("sedeS").textContent=esT?TIENDAS[C.tienda].dir:C.sede?"Ubicación "+C.sede+" · "+SEDES[C.sede].personas+" personas":
+  "Ve "+pl(Object.keys(SEDES).length,"sede","sedes");
+ $("nav").innerHTML=G.menu.map(function(v){
+  return '<button data-act="nav" data-v="'+v+'" class="'+(S.vista===v?"on":"")+'"'+
+   (S.vista===v?' aria-current="page"':'')+'>'+
+   '<svg class="ic" viewBox="0 0 16 18" fill="none" stroke="currentColor" stroke-width="1.4" '+
+   'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+IC[v]+'"/></svg>'+
+   MENU_N[v]+badge(v)+'</button>';}).join("");
+ var T=TIT[S.vista], hoyTxt=fLargo(dISO(HOY))+' de 2026';
+ $("tt").innerHTML='<h1>'+T[0]+'</h1><p>'+T[1]+'</p>';
+ $("ctx").innerHTML=(esT?'TIENDA · '+TIENDAS[C.tienda].n.toUpperCase():C.sede?'SEDE '+C.sede+' · '+SEDES[C.sede].n.toUpperCase():
+  (FILTRABLES.indexOf(S.vista)>=0?'<label class="ctxSede">SEDE <select data-f="filtroSede" aria-label="Filtrar por sede">'+
+   '<option value="todas"'+(S.filtroSede==="todas"?" selected":"")+'>Todas las sedes</option>'+
+   Object.keys(SEDES).map(function(k){return '<option value="'+k+'"'+(S.filtroSede===k?" selected":"")+'>'+nombreSede(k)+'</option>';}).join("")+
+   '</select></label>':'OFICINA BOGOTÁ'))+'<br>'+hoyTxt;
+ var V=VISTAS;
+ var elVista=$("vista"), cambioVista=elVista.getAttribute("data-v")!==S.vista;
+ elVista.setAttribute("data-v",S.vista);
+ elVista.innerHTML=V[S.vista]();
+ // la entrada solo en un cambio real de vista, no en cada render
+ if(cambioVista){elVista.classList.remove("entra");void elVista.offsetWidth;elVista.classList.add("entra");}
+ if(S.vista==="hist")bindHistorial();
+ if(S.vista==="inv"&&S.aj&&S.aj.filtro)filtrarAj();
+ if(S.foco){var el=$(S.foco);S.foco=null;if(el)el.focus();}
+}
+function arriba(){try{window.scrollTo(0,0);}catch(e){}}
+
+var tToast=null;
+function toast(msg){var t=$("toast");t.hidden=true;void t.offsetWidth;
+ t.textContent=msg;t.hidden=false;
+ clearTimeout(tToast);tToast=setTimeout(function(){t.hidden=true;},5200);}
+
+function info(pares){return '<div class="info">'+pares.map(function(x){
+ return '<div><div class="l">'+x[0]+'</div><div class="v">'+x[1]+'</div></div>';}).join("")+'</div>';}
+function volver(txt,num,e){return '<div class="backrow"><button class="back" data-act="volver">← '+txt+'</button>'+
+ (num?'<span class="docnum">'+esc(num)+'</span>':'')+(e?pill(e):'')+'</div>';}
+function fila(act,id,celdas){return '<tr class="rowlink" tabindex="0" data-act="'+act+'" data-id="'+esc(id)+'">'+celdas+'</tr>';}
+
+function gruposCuentas(){
+ return Object.keys(SEDES).map(function(k){return [nombreSede(k),CUENTAS.filter(function(c){return c.sede===k;})];})
+  .concat([["Oficina Bogotá",CUENTAS.filter(function(c){return !c.sede&&!c.tienda;})]])
+  .concat(Object.keys(TIENDAS).map(function(k){
+   return [TIENDAS[k].n,CUENTAS.filter(function(c){return c.tienda===k;})];}))
+  .filter(function(g){return g[1].length;});
+}
+function listaCuentas(act,marcar){
+ return gruposCuentas().map(function(g){
+  return '<div class="ctaGrp"><div class="lbl">'+esc(g[0])+'</div>'+g[1].map(function(c){
+   var on=marcar&&c.id===S.cuenta;
+   return '<button type="button" class="ctaOpt'+(on?' on':'')+'" data-act="'+act+'" data-id="'+esc(c.id)+'"'+(c.activa?'':' disabled')+'>'+
+    '<span class="av">'+esc(iniciales(c.n))+'</span><span class="t"><b>'+esc(c.n)+'</b><span>'+esc(CARGOS[c.cargo].n)+
+    ' · usuario '+esc(c.id)+(c.activa?'':' · desactivada')+'</span></span>'+(on?pill(["Actual","p-o"]):'')+'</button>';}).join("")+'</div>';}).join("");
+}
+function abrirCuentas(){
+ ultimoFoco=$("cuentaBtn");
+ var c=cta(), a=ultimoAcceso(c.id);
+ $("vt").textContent="Su cuenta";
+ $("vc").textContent=CARGOS[c.cargo].n+" · "+ubicCta(c);
+ $("vb").innerHTML='<div class="ctaLista"><div class="ctaYo"><span class="av">'+esc(iniciales(c.n))+'</span><div><b>'+esc(c.n)+'</b>'+
+  '<span>Usuario '+esc(c.id)+(a?' · entró hoy a las '+a.h:'')+'</span></div></div>'+
+  '<div class="ctaAcc"><button class="btn" data-act="cerrar-sesion" id="btnSalir">Cerrar sesión</button></div>'+
+  '<h3 class="sec">Atajo de la demostración: entrar con otra cuenta</h3>'+
+  '<p class="sub" style="margin:-6px 0 12px">En el sistema real se cierra la sesión y se entra con el usuario y la contraseña de la otra persona.</p>'+
+  listaCuentas("entrar",true)+
+  '<div class="ctaPow">'+dantiaHTML()+'</div></div>';
+ $("ovl").hidden=false;
+ $("btnSalir").focus();
+}
+
+/* ============ MARCA DE MESURA (marca/mesura-marca.svg, inyectada por build.py) ============ */
+function marcaSVG(linea,acento,px){return MARCA_SVG.replace(/#0F5A47/g,linea).replace(/#BF7F14/g,acento)
+ .replace('<svg ','<svg width="'+px+'" height="'+px+'" aria-hidden="true" focusable="false" ');}
+/* ============ POWERED BY DANTIA.CA ============ */
+function dantiaHTML(){return '<div class="dantia" role="img" aria-label="Powered by Dantia.ca">'+
+ '<span class="dtL" aria-hidden="true">Powered by</span><span class="dtLogo" aria-hidden="true">'+
+ '<svg class="dtMark" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="currentColor" stroke-width="4"/><path d="M12 20.5 17.5 26 28.5 14.5" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>'+
+ '<span class="dtName">Dantia.ca</span></span></div>';}
+
+/* ============ INICIO Y CIERRE DE SESION ============ */
+var CLAVE_DEMO="demo";
+function pintarLogin(){
+ $("login").innerHTML='<section class="lgIntro"><div class="lgBrand"><div class="gl" aria-hidden="true">'+marcaSVG("#FFFFFF","#F2B64E",32)+'</div>'+
+  '<div><b>Mesura</b><span>'+esc(INTRO.sub)+'</span></div></div>'+
+  '<div class="lgMid"><h1>'+esc(INTRO.titulo)+'</h1><ul class="lgList">'+
+  INTRO.lista.map(function(x){return '<li>'+esc(x)+'</li>';}).join("")+'</ul></div>'+
+  dantiaHTML()+'</section>'+
+  '<section class="lgPanel"><form class="lgCard" id="lgForm" novalidate><h2>Iniciar sesión</h2>'+
+  '<div class="fld"><label for="lgU">Usuario</label><input class="big" id="lgU" name="usuario" autocomplete="username" '+
+   'autocapitalize="none" spellcheck="false"></div>'+
+  '<div class="fld"><label for="lgP">Contraseña</label><input class="big" id="lgP" name="clave" type="password" '+
+   'autocomplete="current-password"></div>'+
+  '<div class="lgMsg" id="lgMsg" aria-live="assertive"></div>'+
+  '<button class="btn lgBtn" type="submit" id="lgBtn">Entrar</button>'+
+  '<button class="lgLink" type="button" data-act="lg-olvide">¿Olvidó su contraseña?</button>'+
+  '<div class="lgInfo" id="lgInfo" aria-live="polite" hidden></div></form>'+
+  '<details class="lgDemo"><summary>Cuentas de demostración</summary>'+
+  '<p>Todas usan la contraseña <b>'+CLAVE_DEMO+'</b>. Elija una para llenar el formulario.</p>'+listaCuentas("lg-usar",false)+'</details>'+
+  dantiaHTML()+'<p class="lgNota">Demostración con datos de ejemplo.</p></section>';
+}
+function iniciarSesion(){
+ var u=String($("lgU").value).trim().toLowerCase(), p=$("lgP").value, c=buscarCta(u), m=$("lgMsg");
+ if(!u||!p){m.textContent="Escriba el usuario y la contraseña.";(u?$("lgP"):$("lgU")).focus();return;}
+ if(!c||p!==CLAVE_DEMO){m.textContent="Usuario o contraseña incorrectos.";$("lgP").value="";$("lgP").focus();return;}
+ if(!c.activa){m.textContent="Esta cuenta está desactivada. Administración puede reactivarla.";return;}
+ abrirSesion(c.id);
+}
+function abrirSesion(id){
+ var c=buscarCta(id), r=S.stash[id];
+ BORR.forEach(function(k){S[k]=r?r[k]:null;});
+ S.cuenta=id;
+ if(!S.serv&&typeof SERV_DIA!=="undefined")S.serv={con:"desayuno",menu:"d1",n:c.sede?SEDES[c.sede].personas:SERV_DIA,real:{}};
+ if(!S.filtroSede)S.filtroSede="todas";
+ limpiar(false); S.vista=cargo().menu[0];
+ S.accesos.unshift({id:id,h:hora()});
+ $("ovl").hidden=true; ultimoFoco=null;
+ render(); arriba(); $("cuentaBtn").focus();
+ toast("Entró como "+c.n+" · "+CARGOS[c.cargo].n+" · "+ubicCta(c)+".");
+}
+function guardarBorradores(){var b={}; BORR.forEach(function(k){b[k]=S[k];}); S.stash[S.cuenta]=b;}
+function cerrarSesion(){
+ if(!S.cuenta)return;
+ var n=cta().n;
+ guardarBorradores(); limpiar(false); S.cuenta=null;
+ $("ovl").hidden=true; ultimoFoco=null;
+ pintarLogin(); render(); arriba(); $("lgU").focus();
+ toast("Sesión de "+n+" cerrada. Lo que dejó a medio llenar sigue guardado para su próxima entrada.");
+}
+function entrar(id){
+ var c=buscarCta(id); if(!c||!c.activa)return;
+ if(id===S.cuenta){cerrarDoc();return;}
+ guardarBorradores();
+ abrirSesion(id);
+}
+
+function ultimoAcceso(id){var a=null;S.accesos.forEach(function(x){if(!a&&x.id===id)a=x;});return a;}
+
+document.addEventListener("click",function(ev){
+ var el=ev.target&&ev.target.closest?ev.target.closest("[data-act]"):null;
+ if(!el||el.disabled)return;
+ var a=el.getAttribute("data-act");
+ if(ACC[a])ACC[a](el.getAttribute("data-v"),el.getAttribute("data-id"),el);
+});
+document.addEventListener("keydown",function(ev){
+ if(ev.key==="Escape"){cerrarDoc();return;}
+ var t=ev.target;
+ if((ev.key==="Enter"||ev.key===" ")&&t&&t.classList&&t.classList.contains("rowlink")){ev.preventDefault();t.click();}
+});
+document.addEventListener("submit",function(ev){
+ if(ev.target&&ev.target.id==="lgForm"){ev.preventDefault();iniciarSesion();}
+});
+var tAncho=null;
+window.addEventListener("resize",function(){clearTimeout(tAncho);
+ tAncho=setTimeout(function(){if(S.cuenta&&S.vista==="tab"&&$("ovl").hidden)render();},200);});
+document.addEventListener("input",onCampo);
+document.addEventListener("change",onCampo);
+$("vx").addEventListener("click",cerrarDoc);
+$("ovl").addEventListener("click",function(ev){if(ev.target===$("ovl"))cerrarDoc();});
+
+
+
+/* ============ ENGANCHES DE DOMINIO ============ */
+/* el aviso del menú y los campos de los formularios los resuelve el dominio cargado */
+function badge(v){return typeof badgeDominio==="function"?badgeDominio(v):"";}
+function onCampo(ev){
+ var el=ev.target, f=el&&el.getAttribute&&el.getAttribute("data-f"); if(!f)return;
+ if(f.indexOf("sm")===0){if(typeof campoTienda==="function")campoTienda(f,el);return;}
+ if(typeof campoDominio==="function")campoDominio(f,el,ev);
+}
+
+/* ============ ACCIONES DEL ARMAZON ============ */
+var ACC={
+ "cuenta-abrir":function(){abrirCuentas();},
+ "cerrar-sesion":function(){cerrarSesion();},
+ "lg-usar":function(v,id){var c=buscarCta(id); if(!c||!c.activa)return;
+  $("lgU").value=c.id; $("lgP").value=CLAVE_DEMO; $("lgMsg").textContent=""; $("lgBtn").focus();},
+ "lg-olvide":function(){var i=$("lgInfo"); i.hidden=false;
+  i.textContent="En el sistema real, administración restablece la contraseña. En la demostración todas las cuentas usan la contraseña "+CLAVE_DEMO+".";},
+ entrar:function(v,id){entrar(id);},
+ nav:function(v){S.vista=v;limpiar(false);render();arriba();}
+};
 
 /* ============ FACTURAS: LINEAS CON IVA POR PRODUCTO ============
    Cada linea vale cantidad x valor unitario. El subtotal, el IVA y el total salen de las lineas. */
@@ -633,7 +1100,8 @@ function buildLineas(prov,objetivo,semilla){
 }
 
 /* ============ HISTORIAL GENERADO (julio a hoy) ============ */
-var EVENTOS=[], FACTURAS=[];
+var FACTURAS=[];
+
 function generarHistorial(cfg){
  var ini=new Date(2026,6,1), fin=new Date(2026,8,5);
  var nRQ=cfg.nRQ, nOC=cfg.nOC, nSal=cfg.nSal, nFac=cfg.nFac, K=cfg.sede;
@@ -693,69 +1161,11 @@ generarHistorial({sede:"3111",nRQ:80,nOC:1200,nSal:700,nFac:9000,sinFac:false,
  servicios:function(){return 48+Math.floor(rnd()*14);},desv:function(){return 0.10+(rnd()-0.5)*0.08;}});
 ordenarEventos();
 FACTURAS.sort(function(a,b){return b.f-a.f;});
-function ordenarEventos(){EVENTOS.sort(function(a,b){return b.f-a.f||b.h.localeCompare(a.h);});}
 
-var TIPOS={rq:["Requerimiento","p-n"],env:["Envío a aprobación","p-w"],aprob:["Aprobación","p-o"],
- rech:["Rechazo","p-a"],oc:["Orden de compra","p-w"],recep:["Recepción","p-o"],salida:["Salida","p-n"],
- rev:["Reversión","p-a"],fis:["Inventario físico","p-n"]};
 
-var H={desde:"2026-09-01",hasta:"2026-09-06",abierto:{"2026-09-06":true},rango:"mes"};
-function enRango(e){var i=iso(e.f);return i>=H.desde&&i<=H.hasta;}
-
-function vistaHistorial(){
- var evs=EVENTOS.filter(enRango).filter(filtroRol), porDia={};
- evs.forEach(function(e){var k=iso(e.f);(porDia[k]=porDia[k]||[]).push(e);});
- var dias=Object.keys(porDia).sort().reverse();
- var tot=evs.reduce(function(a,e){return a+valorSuma(e);},0);
- var sal=evs.filter(function(e){return e.t==="salida"&&!(e.meta&&e.meta.revertida);});
- var servs=sal.reduce(function(a,e){return a+(e.meta&&e.meta.serv||0);},0);
- var revs=evs.filter(function(e){return e.t==="rev";}).length;
- var q=[["hoy","Hoy"],["ayer","Ayer"],["7","Últimos 7 días"],["mes","Este mes"],["pasado","Mes pasado"],["todo","Todo"]];
- return '<div class="card">'+
-  '<div class="filt"><div class="fld"><label for="hd">Desde</label><input type="date" id="hd" value="'+H.desde+'"></div>'+
-  '<div class="fld"><label for="hh">Hasta</label><input type="date" id="hh" value="'+H.hasta+'"></div>'+
-  '<div class="quick">'+q.map(function(x){
-    return '<button data-q="'+x[0]+'" class="'+(H.rango===x[0]?"on":"")+'">'+x[1]+'</button>';}).join("")+
-  '</div></div><div class="stats">'+
-  st(fmt(evs.length),"Movimientos","")+st(fmt(dias.length),"Días con actividad","")+
-  st(fmt(servs),"Servicios producidos","")+st(money(tot),"Valor movido","")+
-  st(fmt(revs),"Reversiones",revs?"warn":"good")+'</div>'+
-  (dias.length?dias.map(function(k){
-    var es=porDia[k], v=es.reduce(function(a,e){return a+valorSuma(e);},0), ab=H.abierto[k];
-    var d=new Date(k+"T12:00:00");
-    return '<div class="day"><button data-d="'+k+'" aria-expanded="'+(ab?"true":"false")+'"><span><span class="dt">'+fLargo(d)+
-     '</span> <span class="dc"> · '+es.length+' movimiento'+(es.length===1?"":"s")+'</span></span>'+
-     '<span class="dc">'+money(v)+' '+(ab?"▾":"▸")+'</span></button>'+
-     (ab?es.map(function(e){var ti=TIPOS[e.t]||[e.t,"p-n"];
-      return '<div class="ev"><span class="h">'+e.h+'</span>'+
-       '<span><span class="pill '+ti[1]+'">'+ti[0]+'</span></span>'+
-       '<span class="d">'+esc(e.des)+'<div class="u">'+esc(e.doc)+' · '+esc(e.u)+esc(sedeEv(e))+'</div></span>'+
-       '<span class="v">'+(valorVisible(e)?money(valorVisible(e)):(e.meta&&e.meta.revertida?"reversada":"·"))+
-       (e.meta&&e.meta.desv!==undefined&&!e.meta.revertida?'<div class="u">'+(e.meta.desv>0?"+":"")+
-        fmt(e.meta.desv*100,1)+'% frente al estándar</div>':"")+'</span></div>';}).join(""):"")+
-     '</div>';}).join("")
-   :'<div class="empty">No hay movimientos en ese rango.</div>')+'</div>';
-}
-
-function bindHistorial(){
- var hd=$("hd"),hh=$("hh");
- if(hd)hd.addEventListener("change",function(){H.desde=hd.value;H.rango="";render();});
- if(hh)hh.addEventListener("change",function(){H.hasta=hh.value;H.rango="";render();});
- [].forEach.call(document.querySelectorAll("[data-q]"),function(b){
-  b.addEventListener("click",function(){
-   var hoy=new Date(HOY+"T12:00:00"), a=new Date(hoy), z=new Date(hoy), q=b.getAttribute("data-q");
-   if(q==="ayer"){a.setDate(a.getDate()-1);z=new Date(a);}
-   else if(q==="7"){a.setDate(a.getDate()-6);}
-   else if(q==="mes"){a=new Date(hoy.getFullYear(),hoy.getMonth(),1);}
-   else if(q==="pasado"){a=new Date(hoy.getFullYear(),hoy.getMonth()-1,1);z=new Date(hoy.getFullYear(),hoy.getMonth(),0);}
-   else if(q==="todo"){a=new Date(2026,6,1);}
-   H.desde=iso(a);H.hasta=iso(z);H.rango=q;H.abierto={};
-   if(q==="hoy"||q==="ayer")H.abierto[iso(a)]=true;
-   render();});});
- [].forEach.call(document.querySelectorAll("[data-d]"),function(b){
-  b.addEventListener("click",function(){var k=b.getAttribute("data-d");
-   H.abierto[k]=!H.abierto[k];render();});});
-}
+TIPOS.rq=["Requerimiento","p-n"]; TIPOS.env=["Envío a aprobación","p-w"]; TIPOS.aprob=["Aprobación","p-o"];
+TIPOS.rech=["Rechazo","p-a"]; TIPOS.oc=["Orden de compra","p-w"]; TIPOS.recep=["Recepción","p-o"];
+TIPOS.salida=["Salida","p-n"]; TIPOS.rev=["Reversión","p-a"]; TIPOS.fis=["Inventario físico","p-n"];
 
 /* ============ VISOR DE DOCUMENTOS ============ */
 function cufe(f){var h=hashN((f.num||"")+f.prov),o="";
@@ -799,7 +1209,7 @@ function thumbSVG(){
   '<rect x="20" y="34" width="13" height="2.4" fill="#0F5A47" opacity=".55"/>'+
   '<rect x="5" y="38" width="9" height="9" fill="#16211d" opacity=".8"/></svg>';
 }
-var ultimoFoco=null;
+
 function verDoc(id){
  var f=null; FACTURAS.forEach(function(x){if(x.id===id)f=x;});
  if(!f)return;
@@ -810,7 +1220,7 @@ function verDoc(id){
  $("ovl").hidden=false;
  $("vx").focus();
 }
-function cerrarDoc(){ if($("ovl").hidden)return; $("ovl").hidden=true; if(ultimoFoco&&ultimoFoco.focus)ultimoFoco.focus(); }
+
 
 /* ============ NOMINA ============ */
 var SMMLV=1750905, AUXTTE=249095;
@@ -876,27 +1286,10 @@ function cargaRows(lista){
   '<td class="n r">'+money(r[2])+'</td><td class="sub">'+r[3]+'</td></tr>';}).join("");
 }
 
+/* ============ PANEL DE DIRECCION (alimentación) ============ */
 /* ============ GRAFICAS PARA DIRECCION (SVG a mano, sin librerias: funcionan offline) ============ */
-var MESES_C=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
-var MESES_L=["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
-function dm(d){return d.getDate()+" "+MESES_C[d.getMonth()];}
-function lunes(d){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());x.setDate(x.getDate()-(x.getDay()+6)%7);return x;}
-function r1(n){return Math.round(n*10)/10;}
-function compacto(n){var a=Math.abs(n),s=n<0?"-$":"$";
- if(a>=1e6)return s+fmt(a/1e6,a>=1e8?0:1)+" M";
- if(a>=1e3)return s+fmt(Math.round(a/1e3))+" mil";
- return s+fmt(a);}
-function escala(min,max,n){
- if(max===min)max=min+1;
- var b=(max-min)/(n||4), e=Math.pow(10,Math.floor(Math.log(b)/Math.LN10)), f=b/e;
- var p=(f<=1?1:f<=2?2:f<=2.5?2.5:f<=5?5:10)*e, lo=Math.floor(min/p)*p, hi=Math.ceil(max/p)*p, t=[];
- for(var v=lo;v<=hi+p/2;v+=p)t.push(Math.round(v*1e6)/1e6);
- return {lo:lo,hi:hi,t:t};
-}
 function colorSede(k){return "var(--g"+((Object.keys(SEDES).indexOf(k)%3)+1)+")";}
-/* ancho disponible para cada gráfica: dos columnas desde 858 px */
-function anchoGraf(){var w=($("vista")&&$("vista").clientWidth)||900, dos=w>=858;
- return Math.max(250,Math.floor((dos?(w-18)/2:w)-36));}
+
 
 /* ---------- datos ---------- */
 function sumaSalida(x,e){var serv=(e.meta&&e.meta.serv)||0;
@@ -931,87 +1324,6 @@ function pagosPorVencer(){
    i=mapa[key];}
   b[i].sede[f.sede]=(b[i].sede[f.sede]||0)+f.v;});
  return [b[0]].concat(b.slice(1).sort(function(x,y){return x.key-y.key;}));
-}
-
-/* ---------- piezas ---------- */
-function leyenda(items){return '<div class="leyenda">'+items.map(function(it){
- return '<span><i class="'+(it.linea?'ln':'')+(it.guion?' gu':'')+'" style="'+(it.linea?'border-color:':'background:')+it.color+'"></i>'+esc(it.n)+'</span>';}).join("")+'</div>';}
-function datosHTML(cab,filas){return '<details class="datos"><summary>Ver los datos</summary><div class="scroll"><table><thead><tr>'+
- cab.map(function(c,i){return '<th'+(i?' class="r"':'')+'>'+esc(c)+'</th>';}).join("")+'</tr></thead><tbody>'+
- filas.map(function(f){return '<tr>'+f.map(function(c,i){return '<td'+(i?' class="n r"':'')+'>'+c+'</td>';}).join("")+'</tr>';}).join("")+
- '</tbody></table></div></details>';}
-function tarjetaGraf(titulo,sub,cuerpo){return '<div class="card"><header><div><h2>'+titulo+'</h2><p>'+sub+'</p></div></header><div class="body">'+cuerpo+'</div></div>';}
-/* línea pequeña para las tarjetas de indicadores */
-function chispa(datos,color){
- var v=datos.filter(function(x){return x!=null;}); if(v.length<2)return "";
- var w=120,h=30,mn=Math.min.apply(null,v),mx=Math.max.apply(null,v); if(mx===mn){mx+=1;mn-=1;}
- var pts=[],ult=null;
- datos.forEach(function(x,i){if(x==null)return; var px=r1(2+i*(w-4)/(datos.length-1)), py=r1(h-3-(x-mn)/(mx-mn)*(h-6));
-  pts.push((pts.length?"L":"M")+px+" "+py); ult=[px,py];});
- return '<svg class="chispa" viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="none" aria-hidden="true" focusable="false">'+
-  '<path d="'+pts.join("")+'" fill="none" style="stroke:'+color+'" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>'+
-  '<circle cx="'+ult[0]+'" cy="'+ult[1]+'" r="2.6" style="fill:'+color+'"/></svg>';
-}
-
-/* ---------- gráficas ---------- */
-function grafLineas(o){
- var w=o.w, h=o.h||230, ml=o.ml||48, mr=14, mt=12, mb=30, iw=w-ml-mr, ih=h-mt-mb, n=o.cats.length, vals=[];
- o.series.forEach(function(s){s.datos.forEach(function(v){if(v!=null)vals.push(v);});});
- if(o.banda)vals.push(o.banda[0],o.banda[1]); if(o.ref!=null)vals.push(o.ref);
- var sc=escala(Math.min.apply(null,vals),Math.max.apply(null,vals),4);
- var X=function(i){return r1(ml+(n<2?iw/2:i*iw/(n-1)));}, Y=function(v){return r1(mt+ih-(v-sc.lo)/(sc.hi-sc.lo)*ih);};
- var g='<svg class="graf" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+esc(o.titulo)+'">';
- if(o.banda)g+='<rect x="'+ml+'" y="'+Y(o.banda[1])+'" width="'+iw+'" height="'+r1(Y(o.banda[0])-Y(o.banda[1]))+'" style="fill:var(--gband)"/>';
- sc.t.forEach(function(t){g+='<line x1="'+ml+'" x2="'+(w-mr)+'" y1="'+Y(t)+'" y2="'+Y(t)+'" style="stroke:var(--line)"/>'+
-  '<text x="'+(ml-7)+'" y="'+r1(Y(t)+4)+'" text-anchor="end" class="gt">'+esc(o.fmtY(t))+'</text>';});
- if(o.ref!=null)g+='<line x1="'+ml+'" x2="'+(w-mr)+'" y1="'+Y(o.ref)+'" y2="'+Y(o.ref)+'" style="stroke:var(--ink2)" stroke-dasharray="4 4"/>';
- var paso=Math.max(1,Math.ceil(n/Math.max(2,Math.floor(iw/58))));
- o.cats.forEach(function(c,i){if(i%paso===0)g+='<text x="'+X(i)+'" y="'+(h-9)+'" text-anchor="middle" class="gt">'+esc(c)+'</text>';});
- o.series.forEach(function(s){
-  var d="",pen=false;
-  s.datos.forEach(function(v,i){if(v==null){pen=false;return;} d+=(pen?"L":"M")+X(i)+" "+Y(v); pen=true;});
-  g+='<path d="'+d+'" fill="none" style="stroke:'+s.color+'" stroke-width="'+(s.ancho||2.2)+'"'+(s.guion?' stroke-dasharray="6 4"':'')+' stroke-linejoin="round" stroke-linecap="round"/>';
-  s.datos.forEach(function(v,i){if(v==null)return;
-   g+='<circle cx="'+X(i)+'" cy="'+Y(v)+'" r="'+(s.guion?2.4:3)+'" style="fill:'+s.color+'"><title>'+esc(s.n+" · "+o.cats[i]+": "+o.fmtTip(v))+'</title></circle>';});
- });
- return g+'</svg>';
-}
-function grafBarras(o){
- var w=o.w, h=o.h||230, ml=o.ml||58, mr=10, mt=18, mb=30, iw=w-ml-mr, ih=h-mt-mb, n=o.cats.length;
- var tot=o.cats.map(function(c,i){return o.series.reduce(function(a,s){return a+(s.datos[i]||0);},0);});
- var sc=escala(0,Math.max.apply(null,tot.concat([1])),4), paso=iw/n, bw=Math.min(52,paso*0.62);
- var Y=function(v){return r1(mt+ih-(v-sc.lo)/(sc.hi-sc.lo)*ih);};
- var g='<svg class="graf" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+esc(o.titulo)+'">';
- sc.t.forEach(function(t){g+='<line x1="'+ml+'" x2="'+(w-mr)+'" y1="'+Y(t)+'" y2="'+Y(t)+'" style="stroke:var(--line)"/>'+
-  '<text x="'+(ml-7)+'" y="'+r1(Y(t)+4)+'" text-anchor="end" class="gt">'+esc(o.fmtY(t))+'</text>';});
- var cada=Math.max(1,Math.ceil(n/Math.max(2,Math.floor(iw/52))));
- o.cats.forEach(function(c,i){
-  var x=r1(ml+paso*i+(paso-bw)/2), base=0;
-  o.series.forEach(function(s){var v=s.datos[i]||0; if(v<=0)return;
-   var y1=Y(base+v), y0=Y(base);
-   g+='<rect x="'+x+'" y="'+y1+'" width="'+r1(bw)+'" height="'+r1(Math.max(0,y0-y1))+'" style="fill:'+s.color+';stroke:var(--panel)" stroke-width="1"><title>'+
-    esc(c+" · "+s.n+": "+o.fmtTip(v))+'</title></rect>';
-   base+=v;});
-  if(o.totales&&tot[i]>0&&bw>=26)g+='<text x="'+r1(x+bw/2)+'" y="'+r1(Y(tot[i])-5)+'" text-anchor="middle" class="gt gv">'+esc(o.fmtY(tot[i]))+'</text>';
-  if(i%cada===0)g+='<text x="'+r1(x+bw/2)+'" y="'+(h-9)+'" text-anchor="middle" class="gt">'+esc(c)+'</text>';
- });
- return g+'</svg>';
-}
-/* barras horizontales al 100%: en qué se va cada peso */
-function grafProporcion(o){
- var w=o.w, fila=34, gap=10, lw=Math.min(118,Math.round(w*0.3)), bx=lw+8, bwid=w-bx-4, h=o.filas.length*(fila+gap)-gap+4;
- var g='<svg class="graf" width="'+w+'" height="'+h+'" viewBox="0 0 '+w+' '+h+'" role="img" aria-label="'+esc(o.titulo)+'">';
- o.filas.forEach(function(f,i){
-  var y=i*(fila+gap), total=f.partes.reduce(function(a,p){return a+Math.max(0,p.v);},0), x=bx;
-  g+='<text x="'+(lw)+'" y="'+(y+fila/2+4)+'" text-anchor="end" class="gt'+(f.total?' gv':'')+'">'+esc(f.n)+'</text>';
-  f.partes.forEach(function(p){if(p.v<=0||!total)return;
-   var ww=p.v/total*bwid, pct=p.v/total*100;
-   g+='<rect x="'+r1(x)+'" y="'+y+'" width="'+r1(ww)+'" height="'+fila+'" style="fill:'+p.color+';stroke:var(--panel)" stroke-width="1.5"><title>'+
-    esc(f.n+" · "+p.n+": "+money(p.v)+" ("+fmt(pct,1)+"%)")+'</title></rect>';
-   if(ww>=30)g+='<text x="'+r1(x+ww/2)+'" y="'+(y+fila/2+4)+'" text-anchor="middle" class="gin">'+fmt(pct,0)+'%</text>';
-   x+=ww;});
- });
- return g+'</svg>';
 }
 
 /* ---------- lo que ve dirección ---------- */
@@ -1109,42 +1421,20 @@ function graficaSede(k){
 }
 
 /* ============ NUCLEO: DATOS Y UTILIDADES ============ */
-var HOY=D.hoy, PROD=D.prod, PROVS=D.prov, MENUS=D.menus, EST=D.est;
+var PROD=D.prod, PROVS=D.prov, MENUS=D.menus, EST=D.est;
 var TOL=0.20, DIAS_CICLO=20, SERV_DIA=82;
 /* equivalencia dada en la reunion: 90 g cocidos por plato = 120 g sin hueso o 170 g con hueso */
 var CORTE={"1001":{g:170,t:"con hueso"},"1002":{g:120,t:"sin hueso"}};
 
-function $(i){return document.getElementById(i);}
-function fmt(n,d){d=d==null?0:d;var s=Number(n).toFixed(d),p=s.split(".");
- p[0]=p[0].replace(/\B(?=(\d{3})+(?!\d))/g,".");return p.join(",");}
-function money(n){var r=Math.round(n);return (r<0?"-$":"$")+fmt(Math.abs(r));}
-function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){
- return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
-function st(v,k,c){return '<div class="stat '+(c||"")+'"><div class="v">'+v+'</div><div class="k">'+k+'</div></div>';}
-function pad4(n){return ("000"+n).slice(-4);}
-function r3(x){return Math.round(x*1000)/1000;}
-function parseNum(v){v=String(v==null?"":v).trim().replace(",",".");return v===""?0:parseFloat(v);}
-function pl(n,s,p){return fmt(n)+" "+(n===1?s:p);}
-function frase(t){return String(t==null?"":t).trim().replace(/[.\s]+$/,"");}
-function normFac(s){return String(s).toUpperCase().replace(/[^A-Z0-9]/g,"");}
+
 function redondear(c,q){return PROD[c].u==="u"?Math.round(q):r3(q);}
 var NOMBRE_COD={}; Object.keys(PROD).forEach(function(c){NOMBRE_COD[PROD[c].n]=c;});
 function codigoDe(desc){return NOMBRE_COD[String(desc).replace(/ (kg|und|L)$/,"")];}
 
-function dISO(s){var p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2]);}
-function fISO(s){return s?fecha(dISO(s)):"·";}
-function diasHasta(s){return Math.round((dISO(s)-dISO(HOY))/864e5);}
-function sumarDias(s,n){var d=dISO(s);d.setDate(d.getDate()+n);return iso(d);}
-function diasTxt(s){var d=diasHasta(s);
- if(d<0)return "vencido hace "+pl(-d,"día","días");
- if(d===0)return "vence hoy"; if(d===1)return "vence mañana"; return "en "+d+" días";}
+
 
 function base(c){return PROD[c].u==="u"?1:1000;}
-function numTxt(q,u){
- if(u==="u")return fmt(Math.round(q));
- var r=Math.round(q*100)/100;
- return fmt(r, r%1===0?0:(Math.round(r*10)/10===r?1:2));
-}
+
 function cant(c,q){return numTxt(q,PROD[c].u)+" "+PROD[c].u;}
 function porcion(c,q){var u=PROD[c].u;return fmt(q)+(u==="u"?" u":(u==="L"?" ml":" g"));}
 function unidadFac(c){return PROD[c].u==="u"?"und":PROD[c].u;}
@@ -1160,7 +1450,7 @@ var EDO_OF={enviado:["Pendiente","p-w"],aprobado:["Aprobado","p-o"],rechazado:["
 var EDO_OC={"por enviar":["Por enviar","p-w"],enviada:["Enviada","p-n"],parcial:["Parcial","p-w"],recibida:["Recibida","p-o"],
  cerrada:["Cerrada con saldo","p-n"]};
 var EDO_REC={enviada:["Por recibir","p-w"],parcial:["Parcial","p-w"],recibida:["Recibida","p-o"],cerrada:["Cerrada con saldo","p-n"]};
-function pill(e){return '<span class="pill '+e[1]+'">'+e[0]+'</span>';}
+
 
 /* ============ SEDES, CARGOS Y CUENTAS ============ */
 var SEDES={
@@ -1169,8 +1459,7 @@ var SEDES={
  "3111":{n:"La Esperanza",personas:55,ext:5600000,pre:"E"}
 };
 var TIENDAS={};   /* el escenario de supermercado las registra; las sedes de alimentación no las ven */
-function nombreSede(k){return SEDES[k]?k+" "+SEDES[k].n:(TIENDAS[k]?TIENDAS[k].n:"Oficina Bogotá");}
-function ubicCta(c){return c.sede?SEDES[c.sede].n:(c.tienda?TIENDAS[c.tienda].n:"Oficina Bogotá");}
+
 var CARGOS={
  sup:{n:"Supervisor de sede",ambito:"sede",menu:["rq","serv","inv","nom","hist"]},
  bod:{n:"Bodega de sede",ambito:"sede",menu:["recep","inv","hist"]},
@@ -1180,6 +1469,12 @@ var CARGOS={
  dir:{n:"Dirección",ambito:"oficina",menu:["tab","con","hist"]},
  adm:{n:"Administración",ambito:"oficina",menu:["cuentas","hist"]}
 };
+INTRO.titulo="Requerimientos, compras, inventario y costo por plato de cada sede";
+INTRO.lista=["La sede pide y recibe; la oficina aprueba y compra.",
+ "Inventario por lote, con salida por fecha de vencimiento.",
+ "Costo real por plato frente al estándar del contrato.",
+ "Una cuenta por persona, con permisos por cargo y por sede."];
+INTRO.sub="Operación de alimentación";
 var MENU_N={rq:"Requerimientos",recep:"Recepción",inv:"Inventario",serv:"Servicios",aprob:"Aprobaciones",
  oc:"Órdenes de compra",fac:"Facturas y pagos",con:"Contabilidad",nom:"Nómina",tab:"Tablero de sedes",
  cuentas:"Cuentas",hist:"Historial"};
@@ -1196,84 +1491,40 @@ var CUENTAS=[
  {id:"lmejia",n:"Laura Mejía",cargo:"dir",sede:null,activa:true},
  {id:"storres",n:"Sofía Torres",cargo:"adm",sede:null,activa:true}
 ];
-function buscarCta(id){var r=null;CUENTAS.forEach(function(c){if(c.id===id)r=c;});return r;}
-function cta(){return buscarCta(S.cuenta);}
-function cargo(){return CARGOS[cta().cargo];}
-function rol(){return cargo().ambito;}
-function quien(){return cta().n;}
-function puede(v){return cargo().menu.indexOf(v)>=0;}
-function iniciales(n){return String(n).split(/\s+/).filter(Boolean).slice(0,2).map(function(p){return p.charAt(0);}).join("").toUpperCase();}
+
 /* nombre de una cuenta activa con ese cargo (y sede, si aplica), para los textos de ayuda */
 function usuarioTxt(cargo,sede){var r=null;CUENTAS.forEach(function(c){if(!r&&c.cargo===cargo&&c.activa&&(!sede||c.sede===sede))r=c;});
  return r?", usuario "+r.id+",":"";}
 function cuentaTxt(cargo,sede){var r=null;CUENTAS.forEach(function(c){if(!r&&c.cargo===cargo&&c.activa&&(!sede||c.sede===sede))r=c;});
  return r?r.n+" ("+CARGOS[cargo].n.toLowerCase()+")":"la cuenta de "+CARGOS[cargo].n.toLowerCase();}
-/* sede en contexto: la de la cuenta de sede, o la del documento que la oficina tiene abierto */
-var CTX="3102";
-function enSede(k,fn){var p=CTX;CTX=k;try{return fn();}finally{CTX=p;}}
+
 function enFiltro(k){return S.filtroSede==="todas"||k===S.filtroSede;}
 function sedesFiltro(){return S.filtroSede==="todas"?Object.keys(SEDES):[S.filtroSede];}
 function nec(c){return NEC[c]?NEC[c]*SEDES[CTX].personas/SERV_DIA:0;}
-var BORR=["nuevo","recep","aj","facForm","emp","serv","nuevaCta","filtroSede"];
 
-/* ============ ESTADO ============ */
-var S={
- cuenta:"jrojas", vista:"rq", filtroSede:"todas", stash:{}, nuevaCta:null, accesos:[], sel:null, nuevo:null, recep:null, motivo:"",
- filtroAprob:"pend", filtroOC:"todas", cierre:false, cierreMotivo:"",
- inv:[], rqs:[], ocs:[], salidas:[],
- serv:{con:"desayuno",menu:"d1",n:SERV_DIA,real:{}}, verSalida:null, revAbierta:false, revMotivo:"",
- facForm:null, pago:null, pagoD:null, emp:null, empRetirar:false, aj:null, ajustes:[],
- reloj:9*60+12, foco:null, fichaSede:null, n:{rq:38,qr:13,oc:1045,sal:0,lote:3420,inv:0,fac:0,aj:1}
-};
-function nuevoLote(c,q,lote,ven,hoy,sede){
- var l={id:"i"+(S.n.inv++),c:c,q:q,lote:lote,ven:ven,hoy:!!hoy,sede:sede||CTX}; S.inv.push(l); return l;
-}
+
+
 D.inv.forEach(function(l){nuevoLote(String(l.c),l.q,l.lote,l.ven,false,"3102");});
 /* las otras sedes arrancan con el mismo surtido, en proporcion a las personas que atienden */
 [["3104","M"],["3111","E"]].forEach(function(x){var f=SEDES[x[0]].personas/SERV_DIA;
  D.inv.forEach(function(l){var c=String(l.c), q=PROD[c].u==="u"?Math.ceil(l.q*f):Math.ceil(l.q*f*2)/2;
   nuevoLote(c,q,String(l.lote).replace(/^L/,x[1]),l.ven,false,x[0]);});});
 
-function hora(){if(S.reloj<23*60+40)S.reloj+=3+(S.reloj%4);return pad(Math.floor(S.reloj/60))+":"+pad(S.reloj%60);}
-function evento(t,doc,des,u,v,meta,fISOx,h,sede){
- EVENTOS.push({f:dISO(fISOx||HOY),h:h||hora(),t:t,doc:doc,des:des,u:u,v:v||0,meta:meta,
-  sede:sede!==undefined?sede:CTX});
- ordenarEventos();
-}
+
 /* tipos de movimiento que cada cargo ve en el historial; la sede ve solo su sede y la oficina filtra por sede */
 var OPERACION_SEDE=["rq","env","aprob","rech","recep","salida","rev","fis","aj"];
 var EVENTOS_CARGO={sup:OPERACION_SEDE.concat(["nom"]),bod:OPERACION_SEDE,com:["env","aprob","rech","oc","recep"],
  nom:["nom"],adm:["acc"],cont:"todo menos cuentas",dir:"todo"};
-function filtroRol(e){
- var t=EVENTOS_CARGO[cta().cargo];
- var ok=t==="todo"||(t==="todo menos cuentas"?e.t!=="acc":t.indexOf(e.t)>=0);
- if(rol()==="tienda")return ok&&e.sede===cta().tienda;
- if(TIENDAS[e.sede])return false;   /* lo de la tienda no entra en el historial de alimentación */
- if(rol()==="sede")return ok&&e.sede===cta().sede;
- return ok&&(S.filtroSede==="todas"||!e.sede||e.sede===S.filtroSede);
-}
-function sedeEv(e){return rol()==="oficina"&&S.filtroSede==="todas"&&SEDES[e.sede]?" · "+SEDES[e.sede].n:"";}
-/* la sede no ve el valor de las facturas; una salida reversada no suma */
-/* al "valor movido" suman salidas y recepciones; ordenes, ajustes, facturas y pagos no, para no contar dos veces */
-function valorSuma(e){return ["oc","aj","fac","pago"].indexOf(e.t)>=0?0:valorVisible(e);}
-function valorVisible(e){
- if(e.meta&&e.meta.revertida)return 0;
- if(rol()==="sede"&&e.t==="recep")return 0;
- return e.v;
-}
+
 
 function buscarRQ(n){var r=null;S.rqs.forEach(function(x){if(x.num===n)r=x;});return r;}
 function buscarOC(n){var r=null;S.ocs.forEach(function(x){if(x.num===n)r=x;});return r;}
 function buscarSalida(n){var r=null;S.salidas.forEach(function(x){if(x.num===n)r=x;});return r;}
-function loteId(id){var r=null;S.inv.forEach(function(x){if(x.id===id)r=x;});return r;}
+
 function valorItems(items){return items.reduce(function(a,it){return a+it.q*PROD[it.c].cost;},0);}
 function porFecha(a,b){return (b.fecha+(b.hora||"")).localeCompare(a.fecha+(a.hora||""));}
 
-function stock(c){return S.inv.reduce(function(a,l){return a+(l.c===c&&l.sede===CTX?l.q:0);},0);}
-function lotesFEFO(c){
- return S.inv.filter(function(l){return l.c===c&&l.sede===CTX&&l.q>1e-9;}).sort(function(a,b){
-  return (a.ven||"9999-12-31").localeCompare(b.ven||"9999-12-31");});
-}
+
 /* lo ya pedido: saldo de ordenes abiertas mas requerimientos esperando aprobacion */
 function enCamino(c,excepto){
  var t=0;
@@ -1432,9 +1683,8 @@ var TIT={
  cuentas:["Cuentas","Quién entra al sistema, con qué cargo y en qué sede."]
 };
 var FILTRABLES=["aprob","oc","fac","con","nom","hist"];
-function badge(v){
+function badgeDominio(v){
  var n=0;
- if(typeof VISTAS_TIENDA!=="undefined"&&VISTAS_TIENDA.indexOf(v)>=0)return badgeTienda(v);
  if(v==="rq")n=S.rqs.filter(function(r){return r.sede===CTX&&r.estado==="rechazado"&&!r.corregidoEn;}).length;
  else if(v==="recep")n=S.ocs.filter(function(o){return o.sede===CTX&&(o.estado==="enviada"||o.estado==="parcial");}).length;
  else if(v==="aprob")n=S.rqs.filter(function(r){return r.estado==="enviado"&&enFiltro(r.sede);}).length;
@@ -1442,61 +1692,9 @@ function badge(v){
  else if(v==="fac")n=FACTURAS.filter(function(f){return f.sinFac&&enFiltro(f.sede);}).length;
  return n?'<span class="bdg">'+n+'</span>':"";
 }
-/* los formularios a medio llenar se conservan por cuenta, hasta guardar o cancelar */
-function limpiar(todo){
- S.sel=null;S.motivo="";S.verSalida=null;S.revAbierta=false;S.cierre=false;S.cierreMotivo="";S.pago=null;S.empRetirar=false;S.fichaSede=null;
- if(todo){S.nuevo=null;S.recep=null;S.facForm=null;S.emp=null;S.aj=null;S.nuevaCta=null;}
-}
 
-function render(){
- $("login").hidden=!!S.cuenta; $("app").hidden=!S.cuenta;
- if(!S.cuenta)return;
- var C=cta(), G=cargo(), esT=G.ambito==="tienda";
- if(G.ambito==="sede")CTX=C.sede; else if(esT)CTX=C.tienda;
- if(!puede(S.vista))S.vista=G.menu[0];
- $("cuentaAv").textContent=iniciales(C.n); $("cuentaN").textContent=C.n;
- $("cuentaC").textContent=G.n+" · "+ubicCta(C);
- $("sedeL").textContent=esT?"Tienda":C.sede?"Sede":"Oficina";
- $("sedeV").textContent=esT?TIENDAS[C.tienda].n.replace("Supermercado ",""):C.sede?SEDES[C.sede].n:"Bogotá";
- $("sedeS").textContent=esT?TIENDAS[C.tienda].dir:C.sede?"Ubicación "+C.sede+" · "+SEDES[C.sede].personas+" personas":
-  "Ve "+pl(Object.keys(SEDES).length,"sede","sedes");
- $("nav").innerHTML=G.menu.map(function(v){
-  return '<button data-act="nav" data-v="'+v+'" class="'+(S.vista===v?"on":"")+'"'+
-   (S.vista===v?' aria-current="page"':'')+'>'+
-   '<svg class="ic" viewBox="0 0 16 18" fill="none" stroke="currentColor" stroke-width="1.4" '+
-   'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="'+IC[v]+'"/></svg>'+
-   MENU_N[v]+badge(v)+'</button>';}).join("");
- var T=TIT[S.vista], hoyTxt=fLargo(dISO(HOY))+' de 2026';
- $("tt").innerHTML='<h1>'+T[0]+'</h1><p>'+T[1]+'</p>';
- $("ctx").innerHTML=(esT?'TIENDA · '+TIENDAS[C.tienda].n.toUpperCase():C.sede?'SEDE '+C.sede+' · '+SEDES[C.sede].n.toUpperCase():
-  (FILTRABLES.indexOf(S.vista)>=0?'<label class="ctxSede">SEDE <select data-f="filtroSede" aria-label="Filtrar por sede">'+
-   '<option value="todas"'+(S.filtroSede==="todas"?" selected":"")+'>Todas las sedes</option>'+
-   Object.keys(SEDES).map(function(k){return '<option value="'+k+'"'+(S.filtroSede===k?" selected":"")+'>'+nombreSede(k)+'</option>';}).join("")+
-   '</select></label>':'OFICINA BOGOTÁ'))+'<br>'+hoyTxt;
- var V={rq:vistaRQ,recep:vistaRecep,inv:vistaInv,serv:vistaServ,hist:vistaHistorial,aprob:vistaAprob,oc:vistaOC,
-  fac:vistaFacturas,con:vistaContabilidad,nom:vistaNomina,tab:vistaTablero,cuentas:vistaCuentas,
-  caja:vistaCaja,vmargen:vistaVMargen,precios:vistaPrecios,vence:vistaVence,repo:vistaRepo,cuadre:vistaCuadre};
- var elVista=$("vista"), cambioVista=elVista.getAttribute("data-v")!==S.vista;
- elVista.setAttribute("data-v",S.vista);
- elVista.innerHTML=V[S.vista]();
- // la entrada solo en un cambio real de vista, no en cada render
- if(cambioVista){elVista.classList.remove("entra");void elVista.offsetWidth;elVista.classList.add("entra");}
- if(S.vista==="hist")bindHistorial();
- if(S.vista==="inv"&&S.aj&&S.aj.filtro)filtrarAj();
- if(S.foco){var el=$(S.foco);S.foco=null;if(el)el.focus();}
-}
-function arriba(){try{window.scrollTo(0,0);}catch(e){}}
 
-var tToast=null;
-function toast(msg){var t=$("toast");t.hidden=true;void t.offsetWidth;
- t.textContent=msg;t.hidden=false;
- clearTimeout(tToast);tToast=setTimeout(function(){t.hidden=true;},5200);}
 
-function info(pares){return '<div class="info">'+pares.map(function(x){
- return '<div><div class="l">'+x[0]+'</div><div class="v">'+x[1]+'</div></div>';}).join("")+'</div>';}
-function volver(txt,num,e){return '<div class="backrow"><button class="back" data-act="volver">← '+txt+'</button>'+
- (num?'<span class="docnum">'+esc(num)+'</span>':'')+(e?pill(e):'')+'</div>';}
-function fila(act,id,celdas){return '<tr class="rowlink" tabindex="0" data-act="'+act+'" data-id="'+esc(id)+'">'+celdas+'</tr>';}
 
 /* ============ SEDE · REQUERIMIENTOS ============ */
 function vistaRQ(){
@@ -2690,102 +2888,9 @@ function formEmp(){
 }
 
 /* ============ CAMBIO DE CUENTA ============ */
-function gruposCuentas(){
- return Object.keys(SEDES).map(function(k){return [nombreSede(k),CUENTAS.filter(function(c){return c.sede===k;})];})
-  .concat([["Oficina Bogotá",CUENTAS.filter(function(c){return !c.sede&&!c.tienda;})]])
-  .concat(Object.keys(TIENDAS).map(function(k){
-   return [TIENDAS[k].n,CUENTAS.filter(function(c){return c.tienda===k;})];}));
-}
-function listaCuentas(act,marcar){
- return gruposCuentas().map(function(g){
-  return '<div class="ctaGrp"><div class="lbl">'+esc(g[0])+'</div>'+g[1].map(function(c){
-   var on=marcar&&c.id===S.cuenta;
-   return '<button type="button" class="ctaOpt'+(on?' on':'')+'" data-act="'+act+'" data-id="'+esc(c.id)+'"'+(c.activa?'':' disabled')+'>'+
-    '<span class="av">'+esc(iniciales(c.n))+'</span><span class="t"><b>'+esc(c.n)+'</b><span>'+esc(CARGOS[c.cargo].n)+
-    ' · usuario '+esc(c.id)+(c.activa?'':' · desactivada')+'</span></span>'+(on?pill(["Actual","p-o"]):'')+'</button>';}).join("")+'</div>';}).join("");
-}
-function abrirCuentas(){
- ultimoFoco=$("cuentaBtn");
- var c=cta(), a=ultimoAcceso(c.id);
- $("vt").textContent="Su cuenta";
- $("vc").textContent=CARGOS[c.cargo].n+" · "+ubicCta(c);
- $("vb").innerHTML='<div class="ctaLista"><div class="ctaYo"><span class="av">'+esc(iniciales(c.n))+'</span><div><b>'+esc(c.n)+'</b>'+
-  '<span>Usuario '+esc(c.id)+(a?' · entró hoy a las '+a.h:'')+'</span></div></div>'+
-  '<div class="ctaAcc"><button class="btn" data-act="cerrar-sesion" id="btnSalir">Cerrar sesión</button></div>'+
-  '<h3 class="sec">Atajo de la demostración: entrar con otra cuenta</h3>'+
-  '<p class="sub" style="margin:-6px 0 12px">En el sistema real se cierra la sesión y se entra con el usuario y la contraseña de la otra persona.</p>'+
-  listaCuentas("entrar",true)+
-  '<div class="ctaPow">'+dantiaHTML()+'</div></div>';
- $("ovl").hidden=false;
- $("btnSalir").focus();
-}
-/* ============ MARCA DE MESURA (marca/mesura-marca.svg, inyectada por build.py) ============ */
-function marcaSVG(linea,acento,px){return MARCA_SVG.replace(/#0F5A47/g,linea).replace(/#BF7F14/g,acento)
- .replace('<svg ','<svg width="'+px+'" height="'+px+'" aria-hidden="true" focusable="false" ');}
-/* ============ POWERED BY DANTIA.CA ============ */
-function dantiaHTML(){return '<div class="dantia" role="img" aria-label="Powered by Dantia.ca">'+
- '<span class="dtL" aria-hidden="true">Powered by</span><span class="dtLogo" aria-hidden="true">'+
- '<svg class="dtMark" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="none" stroke="currentColor" stroke-width="4"/><path d="M12 20.5 17.5 26 28.5 14.5" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>'+
- '<span class="dtName">Dantia.ca</span></span></div>';}
-/* ============ INICIO Y CIERRE DE SESION ============ */
-var CLAVE_DEMO="demo";
-function pintarLogin(){
- $("login").innerHTML='<section class="lgIntro"><div class="lgBrand"><div class="gl" aria-hidden="true">'+marcaSVG("#FFFFFF","#F2B64E",32)+'</div>'+
-  '<div><b>Mesura</b><span>Operación de alimentación</span></div></div>'+
-  '<div class="lgMid"><h1>Requerimientos, compras, inventario y costo por plato de cada sede</h1><ul class="lgList">'+
-  '<li>La sede pide y recibe; la oficina aprueba y compra.</li>'+
-  '<li>Inventario por lote, con salida por fecha de vencimiento.</li>'+
-  '<li>Costo real por plato frente al estándar del contrato.</li>'+
-  '<li>Una cuenta por persona, con permisos por cargo y por sede.</li>'+
-  '<li>Dos escenarios en la misma demostración: alimentación institucional y un supermercado con caja, margen y merma.</li></ul></div>'+
-  dantiaHTML()+'</section>'+
-  '<section class="lgPanel"><form class="lgCard" id="lgForm" novalidate><h2>Iniciar sesión</h2>'+
-  '<div class="fld"><label for="lgU">Usuario</label><input class="big" id="lgU" name="usuario" autocomplete="username" '+
-   'autocapitalize="none" spellcheck="false"></div>'+
-  '<div class="fld"><label for="lgP">Contraseña</label><input class="big" id="lgP" name="clave" type="password" '+
-   'autocomplete="current-password"></div>'+
-  '<div class="lgMsg" id="lgMsg" aria-live="assertive"></div>'+
-  '<button class="btn lgBtn" type="submit" id="lgBtn">Entrar</button>'+
-  '<button class="lgLink" type="button" data-act="lg-olvide">¿Olvidó su contraseña?</button>'+
-  '<div class="lgInfo" id="lgInfo" aria-live="polite" hidden></div></form>'+
-  '<details class="lgDemo"><summary>Cuentas de demostración</summary>'+
-  '<p>Todas usan la contraseña <b>'+CLAVE_DEMO+'</b>. Elija una para llenar el formulario.</p>'+listaCuentas("lg-usar",false)+'</details>'+
-  dantiaHTML()+'<p class="lgNota">Demostración con datos de ejemplo.</p></section>';
-}
-function iniciarSesion(){
- var u=String($("lgU").value).trim().toLowerCase(), p=$("lgP").value, c=buscarCta(u), m=$("lgMsg");
- if(!u||!p){m.textContent="Escriba el usuario y la contraseña.";(u?$("lgP"):$("lgU")).focus();return;}
- if(!c||p!==CLAVE_DEMO){m.textContent="Usuario o contraseña incorrectos.";$("lgP").value="";$("lgP").focus();return;}
- if(!c.activa){m.textContent="Esta cuenta está desactivada. Administración puede reactivarla.";return;}
- abrirSesion(c.id);
-}
-function abrirSesion(id){
- var c=buscarCta(id), r=S.stash[id];
- BORR.forEach(function(k){S[k]=r?r[k]:null;});
- S.cuenta=id;
- if(!S.serv)S.serv={con:"desayuno",menu:"d1",n:c.sede?SEDES[c.sede].personas:SERV_DIA,real:{}};
- if(!S.filtroSede)S.filtroSede="todas";
- limpiar(false); S.vista=cargo().menu[0];
- S.accesos.unshift({id:id,h:hora()});
- $("ovl").hidden=true; ultimoFoco=null;
- render(); arriba(); $("cuentaBtn").focus();
- toast("Entró como "+c.n+" · "+CARGOS[c.cargo].n+" · "+ubicCta(c)+".");
-}
-function guardarBorradores(){var b={}; BORR.forEach(function(k){b[k]=S[k];}); S.stash[S.cuenta]=b;}
-function cerrarSesion(){
- if(!S.cuenta)return;
- var n=cta().n;
- guardarBorradores(); limpiar(false); S.cuenta=null;
- $("ovl").hidden=true; ultimoFoco=null;
- pintarLogin(); render(); arriba(); $("lgU").focus();
- toast("Sesión de "+n+" cerrada. Lo que dejó a medio llenar sigue guardado para su próxima entrada.");
-}
-function entrar(id){
- var c=buscarCta(id); if(!c||!c.activa)return;
- if(id===S.cuenta){cerrarDoc();return;}
- guardarBorradores();
- abrirSesion(id);
-}
+
+
+
 
 /* ============ DIRECCION · TABLERO DE SEDES ============ */
 function metricasSede(k){
@@ -2926,7 +3031,7 @@ function vistaTablero(){
 }
 
 /* ============ ADMINISTRACION · CUENTAS ============ */
-function ultimoAcceso(id){var a=null;S.accesos.forEach(function(x){if(!a&&x.id===id)a=x;});return a;}
+
 function sugerirUsuario(n){
  var p=String(n).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z\s]/g,"").trim().split(/\s+/).filter(Boolean);
  if(!p.length)return "";
@@ -3155,14 +3260,7 @@ function sugerido(excepto){
   var q=Math.ceil(nec(c)-stock(c)-enCamino(c,excepto)-1e-9); if(q>0)items.push({c:c,q:q});});
  return items;
 }
-var ACC={
- "cuenta-abrir":function(){abrirCuentas();},
- "cerrar-sesion":function(){cerrarSesion();},
- "lg-usar":function(v,id){var c=buscarCta(id); if(!c||!c.activa)return;
-  $("lgU").value=c.id; $("lgP").value=CLAVE_DEMO; $("lgMsg").textContent=""; $("lgBtn").focus();},
- "lg-olvide":function(){var i=$("lgInfo"); i.hidden=false;
-  i.textContent="En el sistema real, administración restablece la contraseña. En la demostración todas las cuentas usan la contraseña "+CLAVE_DEMO+".";},
- entrar:function(v,id){entrar(id);},
+var ACC_AL={
  "ficha-sede":function(v,id){if(!SEDES[id])return; S.fichaSede=id; render(); arriba();},
  "ficha-volver":function(){S.fichaSede=null; render(); arriba();},
  "ficha-con":function(v,id){S.filtroSede=id; S.fichaSede=null; S.vista="con"; render(); arriba();
@@ -3182,7 +3280,6 @@ var ACC={
   c.activa=!c.activa;
   evento("acc",c.id,(c.activa?"Cuenta reactivada · ":"Cuenta desactivada · ")+c.n,quien(),0,null,HOY,hora(),null);
   render(); toast(c.activa?c.n+" puede volver a entrar.":c.n+" ya no puede entrar. Lo que hizo sigue en el historial.");},
- nav:function(v){S.vista=v;limpiar(false);render();arriba();},
  abrir:function(v,id){
   if(S.vista==="rq"){var r=buscarRQ(id);
    if(r&&r.estado==="borrador"){S.nuevo={num:r.num,tipo:r.tipo,entrega:r.entrega,reemplaza:r.reemplaza||null,
@@ -3324,10 +3421,9 @@ var ACC={
   "En el sistema real aquí se descarga el archivo del periodo 2026-09 para "+(rol()==="sede"?"el centro de costo "+nombreSede(CTX):
    S.filtroSede==="todas"?"todas las sedes":"el centro de costo "+nombreSede(S.filtroSede))+".");}
 };
+Object.keys(ACC_AL).forEach(function(k){ACC[k]=ACC_AL[k];});
 
-function onCampo(ev){
- var el=ev.target, f=el&&el.getAttribute&&el.getAttribute("data-f"); if(!f)return;
- if(f.indexOf("sm")===0){campoTienda(f,el);return;}
+function campoDominio(f,el,ev){
  var val=el.value, i=+el.getAttribute("data-i"), cambio=ev.type==="change";
  switch(f){
   case "tipo": if(!cambio||val===S.nuevo.tipo)return;
@@ -3387,769 +3483,23 @@ function onCampo(ev){
  }
 }
 
-document.addEventListener("click",function(ev){
- var el=ev.target&&ev.target.closest?ev.target.closest("[data-act]"):null;
- if(!el||el.disabled)return;
- var a=el.getAttribute("data-act");
- if(ACC[a])ACC[a](el.getAttribute("data-v"),el.getAttribute("data-id"),el);
-});
-document.addEventListener("keydown",function(ev){
- if(ev.key==="Escape"){cerrarDoc();return;}
- var t=ev.target;
- if((ev.key==="Enter"||ev.key===" ")&&t&&t.classList&&t.classList.contains("rowlink")){ev.preventDefault();t.click();}
-});
-document.addEventListener("submit",function(ev){
- if(ev.target&&ev.target.id==="lgForm"){ev.preventDefault();iniciarSesion();}
-});
-var tAncho=null;
-window.addEventListener("resize",function(){clearTimeout(tAncho);
- tAncho=setTimeout(function(){if(S.cuenta&&S.vista==="tab"&&$("ovl").hidden)render();},200);});
-document.addEventListener("input",onCampo);
-document.addEventListener("change",onCampo);
-$("vx").addEventListener("click",cerrarDoc);
-$("ovl").addEventListener("click",function(ev){if(ev.target===$("ovl"))cerrarDoc();});
 
+
+
+
+/* ============ VISTAS DE ALIMENTACION ============ */
+VISTAS.rq=vistaRQ; VISTAS.recep=vistaRecep; VISTAS.inv=vistaInv; VISTAS.serv=vistaServ;
+VISTAS.hist=vistaHistorial; VISTAS.aprob=vistaAprob; VISTAS.oc=vistaOC; VISTAS.fac=vistaFacturas;
+VISTAS.con=vistaContabilidad; VISTAS.nom=vistaNomina; VISTAS.tab=vistaTablero; VISTAS.cuentas=vistaCuentas;
+
+/* ============ ARRANQUE ============
+   Va de último: el dominio ya registró sus cuentas, sus vistas y su texto de bienvenida. */
 S.cuenta=null;
 $("glMarca").innerHTML=marcaSVG("#FFFFFF","#F2B64E",25);
 $("pow").innerHTML=dantiaHTML();
+$("marcaSub").textContent=INTRO.sub;
 pintarLogin();
 render();
-
-/* ============ SUPERMERCADO: CAJA, MARGEN, MERMA Y REPOSICION ============
-   Escenario aparte del demo: una tienda independiente, con su catálogo, sus cuentas y su
-   inventario. No toca las sedes de alimentación ni sus cifras; sus movimientos quedan en
-   su propio historial. El precio de góndola incluye IVA y el margen se mide sin IVA. */
-var TPROD=D.tienda.prod, TPROVT=D.tienda.prov, TCAT=D.tienda.cat;
-var TID="T01";
-var COBERTURA=14;      /* días de inventario para lo que no se vence */
-var COB_MIN=7;         /* por debajo de esto hay que pedir, en lo que no se vence */
-var MARGEN_OBJ=0.18;   /* margen sobre el precio sin IVA que la tienda espera */
-var DESCUENTOS=[[3,0.30],[7,0.20],[10,0.10]];   /* días para vencer, descuento sugerido */
-var MOTIVOS_MERMA=["Vencido","Daño en bodega","Producto golpeado","Pérdida o faltante","Consumo interno"];
-
-TIENDAS[TID]={n:"Supermercado La Esquina",dir:"Calle 12 # 5-40, Bogotá",base:300000};
-var TIENDA=TIENDAS[TID];
-
-/* ---------- utilidades del catálogo ---------- */
-function tcods(){return Object.keys(TPROD);}
-function tcant(c,q){return numTxt(q,TPROD[c].u)+" "+TPROD[c].u;}
-function tpaso(c){return TPROD[c].u==="u"?"1":"0.5";}
-function tredondea(c,q){return TPROD[c].u==="u"?Math.round(q):Math.round(q*2)/2;}
-function neto(c,precio){var p=TPROD[c];return (precio===undefined?p.precio:precio)/(1+p.iva);}
-function margenDe(c,precio){var n=neto(c,precio);return n>0?(n-TPROD[c].cost)/n:0;}
-function pct(x,d){return fmt(x*100,d===undefined?1:d)+"%";}
-function tivaTxt(c){var i=TPROD[c].iva;return i?pct(i,0):"excluido";}
-function catCorta(n){return n==="Lácteos y huevos"?"Lácteos":n==="Frutas y verduras"?"Fruver":n==="Carnes y fríos"?"Carnes":n==="Aseo y hogar"?"Aseo":n;}
-
-/* ---------- siembra: secuencia propia para no mover las cifras de alimentación ---------- */
-var seedT=20261027;
-function rndT(){seedT=(seedT*1103515245+12345)&0x7fffffff;return seedT/0x7fffffff;}
-
-var tLote=4400;
-tcods().forEach(function(c){
- var p=TPROD[c], v=p.vida;
- if(v&&v<=20){   /* perecedero: un lote por vencer y uno fresco, pocos días de inventario */
-  nuevoLote(c,Math.max(1,tredondea(c,p.vd*(0.4+rndT()*0.6))),"T-"+(++tLote),
-   sumarDias(HOY,Math.max(1,Math.round(v*0.3))),false,TID);
-  nuevoLote(c,Math.max(1,tredondea(c,p.vd*(1.2+rndT()*1.6))),"T-"+(++tLote),
-   sumarDias(HOY,Math.max(3,Math.round(v*0.9))),false,TID);
- }else{
-  nuevoLote(c,Math.max(1,tredondea(c,p.vd*(6+rndT()*9))),"T-"+(++tLote),
-   v?sumarDias(HOY,Math.round(v*0.8)):null,false,TID);
- }
-});
-
-/* compras que se pasaron: pasa en cualquier tienda y es lo que la pantalla de vencimientos sirve para ver */
-[["7103",2.4,3],["7104",2.8,2],["7204",2.2,4],["7205",1.8,3],["7601",2.0,2],["7307",2.6,3],["7302",1.9,2]]
- .forEach(function(x){
-  var c=x[0];
-  nuevoLote(c,tredondea(c,TPROD[c].vd*x[1]),"T-"+(++tLote),sumarDias(HOY,x[2]),false,TID);
- });
-
-/* ventas de los 42 días anteriores a hoy, por producto y día */
-var TVD=[];
-(function(){
- var fin=dISO(HOY), ini=new Date(fin); ini.setDate(ini.getDate()-42);
- for(var d=new Date(ini); d<fin; d.setDate(d.getDate()+1)){
-  var f=new Date(d), dow=f.getDay();
-  var factor=dow===0?0.55:dow===6?1.35:dow===5?1.2:1;
-  tcods().forEach(function(c){
-   var p=TPROD[c], q=tredondea(c,p.vd*factor*(0.72+rndT()*0.56));
-   if(q<=0)return;
-   TVD.push({f:f,c:c,q:q,bruto:q*p.precio,neto:q*neto(c),cost:q*p.cost});
-  });
- }
-})();
-/* promedio diario de los últimos 28 días, que es lo que usa la reposición */
-var VD28={};
-(function(){
- var lim=new Date(dISO(HOY)); lim.setDate(lim.getDate()-28);
- TVD.forEach(function(r){if(r.f>=lim)VD28[r.c]=(VD28[r.c]||0)+r.q;});
- tcods().forEach(function(c){VD28[c]=(VD28[c]||0)/28;});
-})();
-
-S.tickets=[]; S.tmerma=[]; S.tprecios=[];
-var TICK_N=1240;
-function armarTicket(lineas,pago,h,recibe){
- var bruto=0, base=0, iva=0;
- lineas.forEach(function(l){
-  var t=l.q*l.precio; bruto+=t; base+=t/(1+l.iva); iva+=t-t/(1+l.iva);
- });
- return {num:"V-2609-"+pad4(++TICK_N),h:h,f:HOY,lineas:lineas,base:base,iva:iva,total:bruto,
-  pago:pago,recibe:recibe||0,cambio:recibe?Math.max(0,recibe-bruto):0};
-}
-/* los tickets de la mañana: el inventario sembrado ya está neto de estas ventas */
-(function(){
- var bolsa=[];
- tcods().forEach(function(c){var n=Math.max(1,Math.round(TPROD[c].vd/4));
-  for(var i=0;i<n;i++)bolsa.push(c);});
- var min=6*60+50;
- for(var t=0;t<16;t++){
-  min+=4+Math.floor(rndT()*9);
-  var n=2+Math.floor(rndT()*4), lineas=[], vistos={};
-  for(var i=0;i<n;i++){
-   var c=bolsa[Math.floor(rndT()*bolsa.length)];
-   if(vistos[c])continue;
-   vistos[c]=1;
-   var p=TPROD[c], q=p.u==="u"?1+Math.floor(rndT()*3):tredondea(c,0.5+rndT()*1.5);
-   lineas.push({c:c,q:q,precio:p.precio,iva:p.iva});
-  }
-  if(!lineas.length)continue;
-  var tk=armarTicket(lineas,rndT()<0.62?"efectivo":"tarjeta",pad(Math.floor(min/60))+":"+pad(min%60));
-  S.tickets.unshift(tk);
-  evento("venta",tk.num,"Venta en caja · "+pl(tk.lineas.length,"línea","líneas")+" · "+tk.pago,
-   "Lina Ocampo",tk.total,null,HOY,tk.h,TID);
- }
-})();
-/* merma y cambios de precio de las últimas semanas */
-(function(){
- /* lo que se pierde en una tienda es sobre todo fruta, lácteos y panadería */
- var cands=tcods().filter(function(c){var v=TPROD[c].vida;return v&&v<=20;});
- for(var d=28;d>=1;d--){
-  if(rndT()<0.15)continue;
-  var n=1+Math.floor(rndT()*3);
-  for(var i=0;i<n;i++){
-   var c=cands[Math.floor(rndT()*cands.length)], p=TPROD[c];
-   var q=tredondea(c,p.vd*(0.08+rndT()*0.16));
-   if(q<=0)continue;
-   var mot=rndT()<0.55?"Vencido":rndT()<0.6?"Producto golpeado":rndT()<0.7?"Daño en bodega":"Pérdida o faltante";
-   var f=sumarDias(HOY,-d);
-   S.tmerma.push({f:f,c:c,lote:"·",q:q,motivo:mot,costo:q*p.cost,por:"Lina Ocampo"});
-   evento("merma","MR-"+f.slice(5).replace("-","")+"-"+i,"Merma · "+p.n+" · "+tcant(c,q)+" · "+mot,
-    "Lina Ocampo",q*p.cost,null,f,"17:3"+i,TID);
-  }
- }
-})();
-S.tmerma.sort(function(a,b){return b.f.localeCompare(a.f);});
-[["7001",4600,4800,-16],["7401",6100,6400,-6]].forEach(function(x){
- S.tprecios.push({f:sumarDias(HOY,x[3]),c:x[0],antes:x[1],despues:x[2],motivo:"Alza del proveedor",por:"Esteban Parra"});
- evento("precio","PR-"+String(x[0]),"Precio · "+TPROD[x[0]].n+" · "+money(x[1])+" a "+money(x[2]),
-  "Esteban Parra",0,null,sumarDias(HOY,x[3]),"08:40",TID);
-});
-S.tprecios.sort(function(a,b){return b.f.localeCompare(a.f);});
-
-/* ---------- cargos, cuentas y menús ---------- */
-CARGOS.caj={n:"Cajero de tienda",ambito:"tienda",menu:["caja","cuadre","hist"]};
-CARGOS.jtie={n:"Jefe de tienda",ambito:"tienda",menu:["vmargen","precios","vence","repo","cuadre","hist"]};
-CUENTAS.push({id:"locampo",n:"Lina Ocampo",cargo:"caj",sede:null,tienda:TID,activa:true});
-CUENTAS.push({id:"eparra",n:"Esteban Parra",cargo:"jtie",sede:null,tienda:TID,activa:true});
-MENU_N.caja="Caja"; MENU_N.vmargen="Ventas y margen"; MENU_N.precios="Precios y margen";
-MENU_N.vence="Vencimientos y merma"; MENU_N.repo="Reposición"; MENU_N.cuadre="Cuadre de caja";
-IC.caja='M2 6h12v8H2z M2 9h12 M4.5 11.5h3 M11 11.5h1.5';
-IC.vmargen='M2 14l4-4 3 2 5-6 M11 6h3v3';
-IC.precios='M2 9l7-7h5v5l-7 7z M11 5.5h.01';
-IC.vence='M8 2.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11z M8 5.5v3.5 M8 11.2h.01';
-IC.repo='M2 5h7v6H2z M9 7h3l2 2v2H9z M4.5 13.5h.01 M11.5 13.5h.01';
-IC.cuadre='M2 4h12v9H2z M2 7h12 M10.5 10.5h2';
-TIT.caja=["Caja","Se cobra al cliente. El inventario baja por lote y la venta queda con su margen."];
-TIT.vmargen=["Ventas y margen","Cómo va la tienda: venta del día, margen por categoría y qué se mueve."];
-TIT.precios=["Precios y margen","Costo, precio de góndola y margen sin IVA de cada producto."];
-TIT.vence=["Vencimientos y merma","Lo que está por vencer, el descuento sugerido y lo que se pierde."];
-TIT.repo=["Reposición","Días de inventario según la venta real y qué pedir a cada proveedor."];
-TIT.cuadre=["Cuadre de caja","Base, ventas del día por medio de pago y el conteo al cerrar."];
-TIPOS.venta=["Venta","p-o"]; TIPOS.merma=["Merma","p-a"]; TIPOS.precio=["Cambio de precio","p-w"];
-TIPOS.cierre=["Cierre de caja","p-n"]; TIPOS.pedido=["Pedido a proveedor","p-w"];
-EVENTOS_CARGO.caj=["venta","cierre","merma"];
-EVENTOS_CARGO.jtie=["venta","cierre","merma","precio","pedido"];
-BORR=BORR.concat(["tick","mermaF","precioEd","conteo"]);
-var VISTAS_TIENDA=["caja","vmargen","precios","vence","repo","cuadre"];
-function badgeTienda(v){
- var n=0;
- if(v==="vence")n=lotesEnRiesgo().length;
- else if(v==="repo")n=tcods().filter(porPedir).length;
- return n?'<span class="bdg">'+n+'</span>':"";
-}
-
-/* ---------- cálculos compartidos ---------- */
-function lotesPorVencer(dias){
- return S.inv.filter(function(l){
-  return l.sede===TID&&l.q>1e-9&&l.ven&&diasHasta(l.ven)<=dias;
- }).sort(function(a,b){return a.ven.localeCompare(b.ven);});
-}
-/* cuánto alcanza a venderse de cada lote antes de su fecha, en el orden en que salen */
-function riesgoMapa(){
- var m={};
- tcods().forEach(function(c){
-  var vd=VD28[c]||0, usado=0;
-  lotesT(c).forEach(function(l){
-   var d=l.ven?Math.max(0,diasHasta(l.ven)):9999;
-   var vende=Math.min(l.q,Math.max(0,vd*d-usado));
-   m[l.id]={vende:vende,sobra:r3(l.q-vende)};
-   usado+=vende;
-  });
- });
- return m;
-}
-function lotesEnRiesgo(m){
- m=m||riesgoMapa();
- return lotesPorVencer(12).filter(function(l){return m[l.id]&&m[l.id].sobra>1e-9;})
-  .sort(function(a,b){return m[b.id].sobra*TPROD[b.c].cost-m[a.id].sobra*TPROD[a.c].cost;});
-}
-function cobertura(c){var v=VD28[c];return v>0?stockT(c)/v:99;}
-/* lo que se vence no se pide para dos semanas: el objetivo se ajusta a su vida útil */
-function objCob(c){var v=TPROD[c].vida;return v?Math.max(2,Math.min(COBERTURA,Math.round(v*0.6))):COBERTURA;}
-function minCob(c){return Math.max(1,Math.round(objCob(c)*0.45));}
-function porPedir(c){return cobertura(c)<minCob(c);}
-function stockT(c){return S.inv.reduce(function(a,l){return a+(l.c===c&&l.sede===TID?l.q:0);},0);}
-function lotesT(c){
- return S.inv.filter(function(l){return l.c===c&&l.sede===TID&&l.q>1e-9;})
-  .sort(function(a,b){return (a.ven||"9999-12-31").localeCompare(b.ven||"9999-12-31");});
-}
-function bajarStock(c,q){   /* saca por el que vence primero y devuelve de qué lotes salió */
- var ls=lotesT(c), falta=q, sal=[];
- ls.forEach(function(l){
-  if(falta<=1e-9)return;
-  var t=Math.min(l.q,falta); l.q=r3(l.q-t); falta=r3(falta-t); sal.push({lote:l.lote,q:t,ven:l.ven});
- });
- return sal;
-}
-function ventasRango(dias){
- var lim=new Date(dISO(HOY)); lim.setDate(lim.getDate()-dias);
- return TVD.filter(function(r){return r.f>=lim;});
-}
-function totalRango(dias){
- var t={neto:0,cost:0,q:0};
- ventasRango(dias).forEach(function(r){t.neto+=r.neto;t.cost+=r.cost;t.q+=r.q;});
- t.margen=t.neto?(t.neto-t.cost)/t.neto:0;
- return t;
-}
-function hoyTotales(){
- var t={bruto:0,neto:0,cost:0,efe:0,tar:0,lineas:0,tickets:S.tickets.length};
- S.tickets.forEach(function(k){
-  t.bruto+=k.total;
-  if(k.pago==="efectivo")t.efe+=k.total; else t.tar+=k.total;
-  k.lineas.forEach(function(l){
-   t.neto+=l.q*l.precio/(1+l.iva); t.cost+=l.q*TPROD[l.c].cost; t.lineas++;
-  });
- });
- t.margen=t.neto?(t.neto-t.cost)/t.neto:0;
- t.prom=t.tickets?t.bruto/t.tickets:0;
- return t;
-}
-function merma28(){
- var ini=sumarDias(HOY,-28), t=0;
- S.tmerma.forEach(function(m){if(m.f>=ini)t+=m.costo;});
- return t;
-}
-
-/* ---------- caja ---------- */
-function nuevoTick(){return {lineas:[],pago:"efectivo",recibe:"",busca:"",cat:"todas"};}
-function tickActual(){if(!S.tick)S.tick=nuevoTick();return S.tick;}
-function tickTotales(t){
- var bruto=0, base=0;
- t.lineas.forEach(function(l){var p=TPROD[l.c], x=p.precio*l.q; bruto+=x; base+=x/(1+p.iva);});
- return {bruto:bruto,base:base,iva:bruto-base};
-}
-function lineaTick(c){var r=null;tickActual().lineas.forEach(function(l){if(l.c===c)r=l;});return r;}
-function gridHTML(){
- var t=tickActual(), q=t.busca.trim().toLowerCase();
- var lista=tcods().filter(function(c){
-  var p=TPROD[c];
-  if(t.cat!=="todas"&&p.cat!==t.cat)return false;
-  return !q||p.n.toLowerCase().indexOf(q)>=0||c.indexOf(q)>=0;
- });
- if(!lista.length)return '<div class="empty">Ningún producto coincide con la búsqueda.</div>';
- return '<div class="pGrid">'+lista.map(function(c){
-  var p=TPROD[c], s=stockT(c), ln=lineaTick(c), sin=s<=1e-9;
-  return '<button type="button" class="pBtn'+(sin?" sin":"")+(ln?" en":"")+'" data-act="sm-add" data-id="'+c+'"'+
-   (sin?' disabled':'')+'><b>'+esc(p.n)+'</b><span class="pr">'+money(p.precio)+'</span>'+
-   '<span class="st">'+(sin?"sin saldo":tcant(c,s))+'</span>'+(ln?'<span class="cn">'+numTxt(ln.q,p.u)+'</span>':'')+
-   '</button>';
- }).join("")+'</div>';
-}
-function tickHTML(){
- var t=tickActual(), tt=tickTotales(t);
- var filas=t.lineas.map(function(l){
-  var p=TPROD[l.c];
-  return '<tr><td><span class="ing">'+esc(p.n)+'</span><div class="cod">'+money(p.precio)+' · '+tivaTxt(l.c)+'</div></td>'+
-   '<td class="qtd"><button type="button" class="xbtn" data-act="sm-menos" data-id="'+l.c+'" aria-label="Quitar uno de '+esc(p.n)+'">−</button>'+
-   '<span class="qv">'+numTxt(l.q,p.u)+'</span>'+
-   '<button type="button" class="xbtn" data-act="sm-mas" data-id="'+l.c+'" aria-label="Agregar uno de '+esc(p.n)+'">+</button></td>'+
-   '<td class="n r">'+money(l.q*p.precio)+'</td>'+
-   '<td class="r"><button type="button" class="xbtn" data-act="sm-quitar" data-id="'+l.c+'" aria-label="Eliminar '+esc(p.n)+'">✕</button></td></tr>';
- }).join("");
- var efectivo=t.pago==="efectivo", recibe=parseNum(t.recibe), cambio=recibe-tt.bruto;
- return (t.lineas.length?'<div class="scroll"><table class="tickT"><tbody>'+filas+'</tbody></table></div>':
-   '<div class="empty">Agregue productos desde la izquierda. También puede buscarlos por nombre o código.</div>')+
-  '<div class="tickTot"><div><span>Base</span><b>'+money(tt.base)+'</b></div>'+
-  '<div><span>IVA</span><b>'+money(tt.iva)+'</b></div>'+
-  '<div class="tot"><span>Total</span><b>'+money(tt.bruto)+'</b></div></div>'+
-  '<div class="fld" style="margin-top:14px"><label>Medio de pago</label><div class="quick">'+
-  ['efectivo','tarjeta'].map(function(m){
-   return '<button type="button" data-act="sm-pago" data-id="'+m+'" class="'+(t.pago===m?"on":"")+'"'+
-    (t.pago===m?' aria-current="true"':'')+'>'+(m==="efectivo"?"Efectivo":"Tarjeta")+'</button>';}).join("")+'</div></div>'+
-  (efectivo?'<div class="fld" style="margin-top:10px"><label for="smRecibe">Recibe</label>'+
-   '<input class="big" id="smRecibe" data-f="smRecibe" type="number" min="0" step="100" value="'+esc(t.recibe)+'" '+
-   'inputmode="numeric" autocomplete="off"><div class="hint" id="smCambio">'+
-   (t.recibe!==""&&cambio>=0?"Cambio "+money(cambio):t.recibe!==""?"Falta "+money(-cambio):"Devuelta calculada al escribir")+
-   '</div></div>':'')+
-  '<div class="lgMsg" id="smErr" aria-live="assertive"></div>'+
-  '<div style="display:flex;gap:10px;margin-top:4px">'+
-  '<button class="btn" data-act="sm-cobrar" style="flex:1">Cobrar '+money(tt.bruto)+'</button>'+
-  '<button class="btn g" data-act="sm-vaciar"'+(t.lineas.length?'':' disabled')+'>Vaciar</button></div>';
-}
-function vistaCaja(){
- var t=tickActual(), h=hoyTotales();
- var chips=["todas"].concat(TCAT).map(function(k){
-  return '<button type="button" data-act="sm-cat" data-id="'+esc(k)+'" class="'+(t.cat===k?"on":"")+'"'+
-   (t.cat===k?' aria-current="true"':'')+'>'+esc(k==="todas"?"Todas":catCorta(k))+'</button>';}).join("");
- return '<div class="stats">'+
-  st(money(h.bruto),"Vendido hoy","")+st(fmt(h.tickets),"Tickets del día","")+
-  st(money(h.prom),"Ticket promedio","")+st(pct(h.margen),"Margen del día sin IVA",h.margen>=MARGEN_OBJ?"good":"warn")+'</div>'+
-  '<div class="cajaW">'+
-  '<div class="card"><header><div><h2>Productos</h2><p>Toque un producto para agregarlo al ticket. El saldo que aparece es el de la tienda.</p></div></header>'+
-  '<div class="body"><div class="fld"><label for="smBusca">Buscar</label>'+
-  '<input class="big" id="smBusca" data-f="smBusca" value="'+esc(t.busca)+'" placeholder="nombre o código" autocomplete="off"></div>'+
-  '<div class="quick" style="margin:12px 0">'+chips+'</div>'+
-  '<div id="smGrid">'+gridHTML()+'</div></div></div>'+
-  '<div class="card"><header><div><h2>Ticket</h2><p id="smLin">'+pl(t.lineas.length,"línea","líneas")+'</p></div></header>'+
-  '<div class="body" id="smTick">'+tickHTML()+'</div></div>'+
-  '</div>'+
-  '<div class="cal">El precio de góndola incluye IVA. Al cobrar, el inventario baja por el lote que vence primero y la '+
-  'venta queda con su costo y su margen. El tiquete de esta demostración no es el documento equivalente electrónico de la DIAN.</div>';
-}
-function pintarCaja(){
- var g=$("smGrid"), k=$("smTick"), n=$("smLin");
- if(g)g.innerHTML=gridHTML();
- if(k)k.innerHTML=tickHTML();
- if(n)n.textContent=pl(tickActual().lineas.length,"línea","líneas");
-}
-function reciboHTML(t){
- return '<div class="recibo"><div class="rc"><b>'+esc(TIENDA.n)+'</b><br>'+esc(TIENDA.dir)+'<br>'+
-  'Tiquete '+esc(t.num)+' · '+fISO(t.f)+' '+esc(t.h)+'</div>'+
-  '<table><thead><tr><th>Producto</th><th class="r">Cant</th><th class="r">Valor</th></tr></thead><tbody>'+
-  t.lineas.map(function(l){var p=TPROD[l.c];
-   return '<tr><td>'+esc(p.n)+'</td><td class="n r">'+numTxt(l.q,p.u)+'</td><td class="n r">'+money(l.q*l.precio)+'</td></tr>';
-  }).join("")+'</tbody></table>'+
-  '<div class="tickTot"><div><span>Base</span><b>'+money(t.base)+'</b></div>'+
-  '<div><span>IVA</span><b>'+money(t.iva)+'</b></div>'+
-  '<div class="tot"><span>Total</span><b>'+money(t.total)+'</b></div></div>'+
-  '<div class="rc">Pago en '+esc(t.pago)+
-  (t.pago==="efectivo"&&t.recibe?' · recibido '+money(t.recibe)+' · cambio '+money(t.cambio):'')+'</div>'+
-  '<p class="sub">Documento de demostración. No es el documento equivalente electrónico que exige la DIAN.</p></div>';
-}
-function verRecibo(num){
- var t=null; S.tickets.forEach(function(x){if(x.num===num)t=x;});
- if(!t)return;
- ultimoFoco=document.activeElement;
- $("vt").textContent="Tiquete "+t.num;
- $("vc").textContent=TIENDA.n+" · "+fISO(t.f)+" "+t.h+" · "+money(t.total);
- $("vb").innerHTML=reciboHTML(t);
- $("ovl").hidden=false; $("vx").focus();
-}
-
-/* ---------- ventas y margen ---------- */
-function vistaVMargen(){
- var h=hoyTotales(), s7=totalRango(7), s28=totalRango(28), w=anchoGraf();
- /* venta por día, últimos 14 */
- var dias=[], mapa={};
- ventasRango(14).forEach(function(r){var k=iso(r.f); if(!mapa[k]){mapa[k]={f:r.f,neto:0,cost:0};dias.push(mapa[k]);} mapa[k].neto+=r.neto; mapa[k].cost+=r.cost;});
- dias.sort(function(a,b){return a.f-b.f;});
- var g1=tarjetaGraf("Venta por día, sin IVA","Las dos últimas semanas. Hoy va aparte porque el día no ha terminado.",
-  grafBarras({w:w,cats:dias.map(function(d){return dm(d.f);}),
-   series:[{n:"Venta",color:"var(--g1)",datos:dias.map(function(d){return d.neto;})}],
-   fmtY:compacto,fmtTip:money,titulo:"Venta diaria sin IVA de las últimas dos semanas"})+
-  datosHTML(["Día","Venta","Margen"],dias.map(function(d){
-   return [esc(dm(d.f)),money(d.neto),pct(d.neto?(d.neto-d.cost)/d.neto:0)];})));
- /* margen por categoría, 28 días */
- var cats=TCAT.map(function(k){return {n:k,neto:0,cost:0};}), ci={};
- cats.forEach(function(x,i){ci[x.n]=i;});
- ventasRango(28).forEach(function(r){var x=cats[ci[TPROD[r.c].cat]]; x.neto+=r.neto; x.cost+=r.cost;});
- var g2=tarjetaGraf("Margen por categoría, 28 días","Cuánto deja cada categoría después del costo de la mercancía.",
-  grafBarras({w:w,cats:cats.map(function(x){return catCorta(x.n);}),
-   series:[{n:"Margen",color:"var(--g3)",datos:cats.map(function(x){return x.neto-x.cost;})}],
-   fmtY:compacto,fmtTip:money,titulo:"Margen por categoría en los últimos 28 días",ml:52})+
-  datosHTML(["Categoría","Venta","Margen","% margen"],cats.map(function(x){
-   return [esc(x.n),money(x.neto),money(x.neto-x.cost),pct(x.neto?(x.neto-x.cost)/x.neto:0)];})));
- /* productos */
- var porProd={};
- ventasRango(28).forEach(function(r){var x=porProd[r.c]||(porProd[r.c]={q:0,neto:0,cost:0}); x.q+=r.q; x.neto+=r.neto; x.cost+=r.cost;});
- var orden=tcods().slice().sort(function(a,b){return (porProd[b]?porProd[b].neto:0)-(porProd[a]?porProd[a].neto:0);});
- var lentos=tcods().slice().sort(function(a,b){return cobertura(b)-cobertura(a);}).slice(0,6);
- var filaProd=function(c){
-  var x=porProd[c]||{q:0,neto:0,cost:0}, m=x.neto?(x.neto-x.cost)/x.neto:0;
-  return '<tr><td><span class="ing">'+esc(TPROD[c].n)+'</span><div class="cod">'+esc(catCorta(TPROD[c].cat))+'</div></td>'+
-   '<td class="n r">'+tcant(c,x.q)+'</td><td class="n r">'+money(x.neto)+'</td>'+
-   '<td class="n r">'+money(x.neto-x.cost)+'</td><td class="n r"'+(m<MARGEN_OBJ?' style="color:var(--warn)"':'')+'>'+pct(m)+'</td>'+
-   '<td class="n r">'+fmt(cobertura(c),0)+' días</td></tr>';
- };
- var cab='<thead><tr><th>Producto</th><th class="r">Unidades</th><th class="r">Venta</th><th class="r">Margen</th>'+
-  '<th class="r">% margen</th><th class="r">Cobertura</th></tr></thead>';
- return '<div class="stats">'+
-  st(money(h.bruto),"Vendido hoy con IVA","")+st(pct(h.margen),"Margen de hoy",h.margen>=MARGEN_OBJ?"good":"warn")+
-  st(money(s7.neto),"Venta de 7 días sin IVA","")+st(pct(s7.margen),"Margen de 7 días",s7.margen>=MARGEN_OBJ?"good":"warn")+
-  st(money(s28.neto),"Venta de 28 días sin IVA","")+st(money(merma28()),"Merma de 28 días",merma28()?"bad":"good")+'</div>'+
-  '<div class="graficas">'+g1+g2+'</div>'+
-  '<div class="card"><header><div><h2>Los que más venden</h2><p>Últimos 28 días, venta sin IVA.</p></div></header>'+
-  '<div class="scroll"><table style="min-width:720px">'+cab+'<tbody>'+orden.slice(0,8).map(filaProd).join("")+'</tbody></table></div></div>'+
-  '<div class="card"><header><div><h2>Los más lentos</h2><p>Los que más días de inventario acumulan frente a su venta. '+
-  'Conviene revisar precio, exhibición o dejar de pedirlos.</p></div></header>'+
-  '<div class="scroll"><table style="min-width:720px">'+cab+'<tbody>'+lentos.map(filaProd).join("")+'</tbody></table></div></div>';
-}
-
-/* ---------- precios y margen ---------- */
-function precioEd(){if(!S.precioEd)S.precioEd={};return S.precioEd;}
-function txtGuardar(n){return "Guardar "+(n?pl(n,"cambio","cambios"):"cambios");}
-function cambiosPrecio(){
- var e=precioEd();
- return Object.keys(e).filter(function(c){return parseNum(e[c])!==TPROD[c].precio;});
-}
-function precioDe(c){var e=precioEd();return e[c]!==undefined?parseNum(e[c]):TPROD[c].precio;}
-function margenCelda(c){
- var p=precioDe(c), m=margenDe(c,p), bajo=m<MARGEN_OBJ, malo=p<=TPROD[c].cost;
- return '<b'+(malo?' style="color:var(--alert)"':bajo?' style="color:var(--warn)"':'')+'>'+pct(m)+'</b>'+
-  (malo?'<div class="sub" style="color:var(--alert)">por debajo del costo</div>':'');
-}
-function vistaPrecios(){
- var e=precioEd(), cambios=cambiosPrecio();
- var porProd={};
- ventasRango(28).forEach(function(r){var x=porProd[r.c]||(porProd[r.c]={q:0,neto:0});x.q+=r.q;x.neto+=r.neto;});
- var bajos=tcods().filter(function(c){return margenDe(c)<MARGEN_OBJ;});
- var filas="", grupo="";
- TCAT.forEach(function(cat){
-  tcods().filter(function(c){return TPROD[c].cat===cat;}).forEach(function(c){
-   var p=TPROD[c], x=porProd[c]||{q:0,neto:0};
-   if(grupo!==cat){grupo=cat;filas+='<tr class="grp"><td colspan="7">'+esc(cat)+'</td></tr>';}
-   filas+='<tr><td><span class="ing">'+esc(p.n)+'</span><div class="cod">'+c+'</div></td>'+
-    '<td class="n r">'+money(p.cost)+'</td>'+
-    '<td class="r"><input class="w" type="number" min="0" step="50" data-f="smPrecio" data-id="'+c+'" '+
-     'value="'+esc(e[c]!==undefined?e[c]:String(p.precio))+'" aria-label="Precio de '+esc(p.n)+'"></td>'+
-    '<td class="n r">'+money(neto(c,precioDe(c)))+'</td>'+
-    '<td class="n r" id="mg-'+c+'">'+margenCelda(c)+'</td>'+
-    '<td class="n r">'+tivaTxt(c)+'</td>'+
-    '<td class="n r">'+money(x.neto)+'</td></tr>';
-  });
- });
- return '<div class="stats">'+
-  st(fmt(tcods().length),"Productos","")+
-  st(pct(totalRango(28).margen),"Margen de 28 días","")+
-  st(fmt(bajos.length),"Por debajo del "+pct(MARGEN_OBJ,0)+" objetivo",bajos.length?"warn":"good")+
-  st(fmt(cambios.length),"Precios sin guardar",cambios.length?"warn":"")+'</div>'+
-  '<div class="card"><header><div><h2>Lista de precios</h2><p>El precio es el de góndola, con IVA incluido. El margen se '+
-  'calcula sobre el precio sin IVA, que es lo que queda para la tienda.</p></div>'+
-  '<button class="btn" id="smGuardar" data-act="sm-precios-guardar"'+(cambios.length?'':' disabled')+'>'+
-  txtGuardar(cambios.length)+'</button></header>'+
-  '<div class="lgMsg" id="smPrecioErr" style="padding:0 18px" aria-live="assertive"></div>'+
-  '<div class="scroll"><table style="min-width:820px"><thead><tr><th>Producto</th><th class="r">Costo</th>'+
-  '<th class="r">Precio con IVA</th><th class="r">Sin IVA</th><th class="r">Margen</th><th class="r">IVA</th>'+
-  '<th class="r">Venta 28 días</th></tr></thead><tbody>'+filas+'</tbody></table></div></div>'+
-  (S.tprecios.length?'<div class="card"><header><h2>Cambios recientes</h2></header><div class="scroll"><table>'+
-   '<thead><tr><th>Fecha</th><th>Producto</th><th class="r">Antes</th><th class="r">Ahora</th><th>Motivo</th><th>Quién</th></tr></thead><tbody>'+
-   S.tprecios.slice(0,10).map(function(x){
-    return '<tr><td class="n">'+fISO(x.f)+'</td><td>'+esc(TPROD[x.c].n)+'</td><td class="n r">'+money(x.antes)+'</td>'+
-     '<td class="n r"><b>'+money(x.despues)+'</b></td><td>'+esc(x.motivo)+'</td><td>'+esc(x.por)+'</td></tr>';}).join("")+
-   '</tbody></table></div></div>':'');
-}
-
-/* ---------- vencimientos y merma ---------- */
-function descuentoSug(dias){
- var d=0;
- DESCUENTOS.forEach(function(x){if(!d&&dias<=x[0])d=x[1];});
- return d;
-}
-/* se recorta el descuento hasta donde el precio siga cubriendo el costo */
-function descAplicable(c,desc){
- var p=TPROD[c], piso=p.cost*1.03, d=desc;
- while(d>0.049&&precioCon(c,d)<piso)d=Math.round((d-0.05)*100)/100;
- return d>0.049?Math.round(d*100)/100:0;
-}
-function precioCon(c,d){return Math.round(TPROD[c].precio*(1-d)/50)*50;}
-function mermaF(){if(!S.mermaF)S.mermaF={c:"",lote:"",q:"",motivo:MOTIVOS_MERMA[0]};return S.mermaF;}
-function vistaVence(){
- var RM=riesgoMapa(), ls=lotesEnRiesgo(RM), F=mermaF();
- var valor=ls.reduce(function(a,l){return a+RM[l.id].sobra*TPROD[l.c].cost;},0);
- var m28=totalRango(28), mm=merma28();
- var filas=ls.map(function(l){
-  var p=TPROD[l.c], d=diasHasta(l.ven), desc=descAplicable(l.c,descuentoSug(d)), nuevo=precioCon(l.c,desc);
-  var sobra=RM[l.id].sobra, vende=tredondea(l.c,RM[l.id].vende);
-  return '<tr><td><span class="ing">'+esc(p.n)+'</span><div class="cod">'+esc(l.lote)+'</div></td>'+
-   '<td class="n">'+fISO(l.ven)+'<div class="sub"'+(d<=3?' style="color:var(--alert)"':'')+'>'+diasTxt(l.ven)+'</div></td>'+
-   '<td class="n r">'+tcant(l.c,l.q)+'</td>'+
-   '<td class="n r">'+tcant(l.c,vende)+'</td>'+
-   '<td class="n r"><b style="color:var(--alert)">'+tcant(l.c,sobra)+'</b><div class="sub">'+money(sobra*p.cost)+'</div></td>'+
-   '<td class="n r">'+money(p.precio)+'</td>'+
-   '<td class="n r">'+(desc?pct(desc,0)+'<div class="sub">a '+money(nuevo)+'</div>':
-    '<span class="sub">sin margen</span>')+'</td>'+
-   '<td class="r">'+(desc?'<button class="btn g s" data-act="sm-descuento" data-id="'+l.id+'">Aplicar</button>':
-    '<span class="sub">evaluar merma</span>')+'</td></tr>';
- }).join("");
- var lotesSel=F.c?lotesT(F.c):[];
- return '<div class="stats">'+
-  st(money(valor),"Costo en riesgo de vencerse",valor?"warn":"good")+
-  st(fmt(ls.length),"Lotes en riesgo",ls.length?"warn":"good")+
-  st(money(mm),"Merma de 28 días",mm?"bad":"good")+
-  st(pct(m28.neto?mm/m28.neto:0,2),"Merma sobre la venta","")+'</div>'+
-  '<div class="card"><header><div><h2>Lo que no alcanza a venderse</h2><p>Cada lote se compara con la venta de las últimas '+
-  'cuatro semanas: lo que sobra antes de la fecha de vencimiento es lo que hay que mover. El descuento sugerido crece a '+
-  'medida que se acerca la fecha, y aplicarlo cambia el precio de góndola.</p></div></header>'+
-  (ls.length?'<div class="scroll"><table style="min-width:880px"><thead><tr><th>Producto y lote</th><th>Vence</th>'+
-   '<th class="r">Saldo</th><th class="r">Se vende antes</th><th class="r">Sobra</th><th class="r">Precio</th>'+
-   '<th class="r">Descuento</th><th><span style="position:absolute;left:-9999px">Acción</span></th></tr></thead><tbody>'+
-   filas+'</tbody></table></div>':
-   '<div class="empty">Al ritmo de venta actual, todos los lotes alcanzan a venderse antes de vencerse.</div>')+'</div>'+
-  '<div class="card"><header><div><h2>Registrar merma</h2><p>Lo que no se puede vender sale del inventario con su motivo y '+
-  'queda en el historial con el costo.</p></div></header><div class="body"><div class="grid2">'+
-  '<div class="fld"><label for="smMc">Producto</label><select class="big" id="smMc" data-f="smMc">'+
-   '<option value="">Seleccione</option>'+tcods().map(function(c){
-    return '<option value="'+c+'"'+(F.c===c?" selected":"")+'>'+esc(TPROD[c].n)+'</option>';}).join("")+'</select></div>'+
-  '<div class="fld"><label for="smMl">Lote</label><select class="big" id="smMl" data-f="smMl"'+(F.c?'':' disabled')+'>'+
-   (F.c?'<option value="">Seleccione</option>'+lotesSel.map(function(l){
-     return '<option value="'+esc(l.id)+'"'+(F.lote===l.id?" selected":"")+'>'+esc(l.lote)+' · '+tcant(F.c,l.q)+
-      (l.ven?' · vence '+fISO(l.ven):'')+'</option>';}).join(""):'<option>Elija el producto primero</option>')+'</select></div>'+
-  '<div class="fld"><label for="smMq">Cantidad</label><input class="big" id="smMq" data-f="smMq" type="number" min="0" '+
-   'step="'+(F.c?tpaso(F.c):"1")+'" value="'+esc(F.q)+'" autocomplete="off"></div>'+
-  '<div class="fld"><label for="smMm">Motivo</label><select class="big" id="smMm" data-f="smMm">'+
-   MOTIVOS_MERMA.map(function(m){return '<option'+(F.motivo===m?" selected":"")+'>'+esc(m)+'</option>';}).join("")+'</select></div>'+
-  '</div><div class="lgMsg" id="smMermaErr" aria-live="assertive"></div></div>'+
-  '<div class="actions"><span class="sp"></span><button class="btn" data-act="sm-merma">Registrar merma</button></div></div>'+
-  (S.tmerma.length?'<div class="card"><header><h2>Merma registrada</h2></header><div class="scroll"><table>'+
-   '<thead><tr><th>Fecha</th><th>Producto</th><th class="r">Cantidad</th><th class="r">Costo</th><th>Motivo</th><th>Quién</th></tr></thead><tbody>'+
-   S.tmerma.slice(0,12).map(function(m){
-    return '<tr><td class="n">'+fISO(m.f)+'</td><td>'+esc(TPROD[m.c].n)+'</td><td class="n r">'+tcant(m.c,m.q)+'</td>'+
-     '<td class="n r">'+money(m.costo)+'</td><td>'+esc(m.motivo)+'</td><td>'+esc(m.por)+'</td></tr>';}).join("")+
-   '</tbody></table></div></div>':'');
-}
-
-/* ---------- reposición ---------- */
-function sugerido(c){
- if(!porPedir(c))return 0;   /* se pide lo que está bajo mínimo, no todo lo que falta para el objetivo */
- var falta=VD28[c]*objCob(c)-stockT(c);
- return falta>0?Math.max(TPROD[c].u==="u"?1:0.5,tredondea(c,falta)):0;
-}
-function vistaRepo(){
- var bajo=tcods().filter(porPedir);
- var agotados=tcods().filter(function(c){return stockT(c)<=1e-9;});
- var valor=tcods().reduce(function(a,c){return a+sugerido(c)*TPROD[c].cost;},0);
- var provs=Object.keys(TPROVT);
- var bloques=provs.map(function(pv){
-  var cods=tcods().filter(function(c){return TPROD[c].prov===pv&&sugerido(c)>0;})
-   .sort(function(a,b){return cobertura(a)-cobertura(b);});
-  if(!cods.length)return "";
-  var sub=cods.reduce(function(a,c){return a+sugerido(c)*TPROD[c].cost;},0);
-  return '<div class="card"><header><div><h2>'+esc(TPROVT[pv])+'</h2><p>'+pl(cods.length,"producto por pedir","productos por pedir")+
-   ' · '+money(sub)+' al costo</p></div><button class="btn" data-act="sm-pedido" data-id="'+pv+'">Generar pedido</button></header>'+
-   '<div class="scroll"><table style="min-width:820px"><thead><tr><th>Producto</th><th class="r">Saldo</th>'+
-   '<th class="r">Venta diaria</th><th class="r">Cobertura</th><th class="r">Objetivo</th><th class="r">Sugerido</th>'+
-   '<th class="r">Costo</th></tr></thead><tbody>'+
-   cods.map(function(c){
-    var cob=cobertura(c), s=sugerido(c);
-    return '<tr><td><span class="ing">'+esc(TPROD[c].n)+'</span><div class="cod">'+esc(catCorta(TPROD[c].cat))+'</div></td>'+
-     '<td class="n r">'+tcant(c,stockT(c))+'</td><td class="n r">'+numTxt(VD28[c],TPROD[c].u)+' '+TPROD[c].u+'</td>'+
-     '<td class="n r"'+(porPedir(c)?' style="color:var(--alert)"':'')+'>'+fmt(cob,1)+' días</td>'+
-     '<td class="n r">'+objCob(c)+' días</td>'+
-     '<td class="n r"><b>'+tcant(c,s)+'</b></td><td class="n r">'+money(s*TPROD[c].cost)+'</td></tr>';
-   }).join("")+'</tbody></table></div></div>';
- }).join("");
- return '<div class="stats">'+
-  st(fmt(bajo.length),"Por debajo del mínimo",bajo.length?"warn":"good")+
-  st(fmt(agotados.length),"Agotados",agotados.length?"bad":"good")+
-  st(money(valor),"Pedido sugerido al costo","")+
-  st(fmt(tcods().filter(function(c){return sugerido(c)>0;}).length),"Productos en el pedido","")+'</div>'+
-  '<div class="cal">La venta diaria es el promedio de los últimos 28 días. El objetivo de inventario es de '+COBERTURA+
-  ' días en lo que no se vence y se recorta en lo perecedero, hasta 60% de su vida útil: no tiene sentido pedir pollo '+
-  'para dos semanas si dura cinco días.</div>'+
-  (bloques||'<div class="card"><div class="empty">Ningún producto necesita pedido con la cobertura objetivo actual.</div></div>');
-}
-
-/* ---------- cuadre de caja ---------- */
-var cajaCerrada=false;
-function vistaCuadre(){
- var h=hoyTotales(), esperado=TIENDA.base+h.efe;
- var conteo=S.conteo===null||S.conteo===undefined||S.conteo===""?null:parseNum(S.conteo);
- var dif=conteo===null?null:conteo-esperado;
- return '<div class="stats">'+
-  st(money(TIENDA.base),"Base inicial","")+st(money(h.efe),"Ventas en efectivo","")+
-  st(money(h.tar),"Ventas con tarjeta","")+st(money(esperado),"Debe haber en caja","")+'</div>'+
-  '<div class="card"><header><div><h2>Cierre del día</h2><p>'+fLargo(dISO(HOY))+' · '+pl(h.tickets,"ticket","tickets")+
-  ' · '+money(h.bruto)+' vendido con IVA.</p></div></header><div class="body">'+
-  '<div class="grid2"><div class="fld"><label for="smConteo">Efectivo contado</label>'+
-  '<input class="big" id="smConteo" data-f="smConteo" type="number" min="0" step="1000" value="'+esc(S.conteo||"")+'" '+
-  'inputmode="numeric" autocomplete="off"><div class="hint">Lo que hay en la caja, incluida la base.</div></div>'+
-  '<div class="fld"><label>Diferencia</label><div class="big" id="smDif" style="padding:9px 0">'+difTexto(dif)+'</div></div></div>'+
-  (cajaCerrada?'<div class="cal"><b>Caja cerrada.</b> El cierre quedó en el historial con la diferencia y quién lo hizo.</div>':'')+
-  '<div class="lgMsg" id="smCuadreErr" aria-live="assertive"></div></div>'+
-  '<div class="actions"><span class="sp"></span><button class="btn" data-act="sm-cerrar-caja"'+(cajaCerrada?' disabled':'')+'>Cerrar caja</button></div></div>'+
-  '<div class="card"><header><div><h2>Tickets de hoy</h2><p>Abra uno para ver el tiquete.</p></div></header>'+
-  (S.tickets.length?'<div class="scroll"><table><thead><tr><th>Hora</th><th>Número</th><th class="r">Líneas</th>'+
-   '<th>Pago</th><th class="r">Total</th></tr></thead><tbody>'+
-   S.tickets.map(function(t){
-    return fila("sm-ticket",t.num,'<td class="n">'+esc(t.h)+'</td><td><span class="ing mono">'+esc(t.num)+'</span></td>'+
-     '<td class="n r">'+t.lineas.length+'</td><td>'+pill(t.pago==="efectivo"?["Efectivo","p-o"]:["Tarjeta","p-n"])+'</td>'+
-     '<td class="n r">'+money(t.total)+'</td>');}).join("")+'</tbody></table></div>':
-   '<div class="empty">Todavía no hay ventas hoy.</div>')+'</div>';
-}
-function difTexto(dif){
- if(dif===null)return '<span class="sub">Escriba el conteo</span>';
- if(Math.abs(dif)<1)return '<b style="color:var(--ok)">Cuadra</b>';
- return '<b style="color:var(--alert)">'+(dif>0?"Sobra ":"Falta ")+money(Math.abs(dif))+'</b>';
-}
-
-/* ---------- campos ---------- */
-function campoTienda(f,el){
- var val=el.value, id=el.getAttribute("data-id"), t=tickActual(), F=mermaF();
- switch(f){
-  case "smBusca": t.busca=val; if($("smGrid"))$("smGrid").innerHTML=gridHTML(); break;
-  case "smRecibe": t.recibe=val;
-   if($("smCambio")){
-    var c=parseNum(val)-tickTotales(t).bruto;
-    $("smCambio").textContent=val===""?"Devuelta calculada al escribir":(c>=0?"Cambio "+money(c):"Falta "+money(-c));
-   }
-   break;
-  case "smPrecio": precioEd()[id]=val;
-   if($("mg-"+id))$("mg-"+id).innerHTML=margenCelda(id);
-   if($("smGuardar")){
-    var n=cambiosPrecio().length;
-    $("smGuardar").disabled=!n; $("smGuardar").textContent=txtGuardar(n);
-   }
-   if($("smPrecioErr"))$("smPrecioErr").textContent="";
-   break;
-  case "smMc": F.c=val; F.lote=""; S.foco="smMc"; render(); break;
-  case "smMl": F.lote=val; break;
-  case "smMq": F.q=val; break;
-  case "smMm": F.motivo=val; break;
-  case "smConteo": S.conteo=val; if($("smDif"))$("smDif").innerHTML=difTexto(val===""?null:parseNum(val)-(TIENDA.base+hoyTotales().efe)); break;
- }
-}
-
-/* ---------- acciones ---------- */
-ACC["sm-cat"]=function(v,id){tickActual().cat=id; render();};
-ACC["sm-add"]=function(v,id){
- var t=tickActual(), l=lineaTick(id), paso=TPROD[id].u==="u"?1:0.5, hay=stockT(id);
- if((l?l.q:0)+paso>hay+1e-9){toast("Solo hay "+tcant(id,hay)+" de "+TPROD[id].n+" en la tienda.");return;}
- if(l)l.q=r3(l.q+paso); else t.lineas.push({c:id,q:paso,precio:TPROD[id].precio,iva:TPROD[id].iva});
- if($("smErr"))$("smErr").textContent="";
- pintarCaja();
-};
-ACC["sm-mas"]=function(v,id){ACC["sm-add"](v,id);};
-ACC["sm-menos"]=function(v,id){
- var t=tickActual(), l=lineaTick(id), paso=TPROD[id].u==="u"?1:0.5;
- if(!l)return;
- l.q=r3(l.q-paso);
- if(l.q<=1e-9)t.lineas=t.lineas.filter(function(x){return x.c!==id;});
- pintarCaja();
-};
-ACC["sm-quitar"]=function(v,id){
- var t=tickActual();
- t.lineas=t.lineas.filter(function(x){return x.c!==id;});
- pintarCaja();
-};
-ACC["sm-pago"]=function(v,id){tickActual().pago=id; pintarCaja();};
-ACC["sm-vaciar"]=function(){S.tick=nuevoTick(); render(); toast("Ticket vaciado.");};
-ACC["sm-cobrar"]=function(){
- var t=tickActual(), tt=tickTotales(t), err=$("smErr");
- if(!t.lineas.length){if(err)err.textContent="Agregue al menos un producto.";return;}
- var sin=t.lineas.filter(function(l){return l.q>stockT(l.c)+1e-9;});
- if(sin.length){if(err)err.textContent="No hay saldo de "+TPROD[sin[0].c].n+". Ajuste la cantidad.";return;}
- var recibe=parseNum(t.recibe);
- if(t.pago==="efectivo"&&recibe<tt.bruto-1e-9){
-  if(err)err.textContent="Lo recibido no alcanza para el total.";
-  if($("smRecibe"))$("smRecibe").focus();
-  return;
- }
- t.lineas.forEach(function(l){bajarStock(l.c,l.q);});
- var tk=armarTicket(t.lineas.map(function(l){return {c:l.c,q:l.q,precio:TPROD[l.c].precio,iva:TPROD[l.c].iva};}),
-  t.pago,hora(),t.pago==="efectivo"?recibe:0);
- S.tickets.unshift(tk);
- evento("venta",tk.num,"Venta en caja · "+pl(tk.lineas.length,"línea","líneas")+" · "+tk.pago,quien(),tk.total,null,HOY,tk.h,TID);
- S.tick=nuevoTick();
- render(); arriba(); verRecibo(tk.num);
- toast("Venta "+tk.num+" por "+money(tk.total)+(tk.pago==="efectivo"&&tk.cambio?" · cambio "+money(tk.cambio):"")+".");
-};
-ACC["sm-ticket"]=function(v,id){verRecibo(id);};
-ACC["sm-precios-guardar"]=function(){
- var e=precioEd(), err=$("smPrecioErr"), cambios=[], malo=null;
- Object.keys(e).forEach(function(c){
-  var n=parseNum(e[c]);
-  if(n===TPROD[c].precio)return;
-  if(!(n>0)||n<=TPROD[c].cost){if(!malo)malo=c;return;}
-  cambios.push({c:c,antes:TPROD[c].precio,despues:Math.round(n)});
- });
- if(malo){if(err)err.textContent="El precio de "+TPROD[malo].n+" tiene que ser mayor que su costo, "+money(TPROD[malo].cost)+".";return;}
- if(!cambios.length){if(err)err.textContent="No hay cambios por guardar.";return;}
- cambios.forEach(function(x){
-  TPROD[x.c].precio=x.despues;
-  S.tprecios.unshift({f:HOY,c:x.c,antes:x.antes,despues:x.despues,motivo:"Ajuste de margen",por:quien()});
-  evento("precio","PR-"+x.c,"Precio · "+TPROD[x.c].n+" · "+money(x.antes)+" a "+money(x.despues),quien(),0,null,HOY,hora(),TID);
- });
- S.precioEd={};
- render(); arriba();
- toast(pl(cambios.length,"precio actualizado","precios actualizados")+". El margen se recalculó con el nuevo precio.");
-};
-ACC["sm-descuento"]=function(v,id){
- var l=loteId(id);
- if(!l||l.sede!==TID)return;
- var c=l.c, p=TPROD[c], desc=descAplicable(c,descuentoSug(diasHasta(l.ven))), nuevo=precioCon(c,desc);
- if(!desc){toast("Ese producto no tiene margen para descuento sin quedar por debajo del costo. Conviene registrarlo como merma.");return;}
- var antes=p.precio;
- p.precio=nuevo;
- S.tprecios.unshift({f:HOY,c:c,antes:antes,despues:nuevo,motivo:"Próximo a vencer, lote "+l.lote,por:quien()});
- evento("precio","PR-"+c,"Descuento por vencimiento · "+p.n+" · "+money(antes)+" a "+money(nuevo)+" · lote "+l.lote,
-  quien(),0,null,HOY,hora(),TID);
- render();
- toast(p.n+" queda en "+money(nuevo)+", "+pct(desc,0)+" menos. Margen "+pct(margenDe(c))+".");
-};
-ACC["sm-merma"]=function(){
- var F=mermaF(), err=$("smMermaErr");
- if(!F.c){if(err)err.textContent="Elija el producto.";return;}
- if(!F.lote){if(err)err.textContent="Elija el lote.";return;}
- var l=loteId(F.lote), q=tredondea(F.c,parseNum(F.q));
- if(!l||l.sede!==TID){if(err)err.textContent="Ese lote ya no está en la tienda.";return;}
- if(!(q>0)){if(err)err.textContent="Escriba la cantidad.";return;}
- if(q>l.q+1e-9){if(err)err.textContent="El lote "+l.lote+" tiene "+tcant(F.c,l.q)+".";return;}
- l.q=r3(l.q-q);
- var costo=q*TPROD[F.c].cost;
- S.tmerma.unshift({f:HOY,c:F.c,lote:l.lote,q:q,motivo:F.motivo,costo:costo,por:quien()});
- evento("merma","MR-"+l.lote,"Merma · "+TPROD[F.c].n+" · "+tcant(F.c,q)+" · "+F.motivo,quien(),costo,null,HOY,hora(),TID);
- S.mermaF={c:"",lote:"",q:"",motivo:MOTIVOS_MERMA[0]};
- render(); arriba();
- toast("Merma registrada por "+money(costo)+". Salió del inventario y quedó en el historial.");
-};
-ACC["sm-pedido"]=function(v,id){
- var cods=tcods().filter(function(c){return TPROD[c].prov===id&&sugerido(c)>0;});
- if(!cods.length)return;
- var valor=cods.reduce(function(a,c){return a+sugerido(c)*TPROD[c].cost;},0);
- evento("pedido","PD-"+id,"Pedido sugerido a "+TPROVT[id]+" · "+pl(cods.length,"producto","productos"),quien(),valor,null,HOY,hora(),TID);
- render();
- toast("Pedido a "+TPROVT[id]+" por "+money(valor)+". En el sistema real se envía al proveedor y queda como orden de compra.");
-};
-ACC["sm-cerrar-caja"]=function(){
- var err=$("smCuadreErr"), h=hoyTotales(), esperado=TIENDA.base+h.efe;
- if(S.conteo===null||S.conteo===undefined||S.conteo===""){
-  if(err)err.textContent="Escriba el efectivo contado antes de cerrar.";
-  if($("smConteo"))$("smConteo").focus();
-  return;
- }
- var dif=parseNum(S.conteo)-esperado;
- cajaCerrada=true;
- evento("cierre","CC-"+HOY.slice(5).replace("-",""),"Cierre de caja · esperado "+money(esperado)+" · contado "+
-  money(parseNum(S.conteo))+" · "+(Math.abs(dif)<1?"cuadra":(dif>0?"sobra ":"falta ")+money(Math.abs(dif))),
-  quien(),h.bruto,null,HOY,hora(),TID);
- render(); arriba();
- toast(Math.abs(dif)<1?"Caja cerrada y cuadrada.":"Caja cerrada con "+(dif>0?"sobrante":"faltante")+" de "+money(Math.abs(dif))+".");
-};
-
-/* la pantalla de acceso ya se pintó en app.js, sin las cuentas de la tienda */
-if(!S.cuenta)pintarLogin();
 
 })();
 </script>
