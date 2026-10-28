@@ -1255,9 +1255,9 @@ S.tmerma.sort(function(a,b){return b.f.localeCompare(a.f);});
 S.tprecios.sort(function(a,b){return b.f.localeCompare(a.f);});
 
 /* ---------- cargos, cuentas y menús ---------- */
-CARGOS.jtie={n:"Jefe de tienda",ambito:"tienda",menu:["vmargen","precios","repo","ped","res","hist"]};
-CARGOS.bod={n:"Bodega de tienda",ambito:"tienda",menu:["rec","inv","vence","hist"]};
-CARGOS.adt={n:"Administración de tienda",ambito:"tienda",menu:["fac","nom","res","hist"]};
+CARGOS.jtie={n:"Jefe de tienda",ambito:"tienda",menu:["vmargen","precios","repo","ped","gas","res","imp","hist"]};
+CARGOS.bod={n:"Bodega de tienda",ambito:"tienda",menu:["rec","inv","vence","imp","hist"]};
+CARGOS.adt={n:"Administración de tienda",ambito:"tienda",menu:["fac","gas","nom","res","hist"]};
 CUENTAS.push({id:"eparra",n:"Esteban Parra",cargo:"jtie",sede:null,tienda:TID,activa:true});
 CUENTAS.push({id:"mgil",n:"Marta Gil",cargo:"bod",sede:null,tienda:TID,activa:true});
 CUENTAS.push({id:"asoto",n:"Andrés Soto",cargo:"adt",sede:null,tienda:TID,activa:true});
@@ -1289,11 +1289,11 @@ TIT.vence=["Vencimientos y merma","Lo que está por vencer, el descuento sugerid
 TIT.repo=["Reposición","Días de inventario según la venta real y qué pedir a cada proveedor."];
 TIPOS.venta=["Venta","p-o"]; TIPOS.merma=["Merma","p-a"]; TIPOS.precio=["Cambio de precio","p-w"];
 TIPOS.cierre=["Cierre de caja","p-n"]; TIPOS.pedido=["Pedido a proveedor","p-w"];
-EVENTOS_CARGO.jtie=["venta","merma","precio","pedido","recep","fac","pago","aj","nom"];
-EVENTOS_CARGO.bod=["recep","merma","aj","pedido"];
-EVENTOS_CARGO.adt=["fac","pago","nom","pedido","recep"];
-BORR=BORR.concat(["mermaF","precioEd","pedForm","recForm","facForm2","empT","ajT"]);
-var VISTAS_TIENDA=["vmargen","precios","vence","repo","ped","rec","inv","fac","nom","res"];
+EVENTOS_CARGO.jtie=["venta","merma","precio","pedido","recep","fac","pago","aj","nom","gasto","imp"];
+EVENTOS_CARGO.bod=["recep","merma","aj","pedido","imp"];
+EVENTOS_CARGO.adt=["fac","pago","nom","pedido","recep","gasto"];
+BORR=BORR.concat(["mermaF","precioEd","pedForm","recForm","facForm2","empT","ajT","gasF","imp"]);
+var VISTAS_TIENDA=["vmargen","precios","vence","repo","ped","rec","inv","fac","gas","nom","res","imp"];
 function badgeTienda(v){
  var n=0;
  if(v==="vence")n=lotesEnRiesgo().length;
@@ -1602,7 +1602,12 @@ function campoTienda(f,el){
   case "smMl": F.lote=val; break;
   case "smMq": F.q=val; break;
   case "smMm": F.motivo=val; break;
-  default: if(typeof campoTiendaOp==="function")campoTiendaOp(f,el,val); break;
+  /* cada módulo de la trastienda toma sus campos por el prefijo: smG gastos, smI carga */
+  default:
+   if(f.indexOf("smG")===0&&typeof campoGastos==="function"){campoGastos(f,el,val);break;}
+   if(f.indexOf("smI")===0&&typeof campoImport==="function"){campoImport(f,el,val);break;}
+   if(typeof campoTiendaOp==="function")campoTiendaOp(f,el,val);
+   break;
  }
 }
 
@@ -1685,8 +1690,6 @@ var EDO_PED={borrador:["Borrador","p-n"],enviado:["Enviado","p-w"],parcial:["Par
 var MOTIVOS_AJ=["Conteo físico","Error de digitación","Producto encontrado","Devolución de cliente"];
 var MEDIOS=["Transferencia","Efectivo","Cheque"];
 var TOL_REC=0.10;        /* se acepta hasta 10% por encima de lo pedido */
-var GASTOS_FIJOS=[["Arriendo del local",4500000],["Servicios públicos",1320000],
- ["Aseo y vigilancia",860000],["Software y datáfono",390000]];   /* valores de ejemplo */
 var ARL_TIENDA=0.01044;  /* clase II, comercio al por menor con carnicería */
 
 /* ---------- empleados de la tienda ---------- */
@@ -2187,15 +2190,16 @@ function vistaResultado(){
  var meses=mesesVenta(), act=meses[meses.length-1];
  var ini=HOY.slice(0,8)+"01", dia=dISO(HOY).getDate();
  var mermaM=0; S.tmerma.forEach(function(x){if(x.f>=ini)mermaM+=x.costo;});
- var nom=totalNomina(EMPT).costo, fijos=GASTOS_FIJOS.reduce(function(a,x){return a+x[1];},0);
+ var nom=totalNomina(EMPT).costo, gm=gastosMes(HOY.slice(0,7));
  var parte=dia/30;   /* el mes va por la mitad: nómina y fijos se prorratean para comparar */
  var bruto=act.neto-act.cost;
- var res=bruto-mermaM-nom*parte-fijos*parte;
+ var res=bruto-mermaM-nom*parte-gm.fijo*parte-gm.vari;
  var lineas=[["Venta sin IVA ("+dia+" días)",act.neto,""],
   ["Costo de la mercancía vendida",-act.cost,""],
   ["Merma del mes",-mermaM,"lo que se perdió por vencimiento, daño o faltante"],
   ["Nómina, parte corrida del mes",-Math.round(nom*parte),pl(EMPT.length,"empleado","empleados")+" con prestaciones"],
-  ["Gastos fijos, parte corrida",-Math.round(fijos*parte),"arriendo, servicios, aseo y software"]];
+  ["Gastos fijos, parte corrida",-Math.round(gm.fijo*parte),"arriendo, servicios, aseo, internet y contador"],
+  ["Otros gastos del mes",-Math.round(gm.vari),"lo que se registró en Gastos del negocio, sin IVA"]];
  var w=anchoGraf();
  var g=tarjetaGraf("Venta y margen por mes","Venta sin IVA y lo que queda después del costo de la mercancía. "+
   "Septiembre va hasta el día "+dia+".",
@@ -2221,11 +2225,30 @@ function vistaResultado(){
   '<td class="sub">'+pct(act.neto?res/act.neto:0)+' sobre la venta</td></tr>'+
   '</tbody></table></div></div>'+
   '<div class="graficas">'+g+'</div>'+
-  '<div class="card"><header><h2>Gastos fijos del mes</h2></header><div class="scroll"><table><thead><tr>'+
-  '<th>Concepto</th><th class="r">Valor mes</th></tr></thead><tbody>'+
-  GASTOS_FIJOS.map(function(x){return '<tr><td>'+esc(x[0])+'</td><td class="n r">'+money(x[1])+'</td></tr>';}).join("")+
-  '<tr class="tot"><td>Total</td><td class="n r">'+money(fijos)+'</td></tr></tbody></table></div>'+
-  '<div class="body"><p class="sub">Valores de ejemplo de la demostración.</p></div></div>';
+  gastosDelMes(gm,parte);
+}
+/* el detalle de gastos sale de lo que se registró en Gastos del negocio, no de una lista fija */
+function gastosDelMes(gm,parte){
+ var ym=HOY.slice(0,7), filas="";
+ GCAT.forEach(function(cat){
+  var f=0, v=0;
+  S.tgas.forEach(function(g){
+   if(g.f.slice(0,7)!==ym||g.cat!==cat)return;
+   if(g.fijo)f+=g.base; else v+=g.base;
+  });
+  if(!f&&!v)return;
+  filas+='<tr><td>'+esc(cat)+'</td><td class="n r">'+(f?money(f):"·")+'</td>'+
+   '<td class="n r">'+(v?money(v):"·")+'</td><td class="n r">'+money(f+v)+'</td></tr>';
+ });
+ return '<div class="card"><header><div><h2>Gastos del mes por categoría</h2><p>Sin IVA, que es lo que entra al '+
+  'resultado. El IVA pagado se descuenta del IVA de la venta.</p></div>'+
+  (puede("gas")?'<button class="btn g" data-act="nav" data-v="gas">Ver gastos del negocio</button>':'')+
+  '</header><div class="scroll"><table><thead><tr><th>Categoría</th><th class="r">Fijo</th><th class="r">Variable</th>'+
+  '<th class="r">Total del mes</th></tr></thead><tbody>'+filas+
+  '<tr class="tot"><td>Total</td><td class="n r">'+money(gm.fijo)+'</td><td class="n r">'+money(gm.vari)+'</td>'+
+  '<td class="n r">'+money(gm.total)+'</td></tr></tbody></table></div>'+
+  '<div class="body"><div class="cal">Del gasto fijo entra al resultado la parte corrida del mes, '+pct(parte,0)+
+  ' por ahora, '+money(gm.fijo*parte)+'. Los variables entran completos porque ya ocurrieron.</div></div></div>';
 }
 
 /* ============ SUPERMERCADO: CAMPOS Y ACCIONES DE LA TRASTIENDA ============ */
@@ -2276,7 +2299,8 @@ function actualizarEmpT(){
 
 /* ---------- acciones ---------- */
 ACC.abrir=function(v,id){S.sel=id; render(); arriba();};
-ACC.volver=function(){S.sel=null; S.recForm=null; S.ajT=null; S.empT=null; S.pago=null; S.pagoD=null; render(); arriba();};
+ACC.volver=function(){S.sel=null; S.recForm=null; S.ajT=null; S.empT=null; S.pago=null; S.pagoD=null;
+ S.gasF=null; render(); arriba();};
 ACC["sm-ped-sugerido"]=function(){
  var creados=[], total=0;
  Object.keys(TPROVT).forEach(function(pv){
@@ -2416,8 +2440,735 @@ ACC["sm-emp-retirar"]=function(v,id){
  toast(e.n+" salió de la nómina. La liquidación final del contrato es un paso aparte.");
 };
 ACC["sm-nom-exportar"]=function(){
- toast("En el sistema real aquí se descarga la liquidación del mes, lista para el banco y para contabilidad.");
+ var cab=["Empleado","Cargo","Salario base","HED","HEN","Recargo nocturno","Dominicales","Extras y recargos",
+  "Auxilio de transporte","Devengado","Salud","Pension","Neto a pagar","Costo para la tienda"];
+ var l=[cab.join(";")];
+ EMPT.forEach(function(e){
+  var n=nomina(e);
+  l.push([e.n,e.c,e.s,e.hed,e.hen,e.rn,e.dom,Math.round(n.extras),Math.round(n.aux),Math.round(n.devengado),
+   Math.round(n.salud),Math.round(n.pens),Math.round(n.neto),Math.round(n.costo)].join(";"));
+ });
+ var t=totalNomina(EMPT);
+ l.push(["Total","","","","","","",Math.round(t.extras),"",Math.round(t.devengado),"","",Math.round(t.neto),
+  Math.round(t.costo)].join(";"));
+ bajarCSV("nomina-septiembre-2026.csv",l.join("\n")+"\n");
+ toast("Liquidación descargada en CSV, lista para abrirla en Excel y pasarla al banco y al contador.");
 };
+
+/* ============ SUPERMERCADO: GASTOS DEL NEGOCIO ============
+   Lo que la tienda paga para operar y no es mercancía: arriendo, servicios, contador,
+   mantenimiento. Los fijos se repiten todos los meses y los variables se registran cuando
+   ocurren. El resultado del mes toma de aquí el valor sin IVA, porque el IVA pagado se
+   descuenta del IVA de la venta. La mercancía va por Facturas y pagos, no por aquí. */
+TIPOS.gasto=["Gasto","p-n"];
+var GCAT=["Arriendo","Servicios públicos","Personal externo","Mantenimiento","Transporte",
+ "Insumos de operación","Impuestos y trámites","Seguros","Otros"];
+var GIVA=[["0","Excluido o exento",0],["5","5%",0.05],["19","19%",0.19]];
+var GPLAZO=15;   /* días de plazo que se le ponen a un gasto que queda por pagar */
+var GN=0;
+S.tgas=[];
+
+function tasaIva(k){var r=0;GIVA.forEach(function(x){if(x[0]===String(k))r=x[2];});return r;}
+function nuevoGasto(f,cat,des,ter,base,ivaR,fijo,pagada,medio){
+ var g={id:"G"+(++GN),f:f,cat:cat,des:des,ter:ter,base:Math.round(base),iva:Math.round(base*ivaR),
+  ivaR:ivaR,fijo:!!fijo,venc:sumarDias(f,GPLAZO),pagada:pagada||null,por:"Andrés Soto"};
+ S.tgas.push(g);
+ return g;
+}
+function totalGas(g){return g.base+g.iva;}
+function estadoGas(g){
+ if(g.pagada)return ["Pagado","p-o"];
+ if(g.venc<HOY)return ["Vencido","p-a"];
+ if(diasHasta(g.venc)<=8)return ["Por pagar","p-w"];
+ return ["Programado","p-n"];
+}
+function buscarGas(id){var r=null;S.tgas.forEach(function(x){if(x.id===id)r=x;});return r;}
+
+/* ---------- lo que se repite cada mes ---------- */
+var GFIJOS=[
+ ["Arriendo","Arriendo del local","Inmobiliaria Centro Chapinero",4500000,0.19,1],
+ ["Personal externo","Aseo y vigilancia","Servivigilancia Ltda",860000,0.19,3],
+ ["Servicios públicos","Energía, acueducto y gas","Empresas de servicios",1320000,0,4],
+ ["Servicios públicos","Internet, telefonía y datáfono","Conexión Total SAS",390000,0.19,5],
+ ["Personal externo","Honorarios del contador","Clara Benítez",650000,0,5]
+];
+var GVARS=[
+ ["2026-07-08","Mantenimiento","Mantenimiento de neveras y cuartos fríos","Refrigeración Andina",420000,0.19],
+ ["2026-07-12","Insumos de operación","Bolsas y empaque","Plásticos del Norte",310000,0.19],
+ ["2026-07-16","Impuestos y trámites","Industria y comercio, bimestre de mayo y junio","Secretaría de Hacienda",980000,0],
+ ["2026-07-24","Transporte","Transporte de mercancía","Fletes Urbanos",180000,0],
+ ["2026-08-05","Seguros","Póliza del local y de la mercancía","Aseguradora Nacional",1150000,0.19],
+ ["2026-08-11","Insumos de operación","Rollos de caja y papelería","Papelería La 15",95000,0.19],
+ ["2026-08-19","Mantenimiento","Reparación de la balanza","Básculas y Pesas",260000,0.19],
+ ["2026-08-27","Transporte","Transporte de mercancía","Fletes Urbanos",210000,0],
+ ["2026-09-02","Insumos de operación","Bolsas y empaque","Plásticos del Norte",330000,0.19],
+ ["2026-09-03","Mantenimiento","Mantenimiento de neveras y cuartos fríos","Refrigeración Andina",420000,0.19],
+ ["2026-09-04","Insumos de operación","Rollos de caja y papelería","Papelería La 15",88000,0.19],
+ ["2026-09-05","Transporte","Transporte de mercancía","Fletes Urbanos",195000,0]
+];
+/* julio y agosto quedan pagados; de septiembre queda pendiente lo de los últimos días */
+(function(){
+ var mesSep=HOY.slice(0,7);
+ ["2026-07","2026-08",mesSep].forEach(function(ym){
+  GFIJOS.forEach(function(x){
+   var f=ym+"-"+pad(x[5]), pagar=ym!==mesSep||f<=sumarDias(HOY,-3);
+   nuevoGasto(f,x[0],x[1],x[2],x[3],x[4],true,
+    pagar?{fecha:sumarDias(f,2),medio:"Transferencia",ref:"TR-"+(7200+GN)}:null);
+  });
+ });
+ GVARS.forEach(function(x){
+  var pagar=x[0].slice(0,7)!==mesSep||x[0]<=sumarDias(HOY,-3);
+  nuevoGasto(x[0],x[1],x[2],x[3],x[4],x[5],false,
+   pagar?{fecha:sumarDias(x[0],1),medio:x[4]>400000?"Transferencia":"Efectivo",ref:"TR-"+(7400+GN)}:null);
+ });
+ S.tgas.sort(function(a,b){return b.f.localeCompare(a.f);});
+ var m=gastosMes(HOY.slice(0,7));
+ evento("gasto","GA-MES","Gastos de septiembre registrados · "+pl(m.n,"documento","documentos"),
+  "Andrés Soto",m.total+m.iva,null,sumarDias(HOY,-1),"16:05",TID);
+})();
+
+/* ---------- cálculos ---------- */
+function gastosMes(ym){
+ var t={fijo:0,vari:0,iva:0,pend:0,n:0,nPend:0};
+ S.tgas.forEach(function(g){
+  if(g.f.slice(0,7)!==ym)return;
+  t.n++; t.iva+=g.iva;
+  if(g.fijo)t.fijo+=g.base; else t.vari+=g.base;
+  if(!g.pagada){t.pend+=totalGas(g); t.nPend++;}
+ });
+ t.total=t.fijo+t.vari;
+ return t;
+}
+function mesesGasto(){
+ var v=[];
+ S.tgas.forEach(function(g){var k=g.f.slice(0,7);if(v.indexOf(k)<0)v.push(k);});
+ return v.sort();
+}
+function gasMes(){
+ var m=mesesGasto();
+ if(!S.gasMes||m.indexOf(S.gasMes)<0)S.gasMes=m.length?m[m.length-1]:HOY.slice(0,7);
+ return S.gasMes;
+}
+function nombreMes(ym){return MESES_L[+ym.slice(5,7)-1];}
+/* la venta sin IVA del mes, para medir cuánto pesa el gasto */
+function ventaMes(ym){var v=0;mesesVenta().forEach(function(x){if(x.k===ym)v=x.neto;});return v;}
+/* el mes corriente no está completo: del fijo se compara la parte corrida, igual que en el resultado */
+function gastoCorrido(ym){
+ var t=gastosMes(ym);
+ return ym===HOY.slice(0,7)?t.fijo*(dISO(HOY).getDate()/30)+t.vari:t.total;
+}
+
+/* ---------- vista ---------- */
+function vistaGastos(){
+ if(S.gasF)return formGasto();
+ var ym=gasMes(), t=gastosMes(ym), venta=ventaMes(ym), meses=mesesGasto(), w=anchoGraf();
+ var g=tarjetaGraf("Gasto por mes, sin IVA","Lo que cuesta tener la tienda abierta, separando lo que se repite "+
+  "todos los meses de lo que pasó una vez. "+esc(nombreMes(HOY.slice(0,7)))+" ya tiene cargados sus fijos del mes "+
+  "completo y lo variable que ha ocurrido hasta el día "+dISO(HOY).getDate()+".",
+  leyenda([{n:"Fijos",color:"var(--g1)"},{n:"Variables",color:"var(--g3)"}])+
+  grafBarras({w:w,cats:meses.map(nombreMes),
+   series:[{n:"Fijos",color:"var(--g1)",datos:meses.map(function(k){return gastosMes(k).fijo;})},
+           {n:"Variables",color:"var(--g3)",datos:meses.map(function(k){return gastosMes(k).vari;})}],
+   fmtY:compacto,fmtTip:money,titulo:"Gasto fijo y variable por mes"})+
+  datosHTML(["Mes","Fijos","Variables","Total","Sobre la venta"],meses.map(function(k){
+   var x=gastosMes(k), v=ventaMes(k);
+   return [nombreMes(k),money(x.fijo),money(x.vari),money(x.total),v?pct(gastoCorrido(k)/v):"·"];})));
+ var filas="", grupo="";
+ GCAT.forEach(function(cat){
+  S.tgas.filter(function(x){return x.f.slice(0,7)===ym&&x.cat===cat;}).forEach(function(x){
+   if(grupo!==cat){grupo=cat;filas+='<tr class="grp"><td colspan="7">'+esc(cat)+'</td></tr>';}
+   filas+=fila("sm-gas-editar",x.id,'<td class="n">'+fISO(x.f)+'</td>'+
+    '<td><span class="ing">'+esc(x.des)+'</span><div class="cod">'+esc(x.ter)+'</div></td>'+
+    '<td>'+(x.fijo?'<span class="pill p-n">Cada mes</span>':'<span class="sub">una vez</span>')+'</td>'+
+    '<td class="n r">'+money(x.base)+'</td><td class="n r">'+(x.iva?money(x.iva):"·")+'</td>'+
+    '<td class="n r"><b>'+money(totalGas(x))+'</b></td>'+
+    '<td>'+pill(estadoGas(x))+(x.pagada?'<div class="sub">'+fISO(x.pagada.fecha)+' · '+esc(x.pagada.medio)+'</div>':
+     '<div class="sub">vence '+fISO(x.venc)+'</div>')+'</td>');
+  });
+ });
+ var fijoTot=GFIJOS.reduce(function(a,x){return a+x[3];},0);
+ return '<div class="stats">'+
+  st(money(t.total),"Gasto del mes sin IVA","")+
+  st(money(t.fijo),"Fijos del mes","")+
+  st(money(t.vari),"Variables del mes","")+
+  st(money(t.pend),"Por pagar",t.pend?"warn":"good")+
+  st(venta?pct(gastoCorrido(ym)/venta):"·","Gasto corrido sobre la venta","")+'</div>'+
+  '<div class="card"><header><div><h2>Gastos de '+esc(nombreMes(ym))+'</h2><p>Abra uno para corregirlo. Aquí van los '+
+  'gastos del negocio; las facturas de mercancía están en Facturas y pagos.</p></div>'+
+  '<div style="display:flex;gap:10px;flex-wrap:wrap">'+
+  (meses.length>1?'<div class="chips">'+meses.map(function(k){
+    return '<button data-act="sm-gas-mes" data-id="'+k+'" class="'+(k===ym?"on":"")+'">'+esc(nombreMes(k))+'</button>';
+   }).join("")+'</div>':'')+
+  '<button class="btn" data-act="sm-gas-nuevo">Registrar gasto</button></div></header>'+
+  (t.n?'<div class="scroll"><table style="min-width:900px"><thead><tr><th>Fecha</th><th>Concepto</th><th>Tipo</th>'+
+   '<th class="r">Sin IVA</th><th class="r">IVA</th><th class="r">Total</th><th>Estado</th></tr></thead><tbody>'+
+   filas+'<tr class="tot"><td colspan="3">Total de '+esc(nombreMes(ym))+'</td><td class="n r">'+money(t.total)+'</td>'+
+   '<td class="n r">'+money(t.iva)+'</td><td class="n r">'+money(t.total+t.iva)+'</td><td></td></tr>'+
+   '</tbody></table></div>':'<div class="empty">No hay gastos registrados en ese mes.</div>')+
+  '<div class="body"><div class="cal">Al resultado del mes entra el valor sin IVA. El IVA pagado se descuenta del IVA '+
+  'de la venta en la declaración, así que no es un gasto de la tienda.</div></div></div>'+
+  '<div class="graficas">'+g+'</div>'+
+  (t.nPend?'<div class="card"><header><div><h2>Pendiente de pago</h2><p>'+pl(t.nPend,"gasto","gastos")+' de '+
+   esc(nombreMes(ym))+' sin pagar, por '+money(t.pend)+' con IVA.</p></div></header><div class="scroll"><table>'+
+   '<thead><tr><th>Concepto</th><th>Tercero</th><th class="r">Vence</th><th class="r">Total</th><th>Estado</th>'+
+   '<th><span style="position:absolute;left:-9999px">Acción</span></th></tr></thead><tbody>'+
+   S.tgas.filter(function(x){return x.f.slice(0,7)===ym&&!x.pagada;})
+    .sort(function(a,b){return a.venc.localeCompare(b.venc);}).map(function(x){
+     return '<tr><td>'+esc(x.des)+'</td><td>'+esc(x.ter)+'</td><td class="n r">'+fISO(x.venc)+'</td>'+
+      '<td class="n r">'+money(totalGas(x))+'</td><td>'+pill(estadoGas(x))+'</td>'+
+      '<td class="r"><button class="btn g s" data-act="sm-gas-pagar" data-id="'+x.id+'">Registrar pago</button></td></tr>';
+    }).join("")+'</tbody></table></div></div>':'')+
+  '<div class="card"><header><div><h2>Lo que se repite cada mes</h2><p>Estos gastos se cargan solos al abrir el mes y '+
+  'solo hay que confirmar el valor cuando llega la factura.</p></div></header><div class="scroll"><table>'+
+  '<thead><tr><th>Concepto</th><th>Tercero</th><th>Categoría</th><th class="r">Valor mes sin IVA</th>'+
+  '<th class="r">Día</th></tr></thead><tbody>'+
+  GFIJOS.map(function(x){return '<tr><td>'+esc(x[1])+'</td><td>'+esc(x[2])+'</td><td>'+esc(x[0])+'</td>'+
+   '<td class="n r">'+money(x[3])+'</td><td class="n r">'+x[5]+'</td></tr>';}).join("")+
+  '<tr class="tot"><td colspan="3">Total fijo del mes</td><td class="n r">'+money(fijoTot)+'</td><td></td></tr>'+
+  '</tbody></table></div></div>';
+}
+
+/* ---------- formulario ---------- */
+function evaluarGas(G){
+ var err=[], r=tasaIva(G.iva), total=parseNum(G.v);
+ if(!String(G.des).trim())err.push("falta el concepto");
+ if(!String(G.ter).trim())err.push("falta a quién se le paga");
+ if(!G.f)err.push("falta la fecha");
+ if(!(total>0))err.push("el valor tiene que ser mayor que cero");
+ if(G.pag==="si"&&!String(G.ref).trim())err.push("falta la referencia del pago");
+ var base=Math.round(total/(1+r));
+ return {ok:!err.length,err:err,base:base,iva:Math.round(total)-base,total:Math.round(total),r:r};
+}
+function formGasto(){
+ var G=S.gasF, nuevo=!G.id, v=evaluarGas(G);
+ var campo=function(id,et,val,extra,hint){
+  return '<div class="fld"><label for="'+id+'">'+et+'</label><input class="big" id="'+id+'" data-f="'+id+'" '+
+   'value="'+esc(val)+'" '+(extra||"")+'>'+(hint?'<div class="hint">'+hint+'</div>':'')+'</div>';};
+ var sel=function(id,et,val,ops,hint){
+  return '<div class="fld"><label for="'+id+'">'+et+'</label><select class="big" id="'+id+'" data-f="'+id+'">'+
+   ops.map(function(o){var k=o[0]===undefined?o:o[0], n=o[1]===undefined?o:o[1];
+    return '<option value="'+esc(k)+'"'+(String(val)===String(k)?" selected":"")+'>'+esc(n)+'</option>';}).join("")+
+   '</select>'+(hint?'<div class="hint">'+hint+'</div>':'')+'</div>';};
+ return volver("Volver a gastos",nuevo?"":"GA-"+G.id)+
+  '<div class="card"><header><div><h2>'+(nuevo?"Registrar un gasto":"Editar el gasto")+'</h2>'+
+  '<p>Se escribe el valor total como viene en la factura. El sistema separa el IVA y al resultado del mes lleva solo '+
+  'la base.</p></div></header><div class="body"><div class="grid2">'+
+  campo("smGF","Fecha",G.f,'type="date"')+
+  sel("smGC","Categoría",G.cat,GCAT)+
+  campo("smGD","Concepto",G.des,'autocomplete="off" placeholder="arriendo, energía, mantenimiento…"')+
+  campo("smGT","A quién se le paga",G.ter,'autocomplete="off"')+
+  campo("smGV","Valor total con IVA",G.v,'type="number" min="0" step="1000"',"como viene en la factura")+
+  sel("smGI","IVA de la factura",G.iva,GIVA.map(function(x){return [x[0],x[1]];}),"como venga en el documento")+
+  sel("smGR","¿Se repite?",G.fijo,[["si","Cada mes, es un gasto fijo"],["no","Solo esta vez"]])+
+  sel("smGP","Estado",G.pag,[["no","Queda por pagar"],["si","Ya está pagado"]])+
+  (G.pag==="si"?sel("smGM","Medio de pago",G.medio,MEDIOS)+
+   campo("smGRef","Referencia",G.ref,'autocomplete="off" placeholder="número de transferencia o comprobante"'):"")+
+  '</div><div id="smGasVal" aria-live="polite">'+cuadroGas(v)+'</div>'+
+  '<div class="lgMsg" id="smGasErr" aria-live="assertive"></div></div>'+
+  '<div class="actions">'+(nuevo?'':'<button class="btn g" data-act="sm-gas-borrar" data-id="'+G.id+'">Eliminar</button>')+
+  '<span class="sp"></span><button class="btn g" data-act="sm-gas-cancelar">Cancelar</button>'+
+  '<button class="btn" data-act="sm-gas-guardar">'+(nuevo?"Registrar":"Guardar cambios")+'</button></div></div>';
+}
+function cuadroGas(v){
+ if(!v.ok)return '<div class="cal a"><b>Falta corregir:</b> '+esc(v.err.join("; "))+'.</div>';
+ return '<div class="cal"><b>Al resultado del mes entran '+money(v.base)+'.</b> Total '+money(v.total)+
+  (v.iva?", de los cuales "+money(v.iva)+" son IVA que se descuenta del IVA de la venta":", sin IVA en la factura")+'.</div>';
+}
+function campoGastos(f,el,val){
+ var G=S.gasF; if(!G)return;
+ switch(f){
+  case "smGF": G.f=val; break;
+  case "smGC": G.cat=val; break;
+  case "smGD": G.des=val; pintarGas(); break;
+  case "smGT": G.ter=val; pintarGas(); break;
+  case "smGV": G.v=val; pintarGas(); break;
+  case "smGI": G.iva=val; pintarGas(); break;
+  case "smGR": G.fijo=val; break;
+  case "smGP": G.pag=val; S.foco="smGP"; render(); break;
+  case "smGM": G.medio=val; break;
+  case "smGRef": G.ref=val; pintarGas(); break;
+  case "smGasMes": S.gasMes=val; render(); break;
+ }
+}
+function pintarGas(){var el=$("smGasVal");if(el&&S.gasF)el.innerHTML=cuadroGas(evaluarGas(S.gasF));}
+
+/* ---------- acciones ---------- */
+ACC["sm-gas-mes"]=function(v,id){S.gasMes=id; render(); arriba();};
+ACC["sm-gas-nuevo"]=function(){
+ S.gasF={id:null,f:HOY,cat:GCAT[0],des:"",ter:"",v:"",iva:"19",fijo:"no",pag:"no",medio:MEDIOS[0],ref:""};
+ S.foco="smGD"; render(); arriba();
+};
+ACC["sm-gas-editar"]=function(v,id){
+ var g=buscarGas(id); if(!g)return;
+ S.gasF={id:g.id,f:g.f,cat:g.cat,des:g.des,ter:g.ter,v:String(totalGas(g)),iva:String(Math.round(g.ivaR*100)),
+  fijo:g.fijo?"si":"no",pag:g.pagada?"si":"no",medio:g.pagada?g.pagada.medio:MEDIOS[0],ref:g.pagada?g.pagada.ref:""};
+ render(); arriba();
+};
+ACC["sm-gas-pagar"]=function(v,id){
+ ACC["sm-gas-editar"](v,id);
+ if(S.gasF){S.gasF.pag="si"; S.gasF.ref=""; S.foco="smGRef"; render();}
+};
+ACC["sm-gas-cancelar"]=function(){S.gasF=null; render(); arriba();};
+ACC["sm-gas-guardar"]=function(){
+ var G=S.gasF, v=evaluarGas(G), err=$("smGasErr");
+ if(!v.ok){pintarGas(); if(err)err.textContent="Revise lo marcado antes de guardar.";return;}
+ var pagada=G.pag==="si"?{fecha:HOY,medio:G.medio,ref:String(G.ref).trim()}:null;
+ var g=G.id?buscarGas(G.id):null, nuevo=!g;
+ if(nuevo){g={id:"G"+(++GN),por:quien()}; S.tgas.push(g);}
+ g.f=G.f; g.cat=G.cat; g.des=String(G.des).trim(); g.ter=String(G.ter).trim();
+ g.base=v.base; g.iva=v.iva; g.ivaR=v.r; g.fijo=G.fijo==="si"; g.venc=sumarDias(G.f,GPLAZO);
+ if(pagada&&g.pagada)pagada.fecha=g.pagada.fecha;
+ g.pagada=pagada;
+ S.tgas.sort(function(a,b){return b.f.localeCompare(a.f);});
+ S.gasMes=g.f.slice(0,7);
+ evento("gasto","GA-"+g.id,(nuevo?"Gasto registrado · ":"Gasto corregido · ")+g.des+" · "+g.cat+
+  (g.pagada?" · pagado":" · por pagar"),quien(),totalGas(g),null,g.f,hora(),TID);
+ S.gasF=null; render(); arriba();
+ toast((nuevo?"Gasto registrado por ":"Gasto actualizado a ")+money(totalGas(g))+". Al resultado del mes entran "+
+  money(g.base)+" sin IVA.");
+};
+ACC["sm-gas-borrar"]=function(v,id){
+ var g=buscarGas(id); if(!g)return;
+ S.tgas=S.tgas.filter(function(x){return x.id!==id;});
+ evento("gasto","GA-"+g.id,"Gasto eliminado · "+g.des,quien(),totalGas(g),null,HOY,hora(),TID);
+ S.gasF=null; render(); arriba();
+ toast("El gasto de "+money(totalGas(g))+" salió del mes. El movimiento queda en el historial.");
+};
+
+MENU_N.gas="Gastos del negocio";
+IC.gas='M2.5 3.5h8v11l-1.5-1-1.5 1-1.5-1-1.5 1z M4.5 6.5h4 M4.5 9h4 M13 6a2.6 2.6 0 100 5.2 2.6 2.6 0 000-5.2';
+TIT.gas=["Gastos del negocio","Arriendo, servicios, contador y todo lo que no es mercancía, con lo que falta por pagar."];
+VISTAS.gas=vistaGastos;
+
+/* ============ SUPERMERCADO: CARGA DESDE EXCEL ============
+   Montar la tienda sin digitar producto por producto. Se descarga la plantilla, se llena en
+   Excel y se vuelve a cargar, o se pega directamente lo que se copió de la hoja. Cada fila se
+   revisa antes de aplicar y lo que tenga error se queda por fuera, no entra a medias. */
+TIPOS.imp=["Carga de datos","p-n"];
+
+function sinTildes(s){
+ return String(s==null?"":s).replace(/[áàâä]/g,"a").replace(/[éèêë]/g,"e").replace(/[íìîï]/g,"i")
+  .replace(/[óòôö]/g,"o").replace(/[úùûü]/g,"u").replace(/ñ/g,"n");
+}
+function claveCol(s){return sinTildes(String(s).toLowerCase()).replace(/[^a-z0-9]/g,"");}
+/* los números vienen como los escribe Excel en Colombia: 1.250.000,50 */
+function numCol(s){
+ s=String(s==null?"":s).replace(/[$\s]/g,"").replace(/%$/,"");
+ if(!s)return NaN;
+ var c=s.lastIndexOf(","), p=s.lastIndexOf(".");
+ if(c>=0&&p>=0)s=c>p?s.replace(/\./g,"").replace(",","."):s.replace(/,/g,"");
+ else if(c>=0)s=/^-?\d{1,3}(,\d{3})+$/.test(s)?s.replace(/,/g,""):s.replace(",",".");
+ else if(p>=0&&/^-?\d{1,3}(\.\d{3})+$/.test(s))s=s.replace(/\./g,"");
+ return parseFloat(s);
+}
+function fechaCol(s){
+ s=String(s==null?"":s).trim();
+ if(!s)return "";
+ var m=s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);
+ if(m)return m[1]+"-"+pad(+m[2])+"-"+pad(+m[3]);
+ m=s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})$/);
+ if(m){var a=+m[3];if(a<100)a+=2000;return a+"-"+pad(+m[2])+"-"+pad(+m[1]);}
+ return null;
+}
+function ivaCol(s){
+ var k=claveCol(s);
+ if(k===""||k==="excluido"||k==="exento"||k==="no"||k==="0")return 0;
+ var n=numCol(s);
+ if(isNaN(n))return null;
+ if(n>1)n=n/100;
+ return (n===0||n===0.05||n===0.19)?n:null;
+}
+function unidadCol(s){
+ var k=claveCol(s);
+ if(k==="kg"||k==="kilo"||k==="kilos"||k==="kilogramo"||k==="k")return "kg";
+ if(k==="u"||k==="und"||k==="unidad"||k==="unidades"||k==="un"||k==="ud")return "u";
+ return null;
+}
+
+/* ---------- lectura del archivo o de lo pegado ---------- */
+function impSep(linea){
+ var c={"\t":0,";":0,",":0,"|":0}, q=false, mejor=";", n=0;
+ for(var i=0;i<linea.length;i++){
+  var ch=linea.charAt(i);
+  if(ch==='"')q=!q; else if(!q&&c[ch]!==undefined)c[ch]++;
+ }
+ Object.keys(c).forEach(function(k){if(c[k]>n){n=c[k];mejor=k;}});
+ return mejor;
+}
+function partirLinea(linea,sep){
+ var out=[], cur="", q=false;
+ for(var i=0;i<linea.length;i++){
+  var ch=linea.charAt(i);
+  if(q){
+   if(ch!=='"')cur+=ch;
+   else if(linea.charAt(i+1)==='"'){cur+='"';i++;}
+   else q=false;
+  }
+  else if(ch==='"')q=true;
+  else if(ch===sep){out.push(cur);cur="";}
+  else cur+=ch;
+ }
+ out.push(cur);
+ return out.map(function(x){return x.trim();});
+}
+var IMP_ALIAS={
+ codigo:["codigo","cod","sku","plu","referencia","ref","item","barras"],
+ nombre:["nombre","producto","descripcion","detalle","articulo"],
+ cat:["categoria","linea","grupo","seccion","departamento"],
+ u:["unidad","und","um","medida","unidadmedida"],
+ cost:["costo","costounitario","preciocompra","valorcompra","ultimocosto"],
+ precio:["precio","precioventa","preciogondola","pvp","valorventa","preciopublico"],
+ iva:["iva","impuesto","tarifaiva","impoconsumo"],
+ vida:["vida","vidautil","diasvida","duracion","diasdevida"],
+ prov:["proveedor","prov","fabricante","marca"],
+ vd:["ventadiaria","ventadia","promediodiario","rotacion","unidadesdia","promedio"],
+ lote:["lote","loteproveedor","numerodelote"],
+ q:["cantidad","cant","saldo","existencia","unidades","stock","inventario"],
+ ven:["vencimiento","vence","fechavencimiento","caducidad","fechavence","fechadevencimiento"]
+};
+function campoDeCabecera(txt){
+ var k=claveCol(txt), r=null;
+ Object.keys(IMP_ALIAS).forEach(function(f){if(!r&&IMP_ALIAS[f].indexOf(k)>=0)r=f;});
+ return r;
+}
+
+/* ---------- qué se puede cargar ---------- */
+var IMP_TIPOS={
+ cat:{n:"Catálogo de productos",ver:"precios",
+  p:"El catálogo completo: qué vende la tienda, a qué costo y a qué precio. Si el código ya existe se "+
+    "actualiza solo lo que venga en el archivo; si no existe, el producto se crea.",
+  orden:["codigo","nombre","cat","u","cost","precio","iva","vida","prov","vd"],
+  cols:[["Código","obligatorio","7701"],["Nombre","obligatorio para productos nuevos","Avena en hojuelas 500 g"],
+   ["Categoría","obligatorio para productos nuevos","Abarrotes"],["Unidad","u o kg, por defecto u","u"],
+   ["Costo","obligatorio, sin IVA","3.400"],["Precio","obligatorio, de góndola con IVA","4.500"],
+   ["IVA","0, 5 o 19, por defecto 0","0"],["Vida útil","en días, vacío si no se vence","180"],
+   ["Proveedor","obligatorio para productos nuevos","Distribuidora Andina"],
+   ["Venta diaria","estimada, para la reposición","12"]],
+  ej:[["7701","Avena en hojuelas 500 g","Abarrotes","u","3.400","4.500","0","180","Distribuidora Andina","12"],
+   ["7702","Arequipe 250 g","Abarrotes","u","5.200","7.900","19","240","Distribuidora Andina","6"],
+   ["7001","Arroz blanco 1 kg","Abarrotes","u","4.350","4.900","0","","Distribuidora Andina","65"]]},
+ pre:{n:"Lista de precios",ver:"precios",
+  p:"Solo precios, para cuando el proveedor sube la lista o se corre una promoción. El producto ya tiene "+
+    "que estar en el catálogo y el precio nuevo tiene que cubrir el costo.",
+  orden:["codigo","precio"],
+  cols:[["Código","obligatorio","7001"],["Precio","obligatorio, de góndola con IVA","5.100"]],
+  ej:[["7001","5.100"],["7101","4.500"],["7401","6.700"]]},
+ inv:{n:"Inventario inicial",ver:"inv",
+  p:"El conteo con el que arranca la tienda en el sistema, lote por lote. Es lo que se carga el día de la "+
+    "puesta en marcha, después de contar la bodega.",
+  orden:["codigo","lote","q","ven"],
+  cols:[["Código","obligatorio","7101"],["Lote","obligatorio","L-2609"],["Cantidad","obligatorio","48"],
+   ["Vencimiento","obligatorio en lo que se vence","2026-09-18"]],
+  ej:[["7101","L-2609","48","2026-09-18"],["7102","L-2609","26","2026-09-26"],["7001","L-A41","120",""]]}
+};
+function impTiposVisibles(){
+ return Object.keys(IMP_TIPOS).filter(function(k){return puede(IMP_TIPOS[k].ver);});
+}
+function impS(){
+ var vis=impTiposVisibles();
+ if(!S.imp)S.imp={tipo:vis[0]||"cat",texto:"",nombre:"",filas:null};
+ if(vis.indexOf(S.imp.tipo)<0)S.imp={tipo:vis[0]||"cat",texto:"",nombre:"",filas:null};
+ return S.imp;
+}
+
+/* ---------- revisión fila por fila ---------- */
+function impLeer(txt,tipo){
+ var lineas=String(txt).replace(/\r/g,"").split("\n").filter(function(l){return l.trim()!=="";});
+ if(!lineas.length)return null;
+ var sep=impSep(lineas[0]), tabla=lineas.map(function(l){return partirLinea(l,sep);});
+ var cab=tabla[0].map(campoDeCabecera), hay=cab.filter(function(x){return x;}).length;
+ var idx={}, datos;
+ if(hay>=Math.max(2,Math.ceil(tabla[0].length/2))){
+  cab.forEach(function(f,i){if(f&&idx[f]===undefined)idx[f]=i;});
+  datos=tabla.slice(1);
+ }else{
+  IMP_TIPOS[tipo].orden.forEach(function(f,i){idx[f]=i;});
+  datos=tabla;
+ }
+ return {idx:idx,datos:datos,cabecera:hay>=2};
+}
+function val(fila,idx,f){return idx[f]===undefined?"":String(fila[idx[f]]==null?"":fila[idx[f]]).trim();}
+function provDe(nombre){
+ var k=null, c=claveCol(nombre);
+ Object.keys(TPROVT).forEach(function(x){if(!k&&(claveCol(x)===c||claveCol(TPROVT[x])===c))k=x;});
+ return k;
+}
+function provNuevo(nombre){
+ var base=sinTildes(nombre).toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,4)||"PROV", k=base, i=1;
+ while(TPROVT[k])k=base+(++i);
+ return k;
+}
+function impRevisar(){
+ var I=impS(), L=impLeer(I.texto,I.tipo);
+ if(!L){I.filas=[];return;}
+ var vistos={}, filas=[];
+ L.datos.forEach(function(fila,n){
+  var r={n:n+1+(L.cabecera?1:0),estado:"error",msg:"",d:null,txt:""};
+  var cod=val(fila,L.idx,"codigo").replace(/\.0$/,"");
+  r.cod=cod;
+  if(!cod){r.msg="falta el código";filas.push(r);return;}
+  if(vistos[cod]){r.msg="el código "+cod+" viene más de una vez en el archivo";filas.push(r);return;}
+  vistos[cod]=1;
+  if(I.tipo==="cat")revisarCat(r,fila,L.idx,cod);
+  else if(I.tipo==="pre")revisarPre(r,fila,L.idx,cod);
+  else revisarInv(r,fila,L.idx,cod);
+  filas.push(r);
+ });
+ I.filas=filas;
+}
+function revisarCat(r,fila,idx,cod){
+ var p=TPROD[cod], nuevo=!p, avisos=[];
+ var d=p?{n:p.n,u:p.u,cat:p.cat,cost:p.cost,precio:p.precio,iva:p.iva,vida:p.vida,vd:VD28[cod]||p.vd,prov:p.prov}:
+  {n:"",u:"u",cat:"",cost:0,precio:0,iva:0,vida:null,vd:0,prov:""};
+ var g=function(f){return val(fila,idx,f);};
+ if(g("nombre"))d.n=g("nombre");
+ if(g("cat"))d.catTxt=g("cat");
+ if(g("u")){var u=unidadCol(g("u")); if(!u){r.msg="la unidad "+g("u")+" no se entiende, use u o kg";return;} d.u=u;}
+ if(g("cost")!==""){var c=numCol(g("cost")); if(!(c>0)){r.msg="el costo no se entiende";return;} d.cost=Math.round(c);}
+ if(g("precio")!==""){var v=numCol(g("precio")); if(!(v>0)){r.msg="el precio no se entiende";return;} d.precio=Math.round(v);}
+ if(g("iva")!==""){var iv=ivaCol(g("iva")); if(iv===null){r.msg="el IVA "+g("iva")+" no es una tarifa que se use";return;} d.iva=iv;}
+ if(g("vida")!==""){var vi=numCol(g("vida")); if(isNaN(vi)||vi<1){r.msg="la vida útil se escribe en días";return;} d.vida=Math.round(vi);}
+ if(g("vd")!==""){var vd=numCol(g("vd")); if(isNaN(vd)||vd<0){r.msg="la venta diaria no se entiende";return;} d.vd=vd;}
+ if(g("prov"))d.provTxt=g("prov");
+ if(nuevo){
+  if(!d.n){r.msg="falta el nombre";return;}
+  if(!d.catTxt){r.msg="falta la categoría";return;}
+  if(!d.provTxt){r.msg="falta el proveedor";return;}
+  if(!d.cost){r.msg="falta el costo";return;}
+  if(!d.precio){r.msg="falta el precio";return;}
+ }
+ if(d.catTxt){
+  var cat=null;
+  TCAT.forEach(function(x){if(!cat&&claveCol(x)===claveCol(d.catTxt))cat=x;});
+  if(cat)d.cat=cat; else {d.cat=d.catTxt; d.catNueva=true; avisos.push("categoría nueva");}
+ }
+ if(d.provTxt){
+  var pv=provDe(d.provTxt);
+  if(pv)d.prov=pv; else {d.prov=provNuevo(d.provTxt); d.provNombre=d.provTxt; avisos.push("proveedor nuevo");}
+ }
+ if(d.precio/(1+d.iva)<=d.cost){
+  r.msg="el precio sin IVA ("+money(d.precio/(1+d.iva))+") no cubre el costo de "+money(d.cost);
+  return;
+ }
+ if(!d.vd)avisos.push("sin venta diaria no entra en la reposición");
+ var m=(d.precio/(1+d.iva)-d.cost)/(d.precio/(1+d.iva));
+ if(m<MARGEN_OBJ)avisos.push("margen de "+pct(m)+", por debajo del objetivo");
+ r.estado=nuevo?"nuevo":"actualiza";
+ r.msg=avisos.join(" · ");
+ r.d=d;
+ r.txt=esc(d.n)+" · "+esc(d.cat)+" · "+esc(d.u)+" · costo "+money(d.cost)+" · precio "+money(d.precio)+
+  " · IVA "+(d.iva?pct(d.iva,0):"excluido")+(d.vida?" · vence a los "+d.vida+" días":"")+" · "+
+  esc(d.provNombre||TPROVT[d.prov]||d.prov);
+}
+function revisarPre(r,fila,idx,cod){
+ var p=TPROD[cod];
+ if(!p){r.msg="el código "+cod+" no está en el catálogo";return;}
+ var v=numCol(val(fila,idx,"precio"));
+ if(!(v>0)){r.msg="el precio no se entiende";return;}
+ v=Math.round(v);
+ if(v===p.precio){r.estado="igual";r.msg="ya tiene ese precio";r.txt=esc(p.n)+" · "+money(v);return;}
+ if(v/(1+p.iva)<=p.cost){r.msg="el precio sin IVA ("+money(v/(1+p.iva))+") no cubre el costo de "+money(p.cost);return;}
+ var m=(v/(1+p.iva)-p.cost)/(v/(1+p.iva));
+ r.estado="actualiza";
+ r.msg=(m<MARGEN_OBJ?"margen de "+pct(m)+", por debajo del objetivo":"margen de "+pct(m))+
+  (v<p.precio?" · baja de precio":"");
+ r.d={precio:v};
+ r.txt=esc(p.n)+" · de "+money(p.precio)+" a "+money(v);
+}
+function revisarInv(r,fila,idx,cod){
+ var p=TPROD[cod];
+ if(!p){r.msg="el código "+cod+" no está en el catálogo";return;}
+ var lote=val(fila,idx,"lote"), q=numCol(val(fila,idx,"q")), ven=fechaCol(val(fila,idx,"ven"));
+ if(!lote){r.msg="falta el lote";return;}
+ if(!(q>0)){r.msg="la cantidad no se entiende";return;}
+ if(ven===null){r.msg="la fecha de vencimiento no se entiende, use 2026-09-18 o 18/09/2026";return;}
+ if(p.vida&&!ven){r.msg="este producto se vence, falta la fecha";return;}
+ if(ven&&ven<HOY){r.msg="esa fecha ya pasó, el lote estaría vencido";return;}
+ q=tredondea(cod,q);
+ r.estado="nuevo";
+ r.msg=ven&&diasHasta(ven)<=7?"vence en "+pl(diasHasta(ven),"día","días"):"";
+ r.d={lote:lote,q:q,ven:ven||null};
+ r.txt=esc(p.n)+" · lote "+esc(lote)+" · "+tcant(cod,q)+(ven?" · vence "+fISO(ven):" · sin vencimiento")+
+  " · "+money(q*p.cost)+" al costo";
+}
+function impResumen(){
+ var I=impS(), t={n:0,nuevo:0,act:0,err:0,igual:0,valor:0};
+ (I.filas||[]).forEach(function(r){
+  t.n++;
+  if(r.estado==="error")t.err++;
+  else if(r.estado==="igual")t.igual++;
+  else if(r.estado==="nuevo"){t.nuevo++; if(I.tipo==="inv")t.valor+=r.d.q*TPROD[r.cod].cost;}
+  else t.act++;
+ });
+ t.aplica=t.nuevo+t.act;
+ return t;
+}
+
+/* ---------- plantilla ---------- */
+function csvTexto(tipo){
+ var T=IMP_TIPOS[tipo];
+ var l=[T.cols.map(function(c){return c[0];}).join(";")];
+ T.ej.forEach(function(f){l.push(f.join(";"));});
+ return l.join("\n")+"\n";
+}
+function bajarCSV(nombre,txt){
+ var a=document.createElement("a");
+ a.setAttribute("href","data:text/csv;charset=utf-8,"+encodeURIComponent("﻿"+txt));
+ a.setAttribute("download",nombre);
+ document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+/* ---------- vista ---------- */
+function vistaImport(){
+ var I=impS(), T=IMP_TIPOS[I.tipo], vis=impTiposVisibles(), t=impResumen();
+ var pill2={nuevo:["Nuevo","p-o"],actualiza:["Actualiza","p-w"],igual:["Sin cambio","p-n"],error:["Error","p-a"]};
+ return '<div class="card"><header><div><h2>Qué se va a cargar</h2><p>Se descarga la plantilla, se llena en Excel y '+
+  'se vuelve a cargar. También sirve copiar las celdas en Excel y pegarlas aquí.</p></div>'+
+  (vis.length>1?'<div class="chips">'+vis.map(function(k){
+    return '<button data-act="sm-imp-tipo" data-id="'+k+'" class="'+(k===I.tipo?"on":"")+'">'+esc(IMP_TIPOS[k].n)+'</button>';
+   }).join("")+'</div>':'')+'</header>'+
+  '<div class="body"><div class="cal"><b>'+esc(T.n)+'.</b> '+esc(T.p)+'</div></div>'+
+  '<div class="scroll"><table><thead><tr><th>Columna</th><th>Regla</th><th>Ejemplo</th></tr></thead><tbody>'+
+  T.cols.map(function(c){return '<tr><td><b>'+esc(c[0])+'</b></td><td class="sub">'+esc(c[1])+'</td>'+
+   '<td class="n">'+esc(c[2])+'</td></tr>';}).join("")+'</tbody></table></div>'+
+  '<div class="body"><p class="sub">El orden de las columnas da igual si el archivo trae la fila de títulos. '+
+  'Separador punto y coma, coma o tabulación, y los números como los escribe Excel en Colombia.</p></div>'+
+  '<div class="actions"><button class="btn g" data-act="sm-imp-plantilla">Descargar plantilla</button>'+
+  '<button class="btn g" data-act="sm-imp-ejemplo">Llenar con un ejemplo</button><span class="sp"></span></div></div>'+
+  '<div class="card"><header><div><h2>El archivo</h2><p>Guarde la plantilla como CSV desde Excel y súbala, o pegue '+
+  'aquí las celdas copiadas de la hoja.</p></div></header><div class="body">'+
+  '<div class="fld" style="max-width:420px"><label for="smIFile">Archivo CSV o de texto</label>'+
+  '<input id="smIFile" data-f="smIFile" type="file" accept=".csv,.txt,.tsv,text/csv,text/plain">'+
+  (I.nombre?'<div class="hint">Cargado: '+esc(I.nombre)+'</div>':
+   '<div class="hint">Excel guarda en CSV con Archivo, Guardar como, CSV delimitado por comas.</div>')+'</div>'+
+  '<div class="fld" style="margin-top:16px"><label for="smITxt">O pegue las celdas aquí</label>'+
+  '<textarea id="smITxt" data-f="smITxt" rows="7" spellcheck="false" aria-describedby="smIAyuda">'+esc(I.texto)+'</textarea>'+
+  '<div class="hint" id="smIAyuda">Seleccione el rango en Excel, cópielo y péguelo. Cada línea es un producto.</div></div>'+
+  '<div class="lgMsg" id="smImpErr" aria-live="assertive"></div></div>'+
+  '<div class="actions"><button class="btn g" data-act="sm-imp-limpiar">Limpiar</button><span class="sp"></span>'+
+  '<button class="btn" data-act="sm-imp-revisar">Revisar</button></div></div>'+
+  (I.filas?'<div class="stats">'+
+   st(fmt(t.n),"Filas leídas","")+st(fmt(t.nuevo),"Nuevas","")+st(fmt(t.act),"Actualizan","")+
+   st(fmt(t.err),"Con error",t.err?"bad":"good")+
+   (I.tipo==="inv"&&t.valor?st(money(t.valor),"Valor al costo",""):"")+'</div>'+
+   '<div class="card"><header><div><h2>Revisión antes de aplicar</h2><p>Lo que tiene error no se aplica. Corrija esas '+
+   'filas en Excel y vuelva a cargar el archivo, o aplique el resto y cárguelas después.</p></div></header>'+
+   (t.n?'<div class="scroll"><table style="min-width:860px"><thead><tr><th class="r">Fila</th><th>Código</th>'+
+    '<th>Qué dice</th><th>Estado</th><th>Nota</th></tr></thead><tbody>'+
+    I.filas.map(function(r){
+     return '<tr><td class="n r">'+r.n+'</td><td><span class="ing">'+esc(r.cod||"·")+'</span></td>'+
+      '<td>'+(r.txt||'<span class="sub">no se pudo leer</span>')+'</td>'+
+      '<td>'+pill(pill2[r.estado])+'</td>'+
+      '<td class="sub"'+(r.estado==="error"?' style="color:var(--alert)"':'')+'>'+esc(r.msg||"·")+'</td></tr>';
+    }).join("")+'</tbody></table></div>':'<div class="empty">No se leyó ninguna fila.</div>')+
+   '<div class="actions"><span class="sp"></span>'+
+   '<button class="btn" data-act="sm-imp-aplicar"'+(t.aplica?'':' disabled')+'>'+
+   (t.aplica?"Aplicar "+pl(t.aplica,"fila","filas"):"No hay nada que aplicar")+'</button></div></div>':'')+
+  '<div class="card"><header><h2>Qué no hace esta pantalla</h2></header><div class="body">'+
+  '<div class="cal w">Lee archivos CSV y texto pegado, que es lo que Excel exporta y copia. No abre el archivo .xlsx '+
+  'directamente. Tampoco borra lo que ya existe: una carga crea o actualiza, nunca elimina productos ni lotes.</div>'+
+  '</div></div>';
+}
+function campoImport(f,el,v){
+ var I=impS();
+ if(f==="smITxt"){I.texto=v; I.nombre=""; I.filas=null; return;}
+ if(f==="smIFile"){
+  var file=el.files&&el.files[0];
+  if(!file)return;
+  var lector=new FileReader();
+  lector.onload=function(){
+   I.texto=String(lector.result).replace(/^﻿/,"");
+   I.nombre=file.name; I.filas=null;
+   impRevisar(); render(); arriba();
+   toast("Se leyó "+file.name+" · "+pl(impResumen().n,"fila","filas")+". Revise antes de aplicar.");
+  };
+  lector.onerror=function(){toast("No se pudo leer el archivo. Guárdelo como CSV e inténtelo otra vez.");};
+  lector.readAsText(file,"utf-8");
+ }
+}
+
+/* ---------- acciones ---------- */
+ACC["sm-imp-tipo"]=function(v,id){
+ var I=impS(); I.tipo=id; I.filas=null; I.texto=""; I.nombre="";
+ render(); arriba();
+};
+ACC["sm-imp-plantilla"]=function(){
+ var I=impS();
+ bajarCSV("plantilla-"+I.tipo+"-mesura.csv",csvTexto(I.tipo));
+ toast("Plantilla descargada. Llénela en Excel, guárdela como CSV y vuelva a subirla.");
+};
+ACC["sm-imp-ejemplo"]=function(){
+ var I=impS();
+ I.texto=csvTexto(I.tipo); I.nombre=""; I.filas=null;
+ impRevisar(); render(); arriba();
+ toast("Quedó el ejemplo de la plantilla. Así se ve la revisión antes de aplicar.");
+};
+ACC["sm-imp-limpiar"]=function(){
+ S.imp=null; impS(); render(); arriba();
+};
+ACC["sm-imp-revisar"]=function(){
+ var I=impS(), err=$("smImpErr");
+ if(!String(I.texto).trim()){if(err)err.textContent="Suba el archivo o pegue las celdas antes de revisar.";return;}
+ impRevisar(); render(); arriba();
+ var t=impResumen();
+ toast(pl(t.n,"fila leída","filas leídas")+" · "+t.nuevo+" nuevas, "+t.act+" actualizan, "+t.err+" con error.");
+};
+ACC["sm-imp-aplicar"]=function(){
+ var I=impS(), t=impResumen();
+ if(!t.aplica)return;
+ if(I.tipo==="cat")aplicarCat(I);
+ else if(I.tipo==="pre")aplicarPre(I);
+ else aplicarInv(I);
+ S.imp={tipo:I.tipo,texto:"",nombre:"",filas:null};
+ render(); arriba();
+};
+function aplicarCat(I){
+ var nuevos=0, act=0, cats=0, provs=0;
+ I.filas.forEach(function(r){
+  if(r.estado!=="nuevo"&&r.estado!=="actualiza")return;
+  var d=r.d;
+  if(d.catNueva&&TCAT.indexOf(d.cat)<0){TCAT.push(d.cat);cats++;}
+  if(d.provNombre&&!TPROVT[d.prov]){TPROVT[d.prov]=d.provNombre;provs++;}
+  TPROD[r.cod]={n:d.n,u:d.u,cat:d.cat,cost:d.cost,precio:d.precio,iva:d.iva,vida:d.vida||null,vd:d.vd,prov:d.prov};
+  VD28[r.cod]=d.vd;
+  if(r.estado==="nuevo")nuevos++; else act++;
+ });
+ evento("imp","IMP-CAT","Carga de catálogo · "+nuevos+" productos nuevos y "+act+" actualizados",
+  quien(),0,null,HOY,hora(),TID);
+ toast(pl(nuevos,"producto nuevo","productos nuevos")+" y "+pl(act,"actualizado","actualizados")+
+  (cats?", "+pl(cats,"categoría nueva","categorías nuevas"):"")+
+  (provs?", "+pl(provs,"proveedor nuevo","proveedores nuevos"):"")+
+  ". Ya aparecen en precios, inventario y reposición.");
+}
+function aplicarPre(I){
+ var n=0;
+ I.filas.forEach(function(r){
+  if(r.estado!=="actualiza")return;
+  var p=TPROD[r.cod], antes=p.precio;
+  p.precio=r.d.precio;
+  S.tprecios.unshift({f:HOY,c:r.cod,antes:antes,despues:p.precio,motivo:"Carga de lista de precios",por:quien()});
+  n++;
+ });
+ S.tprecios.sort(function(a,b){return b.f.localeCompare(a.f);});
+ evento("imp","IMP-PRE","Carga de lista de precios · "+n+" productos",quien(),0,null,HOY,hora(),TID);
+ toast(pl(n,"precio actualizado","precios actualizados")+". Cada cambio quedó en el historial de precios.");
+}
+function aplicarInv(I){
+ var n=0, valor=0;
+ I.filas.forEach(function(r){
+  if(r.estado!=="nuevo")return;
+  nuevoLote(r.cod,r.d.q,r.d.lote,r.d.ven,false,TID);
+  valor+=r.d.q*TPROD[r.cod].cost;
+  n++;
+ });
+ evento("imp","IMP-INV","Carga de inventario inicial · "+pl(n,"lote","lotes"),quien(),valor,null,HOY,hora(),TID);
+ toast(pl(n,"lote cargado","lotes cargados")+" por "+money(valor)+" al costo. Ya cuentan para la cobertura y los vencimientos.");
+}
+
+MENU_N.imp="Cargar desde Excel";
+IC.imp='M8 2.5v7 M5.5 5L8 2.5 10.5 5 M2.5 10.5v3h11v-3';
+TIT.imp=["Cargar desde Excel","Catálogo, precios e inventario inicial desde una plantilla, con revisión antes de aplicar."];
+VISTAS.imp=vistaImport;
 
 /* ============ ARRANQUE ============
    Va de último: el dominio ya registró sus cuentas, sus vistas y su texto de bienvenida. */
