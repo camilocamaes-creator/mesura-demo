@@ -612,7 +612,6 @@ function vistaHistorial(){
  var dias=Object.keys(porDia).sort().reverse();
  var tot=evs.reduce(function(a,e){return a+valorSuma(e);},0);
  var sal=evs.filter(function(e){return e.t==="salida"&&!(e.meta&&e.meta.revertida);});
- var servs=sal.reduce(function(a,e){return a+(e.meta&&e.meta.serv||0);},0);
  var revs=evs.filter(function(e){return e.t==="rev";}).length;
  var q=[["hoy","Hoy"],["ayer","Ayer"],["7","Últimos 7 días"],["mes","Este mes"],["pasado","Mes pasado"],["todo","Todo"]];
  return '<div class="card">'+
@@ -622,8 +621,8 @@ function vistaHistorial(){
     return '<button data-q="'+x[0]+'" class="'+(H.rango===x[0]?"on":"")+'">'+x[1]+'</button>';}).join("")+
   '</div></div><div class="stats">'+
   st(fmt(evs.length),"Movimientos","")+st(fmt(dias.length),"Días con actividad","")+
-  st(fmt(servs),"Servicios producidos","")+st(money(tot),"Valor movido","")+
-  st(fmt(revs),"Reversiones",revs?"warn":"good")+'</div>'+
+  st(money(tot),"Valor movido","")+
+  (typeof statsHistorial==="function"?statsHistorial(sal,revs):"")+'</div>'+
   (dias.length?dias.map(function(k){
     var es=porDia[k], v=es.reduce(function(a,e){return a+valorSuma(e);},0), ab=H.abierto[k];
     var d=new Date(k+"T12:00:00");
@@ -664,6 +663,8 @@ function bindHistorial(){
 /* ============ VISOR ============ */
 var ultimoFoco=null;
 function cerrarDoc(){ if($("ovl").hidden)return; $("ovl").hidden=true; if(ultimoFoco&&ultimoFoco.focus)ultimoFoco.focus(); }
+
+function pct(x,d){return fmt(x*100,d===undefined?1:d)+"%";}
 
 /* ============ GRAFICOS: SVG a mano, sin librerías, para los dos demos ============ */
 var MESES_C=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
@@ -763,6 +764,63 @@ function grafProporcion(o){
    x+=ww;});
  });
  return g+'</svg>';
+}
+
+/* ============ NOMINA COLOMBIANA ============
+   Cálculo común a los dos demos: salario, extras, recargos, seguridad social y prestaciones.
+   Cada operación pone su lista de empleados y su clase de riesgo (ARL). */
+var SMMLV=1750905, AUXTTE=249095;
+var HORAS_MES=210;                                  /* Ley 2101: 42 horas semanales desde el 15 de julio de 2026 */
+var TARIFA={hed:1.25,hen:1.75,rn:0.35,dom:0.90};   /* Ley 2466: dominical 90% desde jul 2026 */
+var ARL=0.02436, ARL_TXT="clase III, manipulación de alimentos";   /* cada operación fija su clase */
+
+function nomina(e){
+ var vh=e.s/HORAS_MES;
+ var hed=Math.round(e.hed*vh*TARIFA.hed), hen=Math.round(e.hen*vh*TARIFA.hen);
+ var rn=Math.round(e.rn*vh*TARIFA.rn), dom=Math.round(e.dom*vh*TARIFA.dom);
+ var extras=hed+hen+rn+dom;
+ var aux=(e.s<=2*SMMLV)?AUXTTE:0;
+ var ibc=e.s+extras;
+ var salud=Math.round(ibc*0.04), pens=Math.round(ibc*0.04);
+ var devengado=e.s+extras+aux, neto=devengado-salud-pens;
+ var exonerado=e.s<10*SMMLV;
+ var apPens=Math.round(ibc*0.12), apArl=Math.round(ibc*ARL), apCaja=Math.round(ibc*0.04);
+ var apSalud=exonerado?0:Math.round(ibc*0.085);
+ var apSena=exonerado?0:Math.round(ibc*0.02), apIcbf=exonerado?0:Math.round(ibc*0.03);
+ var aportes=apPens+apArl+apCaja+apSalud+apSena+apIcbf;
+ var base=e.s+extras+aux;
+ var ces=Math.round(base*0.0833), int_=Math.round(ces*0.12);
+ var prima=Math.round(base*0.0833), vac=Math.round((e.s+extras)*0.0417);
+ var prest=ces+int_+prima+vac;
+ return {apSalud:apSalud,apSena:apSena,apIcbf:apIcbf,vh:vh,hed:hed,hen:hen,rn:rn,dom:dom,extras:extras,aux:aux,devengado:devengado,
+  salud:salud,pens:pens,neto:neto,aportes:aportes,prest:prest,costo:devengado+aportes+prest,
+  exonerado:exonerado,ces:ces,int:int_,prima:prima,vac:vac,apPens:apPens,apArl:apArl,apCaja:apCaja};
+}
+function totalNomina(lista){
+ var t={devengado:0,extras:0,neto:0,aportes:0,prest:0,costo:0};
+ (lista||[]).forEach(function(e){var n=nomina(e);
+  t.devengado+=n.devengado;t.extras+=n.extras;t.neto+=n.neto;
+  t.aportes+=n.aportes;t.prest+=n.prest;t.costo+=n.costo;});
+ return t;
+}
+function cargaRows(lista){
+ var acc={ces:0,int:0,prima:0,vac:0,apPens:0,apArl:0,apCaja:0,otros:0}, exo=true, noExo=0;
+ (lista||[]).forEach(function(e){var n=nomina(e);
+  acc.ces+=n.ces;acc.int+=n.int;acc.prima+=n.prima;acc.vac+=n.vac;
+  acc.apPens+=n.apPens;acc.apArl+=n.apArl;acc.apCaja+=n.apCaja;
+  acc.otros+=n.apSalud+n.apSena+n.apIcbf;
+  if(!n.exonerado){exo=false;noExo++;}});
+ var f=[["Cesantías","8,33%",acc.ces,"se consignan al fondo en febrero"],
+  ["Intereses a las cesantías","12% anual",acc.int,"se pagan al empleado en enero"],
+  ["Prima de servicios","8,33%",acc.prima,"junio y diciembre"],
+  ["Vacaciones","4,17%",acc.vac,"15 días hábiles al año"],
+  ["Pensión, aporte patronal","12%",acc.apPens,"obligatorio siempre"],
+  ["ARL",pct(ARL,3),acc.apArl,ARL_TXT],
+  ["Caja de compensación","4%",acc.apCaja,"obligatorio siempre"],
+  ["Salud, SENA e ICBF",exo?"0%":"13,5%",acc.otros,exo?"exonerado por el art. 114-1 del Estatuto Tributario, todos bajo 10 SMMLV":
+   "8,5% + 2% + 3% para "+noExo+(noExo===1?" empleado":" empleados")+" con 10 SMMLV o más; el resto, exonerado"]];
+ return f.map(function(r){return '<tr><td class="ing">'+r[0]+'</td><td class="n r">'+r[1]+'</td>'+
+  '<td class="n r">'+money(r[2])+'</td><td class="sub">'+r[3]+'</td></tr>';}).join("");
 }
 
 /* ============ NUCLEO: ARMAZON COMPARTIDO ============
@@ -1221,12 +1279,7 @@ function verDoc(id){
  $("vx").focus();
 }
 
-
-/* ============ NOMINA ============ */
-var SMMLV=1750905, AUXTTE=249095;
-var HORAS_MES=210;                                  /* Ley 2101: 42 horas semanales desde el 15 de julio de 2026 */
-var TARIFA={hed:1.25,hen:1.75,rn:0.35,dom:0.90};   /* Ley 2466: dominical 90% desde jul 2026 */
-var ARL=0.02436;                                    /* clase III, manipulación de alimentos */
+/* ============ EMPLEADOS DE LA OPERACION ============ */
 var EMP=[
  {n:"Julián Rojas",   c:"Supervisor de operación", s:2850000, hed:12, hen:4,  rn:18, dom:8},
  {n:"Marta Quintero", c:"Jefe de cocina",          s:2100000, hed:16, hen:6,  rn:24, dom:8},
@@ -1237,54 +1290,6 @@ var EMP=[
  {n:"Diego Molina",   c:"Bodeguero",               s:1900000, hed:8,  hen:0,  rn:0,  dom:8},
  {n:"Rosa Cárdenas",  c:"Servicios generales",     s:SMMLV,   hed:6,  hen:0,  rn:0,  dom:8}
 ];
-function nomina(e){
- var vh=e.s/HORAS_MES;
- var hed=Math.round(e.hed*vh*TARIFA.hed), hen=Math.round(e.hen*vh*TARIFA.hen);
- var rn=Math.round(e.rn*vh*TARIFA.rn), dom=Math.round(e.dom*vh*TARIFA.dom);
- var extras=hed+hen+rn+dom;
- var aux=(e.s<=2*SMMLV)?AUXTTE:0;
- var ibc=e.s+extras;
- var salud=Math.round(ibc*0.04), pens=Math.round(ibc*0.04);
- var devengado=e.s+extras+aux, neto=devengado-salud-pens;
- var exonerado=e.s<10*SMMLV;
- var apPens=Math.round(ibc*0.12), apArl=Math.round(ibc*ARL), apCaja=Math.round(ibc*0.04);
- var apSalud=exonerado?0:Math.round(ibc*0.085);
- var apSena=exonerado?0:Math.round(ibc*0.02), apIcbf=exonerado?0:Math.round(ibc*0.03);
- var aportes=apPens+apArl+apCaja+apSalud+apSena+apIcbf;
- var base=e.s+extras+aux;
- var ces=Math.round(base*0.0833), int_=Math.round(ces*0.12);
- var prima=Math.round(base*0.0833), vac=Math.round((e.s+extras)*0.0417);
- var prest=ces+int_+prima+vac;
- return {apSalud:apSalud,apSena:apSena,apIcbf:apIcbf,vh:vh,hed:hed,hen:hen,rn:rn,dom:dom,extras:extras,aux:aux,devengado:devengado,
-  salud:salud,pens:pens,neto:neto,aportes:aportes,prest:prest,costo:devengado+aportes+prest,
-  exonerado:exonerado,ces:ces,int:int_,prima:prima,vac:vac,apPens:apPens,apArl:apArl,apCaja:apCaja};
-}
-function totalNomina(lista){
- var t={devengado:0,extras:0,neto:0,aportes:0,prest:0,costo:0};
- (lista||EMP).forEach(function(e){var n=nomina(e);
-  t.devengado+=n.devengado;t.extras+=n.extras;t.neto+=n.neto;
-  t.aportes+=n.aportes;t.prest+=n.prest;t.costo+=n.costo;});
- return t;
-}
-function cargaRows(lista){
- var acc={ces:0,int:0,prima:0,vac:0,apPens:0,apArl:0,apCaja:0,otros:0}, exo=true, noExo=0;
- (lista||EMP).forEach(function(e){var n=nomina(e);
-  acc.ces+=n.ces;acc.int+=n.int;acc.prima+=n.prima;acc.vac+=n.vac;
-  acc.apPens+=n.apPens;acc.apArl+=n.apArl;acc.apCaja+=n.apCaja;
-  acc.otros+=n.apSalud+n.apSena+n.apIcbf;
-  if(!n.exonerado){exo=false;noExo++;}});
- var f=[["Cesantías","8,33%",acc.ces,"se consignan al fondo en febrero"],
-  ["Intereses a las cesantías","12% anual",acc.int,"se pagan al empleado en enero"],
-  ["Prima de servicios","8,33%",acc.prima,"junio y diciembre"],
-  ["Vacaciones","4,17%",acc.vac,"15 días hábiles al año"],
-  ["Pensión, aporte patronal","12%",acc.apPens,"obligatorio siempre"],
-  ["ARL","2,436%",acc.apArl,"clase III, manipulación de alimentos"],
-  ["Caja de compensación","4%",acc.apCaja,"obligatorio siempre"],
-  ["Salud, SENA e ICBF",exo?"0%":"13,5%",acc.otros,exo?"exonerado por el art. 114-1 del Estatuto Tributario, todos bajo 10 SMMLV":
-   "8,5% + 2% + 3% para "+noExo+(noExo===1?" empleado":" empleados")+" con 10 SMMLV o más; el resto, exonerado"]];
- return f.map(function(r){return '<tr><td class="ing">'+r[0]+'</td><td class="n r">'+r[1]+'</td>'+
-  '<td class="n r">'+money(r[2])+'</td><td class="sub">'+r[3]+'</td></tr>';}).join("");
-}
 
 /* ============ PANEL DE DIRECCION (alimentación) ============ */
 /* ============ GRAFICAS PARA DIRECCION (SVG a mano, sin librerias: funcionan offline) ============ */
@@ -3486,6 +3491,12 @@ function campoDominio(f,el,ev){
 
 
 
+
+/* los dos indicadores del historial que solo tienen sentido en una operación de alimentación */
+function statsHistorial(sal,revs){
+ var servs=sal.reduce(function(a,e){return a+((e.meta&&e.meta.serv)||0);},0);
+ return st(fmt(servs),"Servicios producidos","")+st(fmt(revs),"Reversiones",revs?"warn":"good");
+}
 
 /* ============ VISTAS DE ALIMENTACION ============ */
 VISTAS.rq=vistaRQ; VISTAS.recep=vistaRecep; VISTAS.inv=vistaInv; VISTAS.serv=vistaServ;
